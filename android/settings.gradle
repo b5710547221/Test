@@ -1,0 +1,3 @@
+rootProject.name = 'Barkodo_Customer'
+
+include ':app'
