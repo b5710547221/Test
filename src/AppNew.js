@@ -1,0 +1,62 @@
+import React, { Component } from 'react'
+import { SwitchNavigator, StackNavigator } from 'react-navigation'
+
+// Auth
+import AuthLoadingScreen from './Components/Auth/AuthLoading'
+import LoginScreen from './Components/Auth/Login'
+import SignUpScreen from './Components/Auth/SignUp'
+
+//App
+import MainScreen from './Components/App/Main'
+import ScanScreen from './Components/App/Scan'
+import MyWalletScreen from './Components/App/MyWallet'
+import EditProfileScreen from './Components/screen/EditProfile'
+//import ShowPromotionScreen from './Components/module/ShowPromotion'
+//import Main from './Components/Main'
+
+// const LoginScreen = ''
+// const ShopListScreen = ''
+// const ScanScreen = ''
+// const MyWalletScreen = ''
+// const EditProfileScreen = ''
+
+const AuthStack = StackNavigator({
+    Login: LoginScreen,
+    SignUp: SignUpScreen
+})
+const AppStack = StackNavigator({
+    Main: MainScreen,
+    // Scan: ScanScreen,
+    // MyWallet: MyWalletScreen,
+    // EditProfile: EditProfileScreen,
+    //ShowPromotion: ShowPromotionScreen
+})
+// const MemberStack = StackNavigator({
+//     ShopList: ShopListScreen,
+//     Scan: ScanScreen,
+//     MyWallet: MyWalletScreen,
+// })
+
+export default App = SwitchNavigator(
+    {
+        AuthLoading: AuthLoadingScreen,
+        Auth: AuthStack,
+        App: AppStack
+        // EditProfile: { screen: EditProfile },
+        // SignUp: { screen: SignUp },
+        // ShowPromotion: { screen: ShowPromotion }
+    },
+    {
+        initialRouteName: 'AuthLoading',
+        navigationOptions: {
+            headerStyle: {
+              backgroundColor: '#f4511e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          },
+    }
+)
+
