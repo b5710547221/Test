@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+/*import React, { Component } from 'react'
 import { AsyncStorage, BackHandler, StyleSheet, NetInfo, Alert, View } from 'react-native'
 import { Container, Spinner } from 'native-base'
 import axios from 'axios'
@@ -98,3 +98,17 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
 })
+
+*/
+import React, {Component} from 'react';
+export default class Main extends Component {
+    render() {
+        return (
+            <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+            <View style={{flex: 1}}>
+                <Text>This is main page!</Text>
+            </View>
+            </SafeAreaView>
+        );
+    }
+}
