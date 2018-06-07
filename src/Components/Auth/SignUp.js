@@ -134,41 +134,6 @@ export default class SignUp extends Component {
         if (birthday === '') {
             return Alert.alert('กรุณาใส่วันเดือนปีเกิด')
         }
-        // Validation Personal ID
-        if (personId === '') {
-            return Alert.alert('กรุณาใส่หมายเลขบัตรประจำตัวประชาชน')
-        } else if (!NUMBER_REGEX.test(personId)) {
-            return Alert.alert('หมายเลขบัตรประจำตัวประชาชน ต้องเป็นตัวเลขเท่านั้น')
-        } else if (personId.length !== 13) {
-            return Alert.alert('หมายเลขบัตรประจำตัวประชาชน ต้องมี ​13 ตัว')
-        }
-        // Validation Address
-        ////// Content
-        if (address === '') {
-            return Alert.alert('กรุณาใส่ที่อยู่')
-        }
-        ////// City
-        if (city === '') {
-            return Alert.alert('กรุณาใส่จังหวัด')
-        }
-        ////// Zip Code
-        if (zipcode === '') {
-            return Alert.alert('กรุณาใส่รหัสไปรษณีย์')
-        } else if (!NUMBER_REGEX.test(zipcode)) {
-            return Alert.alert('รหัสไปรษณีย์ ต้องเป็นตัวเลขเท่านั้น')
-        } else if (zipcode.length !== 5) {
-            return Alert.alert('รหัสไปรษณีย์ ต้องมี ​5 ตัว')
-        }
-        ////// Country
-        if (country === '') {
-            return Alert.alert('กรุณาใส่ประเทศ')
-        }
-        // Validation Phone
-        if (phone === '') {
-            return Alert.alert('กรุณาใส่เบอร์โทรศัพท์')
-        } else if (!NUMBER_REGEX.test(phone)) {
-            return Alert.alert('เบอร์โทรศัพท์ ต้องเป็นตัวเลขเท่านั้น')
-        }
         this.submitForm(this.state.formRegister)
     }
 
