@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import { AsyncStorage, Alert, BackHandler, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Container, Content, Button, Icon } from 'native-base'
 
-import CameraView from './Scan'
-import Wallet from './MyWallet'
-import ShopList from './ShopList'
-import EditProfile from './EditProfile'
+// import CameraView from './Scan'
+// import Wallet from './MyWallet'
+// import ShopList from './ShopList'
+// import EditProfile from './EditProfile'
+
+
 
 import { Loading_Color } from '../../Config'
 import { SearchIcon, BackIcon, HiddenIcon } from '../Common/Icon'
@@ -124,13 +126,13 @@ export default class Main extends Component {
                     leftFunction={leftFunction}
                     rightFunction={rightFunction}
                 />
-                {
+                {/* {
                     currentPage === 'Shop List' ? (<ShopList />)
                         : currentPage === 'Scan' ? (<CameraView />)
                             : currentPage === 'My Wallet' ? (<Wallet />)
                                 : currentPage === 'Edit Profile' ? (<EditProfile navigation={this.navigation} />)
                                     : <View></View>
-                }
+                } */}
                 {
                     currentPage !== 'Edit Profile'
                         ?

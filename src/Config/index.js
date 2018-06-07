@@ -1,6 +1,6 @@
 // SET API Server
 export const API = {
-	base: 'http://209.58.177.160:5001'
+	base: 'http://worldenergystation.com/Barkodo/api/V1/'
 };
 
 // SET Theme Color Applicationƒ

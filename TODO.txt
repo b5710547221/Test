@@ -1,0 +1,9 @@
+1. Log in and Register
+
+
+
+
+- deal with the case that have expired token in AuthLoading.js
+- clean up and organize navigation in AppNew.js
+- change Main.js
+- Change Login to work with e-mail

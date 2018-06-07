@@ -22,8 +22,6 @@ export default class Login extends Component {
         this.state = {
             isLoading: false,
             isInternet: true,
-            // email: 'TonS@gmail.com',
-            // password: 'TonS_123456'
             email: '',
             password: ''
         }
@@ -64,6 +62,25 @@ export default class Login extends Component {
         })
     }
 
+    tokenIsValid = async(userToken) => {
+        const urlLogin = API['base']
+        const dataLogin = {
+            'name' : 'generateTokenLogin',
+            'params': {
+                'token': userToken
+            }
+        }
+        const optionLogin = {
+            headers: {
+                'Content-Type': 'application/json',
+                'crossDomain': true 
+            },
+            timeout: 10000
+        }
+        await axios.post(urlLogin, dataLogin, optionLogin)
+        return resultLogin['data']['response']['error']
+    }
+
     onLogin = async () => {
         const { isInternet, email, password } = this.state
         if (email === '' || password === '') {
@@ -74,31 +91,39 @@ export default class Login extends Component {
             try {
                 this.setState({ isLoading: true })
 
-                const urlLogin = API['base'] + '/api/v1/Account/Login'
+                const urlLogin = API['base']
                 const dataLogin = {
-                    email: this.state.email,
-                    password: this.state.password
+                    'name' : 'generateTokenLogin',
+                    'params': {
+                        'username' : this.state.email,
+                        'password' : this.state.password
+                    }
                 }
                 const optionLogin = {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'crossDomain': true 
                     },
                     timeout: 10000
                 }
-
                 const resultLogin = await axios.post(urlLogin, dataLogin, optionLogin)
+                console.log(resultLogin)
+                if (resultLogin['data']['response']['status'] === 200) {
+                    console.log('Generate Token succesfully!')
+                    await AsyncStorage.setItem('userToken', resultLogin['data']['response']['result']['token'])
+                   
+                    userToken = resultLogin['data']['response']['result']['token']
+                    if(this.tokenIsValid(userToken))
+                        this.onChangePage('App')
+                } 
+                await this.setState({
+                    isLoading: false
+                })               
+                Alert.alert(resultLogin['data']['response']['result'])
 
-                if (resultLogin['data']['success'] === true) {
-                    await AsyncStorage.setItem('userId', resultLogin['data']['data']['user']['id'])
-                    await AsyncStorage.setItem('userEmail', resultLogin['data']['data']['user']['email'])
-                    // await AsyncStorage.setItem('userFirstName', resultLogin['data']['data']['user']['firstName'])
-                    // await AsyncStorage.setItem('userLastName', resultLogin['data']['data']['user']['lastName'])
-                    await AsyncStorage.setItem('userToken', resultLogin['data']['data']['token'])
-                    await AsyncStorage.setItem('expires', resultLogin['data']['data']['expires'])
-
-                    this.onChangePage('App')
-                }
             } catch (error) {
+                 console.log('Request Error!')
+                 console.log(error)
                 if (error['response']['status'] === 400) {
                     Alert.alert('Login Failed')
                 }
@@ -108,6 +133,7 @@ export default class Login extends Component {
             }
         }
     }
+
 
     render() {
 
@@ -137,6 +163,7 @@ export default class Login extends Component {
                                     value={email}
                                     style={styles.input}
                                     underlineColorAndroid="transparent"
+                                    autoCapitalize = 'none'
                                     onChangeText={(value) => { this.updateFormToState('email', value) }}
                                 />
 
@@ -198,7 +225,7 @@ export default class Login extends Component {
         )
     }
 }
-
+// TODO: sdf
 const styles = StyleSheet.create({
     Button_Login: {
         height: '12%',
