@@ -7,3 +7,5 @@
 - clean up and organize navigation in AppNew.js
 - change Main.js
 - Change Login to work with e-mail
+- regular expression for signup form
+- Signup form cannot scroll to Address

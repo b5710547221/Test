@@ -52,6 +52,7 @@ export default class SignUp extends Component {
             //     instagram: ''
             // }
             formRegister: {
+                username: '',
                 email: '',
                 password: '',
                 confirmpassword: '',
@@ -83,7 +84,7 @@ export default class SignUp extends Component {
     }
 
     formValidation = () => {
-        const { email, password, confirmpassword,
+        const { username, email, password, confirmpassword,
             firstname, lastname, gender, birthday, personId,
             address, city, zipcode, country, phone
         } = this.state.formRegister
@@ -91,6 +92,11 @@ export default class SignUp extends Component {
         const EMAIL_REGEX = RegExp(/^(([^<>()\[\]\\.,:\s@"]+(\.[^<>()\[\]\\.,:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
         const STRING_REGEX = RegExp(/^[ก-ๅ||a-z||A-Z]+$/)
         const NUMBER_REGEX = RegExp(/^[0-9]+$/)
+
+        // Validation username
+        if (username === '') {
+            return Alert.alert('กรุณาใส่ username')
+        }   
 
         // Validation Email
         if (email === '') {
@@ -163,39 +169,84 @@ export default class SignUp extends Component {
         } else if (!NUMBER_REGEX.test(phone)) {
             return Alert.alert('เบอร์โทรศัพท์ ต้องเป็นตัวเลขเท่านั้น')
         }
-
         this.submitForm(this.state.formRegister)
     }
 
     submitForm = async (data) => {
         try {
-            const urlRegister = API['base'] + '/api/v1/Account/Register'
+            const urlRegister = API['base']
             const dataRegister = {
-                email: data['email'],
-                password: data['password']
-            }
-
-            const resultRegister = await axios({
-                method: 'POST',
-                url: urlRegister,
-                data: dataRegister
-            })
-
-            if (resultRegister['data']['success'] === true) {
-                await AsyncStorage.setItem('userId', resultRegister['data']['data']['user']['id'])
-                await AsyncStorage.setItem('userEmail', resultRegister['data']['data']['user']['email'])
-                // await AsyncStorage.setItem('userFirstName', resultRegister['data']['data']['user']['firstName'])
-                // await AsyncStorage.setItem('userLastName', resultRegister['data']['data']['user']['lastName'])
-                await AsyncStorage.setItem('token', resultRegister['data']['data']['token'])
-                await AsyncStorage.setItem('expires', resultRegister['data']['data']['expires'])
-
-                this.navigation.goBack()
-            }
-        } catch (error) {
-            if (error['response']['status'] === 400) {
-                if (error['response']['data']['data']['success'] === false) {
-                    Alert.alert(error['response']['data']['message'])
+                'name' : 'registerNewAccount',
+                'params': {
+                    'username' : data['username'],
+                    'password' : data['password'],
+                    'firstname': data['firstname'],
+                    'lastname': data['lastname'],
+                    'email': data['email'],
+                    'confirmPassword': data['confirmpassword'],
+                    'gender': data['gender'],
+                    'birthday': data['birthday'],
+                    'phoneNumber': data['phone']
                 }
+            }
+            const optionRegister = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'crossDomain': true 
+                },
+                timeout: 10000
+            }
+            console.log(dataRegister)
+            const resultRegister = await axios.post(urlRegister, dataRegister, optionRegister)
+            /*{
+                "response": {
+                    "status": 200,
+                    "result": "This Username is already exist.",
+                    "error": false
+                }
+                {
+                    "response": {
+                        "status": 200,
+                        "result": "Inserted successfully.",
+                        "error": false
+                    }
+                }
+            }*/
+            console.log(resultRegister)
+            if (resultRegister['data']['response']['status'] === 200) {
+                Alert.alert(resultRegister['data']['response']['result'])
+                if(!resultRegister['data']['response']['error']) {
+                    const urlLogin = API['base']
+                    const dataLogin = {
+                        'name' : 'generateTokenLogin',
+                        'params': {
+                            'username' : data['username'],
+                            'password' : data['password']
+                        }
+                    }
+                    const optionLogin = {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'crossDomain': true 
+                        },
+                        timeout: 10000
+                    }
+                    const resultLogin = await axios.post(urlLogin, dataLogin, optionLogin)
+                    if (resultLogin['data']['response']['status'] === 200) {
+                        console.log('Generate Token succesfully!')
+                        await AsyncStorage.setItem('userToken', resultLogin['data']['response']['result']['token'])
+                        this.navigation.navigate('App')                   
+                    } else {
+                        Alert.alert(resultLogin['data']['response']['result'])
+                    }
+                } 
+            } 
+            Alert.alert(resultRegister['data']['response']['result'])
+
+        } catch (error) {
+            console.log("Register Error!")
+            if (error['response']['status'] === 400) {
+                Alert.alert('Registration Failed')
             }
         }
     }
@@ -204,18 +255,6 @@ export default class SignUp extends Component {
         await AsyncStorage.setItem('userId', 'userId')
         await AsyncStorage.setItem('token', 'token')
         this.navigation.goBack()
-    }
-
-    onLogout() {
-        return this.props
-            .navigation
-            .dispatch(NavigationActions.reset(
-                {
-                    index: 0,
-                    actions: [
-                        NavigationActions.navigate({ routeName: 'Main' })
-                    ]
-                }));
     }
 
     render() {
@@ -236,6 +275,15 @@ export default class SignUp extends Component {
 
                 <Content>
                     <View style={styles['Card']}>
+                        <Text style={styles['Card_Label']}>username</Text>
+                        <TextInput
+                            onChangeText={(email) => { this.updateFormToState('username', email) }}
+                            placeholder='Enter your username'
+                            value={formRegister['username']}
+                            style={styles['Card_Input']}
+                            underlineColorAndroid="transparent"
+                            autoCapitalize = 'none'
+                        />
                         <Text style={styles['Card_Label']}>Email</Text>
                         <TextInput
                             keyboardType="email-address"
@@ -244,6 +292,7 @@ export default class SignUp extends Component {
                             value={formRegister['email']}
                             style={styles['Card_Input']}
                             underlineColorAndroid="transparent"
+                            autoCapitalize = 'none'
                         />
                         <Text style={styles['Card_Label']}>Password</Text>
                         <TextInput
@@ -394,9 +443,7 @@ export default class SignUp extends Component {
                         />
                     </View>
                     <Button block rounded
-                        // onPress={() => { this.testSubmit() }}
-                        onPress={() => { this.onLogout() }}
-                    >
+                        onPress={() => { this.formValidation() }} >
                         <Text>Submit</Text>
                     </Button>
                 </Content>
