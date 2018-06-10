@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { AsyncStorage, Alert, BackHandler, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Container, Content, Button, Icon } from 'native-base'
 
-// import CameraView from './Scan'
+ import CameraView from './Scan'
 // import Wallet from './MyWallet'
 // import ShopList from './ShopList'
  import EditProfile from './EditProfile'
@@ -129,8 +129,8 @@ export default class Main extends Component {
                 />
                 {
                 /*    currentPage === 'Shop List' ? (<ShopList />)
-                        : currentPage === 'Scan' ? (<CameraView />)
-                            : currentPage === 'My Wallet' ? (<Wallet />)
+                        : */currentPage === 'Scan' ? (<CameraView />)
+                            : /* currentPage === 'My Wallet' ? (<Wallet />)
                                 :*/ currentPage === 'Edit Profile' ? (<EditProfile navigation={this.navigation} />)
                                     : <View></View>
                 }
