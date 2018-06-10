@@ -5,7 +5,7 @@ import { Container, Content, Button, Icon } from 'native-base'
 // import CameraView from './Scan'
 // import Wallet from './MyWallet'
 // import ShopList from './ShopList'
-// import EditProfile from './EditProfile'
+ import EditProfile from './EditProfile'
 
 
 
@@ -22,7 +22,7 @@ export default class Main extends Component {
 
     constructor(props) {
         super(props)
-
+        console.log('Page changed!')
         this.state = {
             header: {
                 leftButton: HiddenIcon,
@@ -114,6 +114,7 @@ export default class Main extends Component {
     }
 
     render() {
+        console.log('To be rendered')
         const { currentPage } = this.state
         const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header
 
@@ -126,13 +127,13 @@ export default class Main extends Component {
                     leftFunction={leftFunction}
                     rightFunction={rightFunction}
                 />
-                {/* {
-                    currentPage === 'Shop List' ? (<ShopList />)
+                {
+                /*    currentPage === 'Shop List' ? (<ShopList />)
                         : currentPage === 'Scan' ? (<CameraView />)
                             : currentPage === 'My Wallet' ? (<Wallet />)
-                                : currentPage === 'Edit Profile' ? (<EditProfile navigation={this.navigation} />)
+                                :*/ currentPage === 'Edit Profile' ? (<EditProfile navigation={this.navigation} />)
                                     : <View></View>
-                } */}
+                }
                 {
                     currentPage !== 'Edit Profile'
                         ?

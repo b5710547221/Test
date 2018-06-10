@@ -8,7 +8,7 @@ import LoginScreen from './Components/Auth/Login'
 
 //App
 import MainScreen from './Components/App/Main'
-// import ScanScreen from './Components/App/Scan'
+import ScanScreen from './Components/App/Scan'
 // import MyWalletScreen from './Components/App/MyWallet'
 // import EditProfileScreen from './Components/screen/EditProfile' 
 //import ShowPromotionScreen from './Components/module/ShowPromotion'
@@ -26,7 +26,7 @@ const AuthStack = createStackNavigator({
 })
 const AppStack = createStackNavigator({
     Main: MainScreen,
-    // Scan: ScanScreen,
+    Scan: ScanScreen,
     // MyWallet: MyWalletScreen,
     // EditProfile: EditProfileScreen,
     //ShowPromotion: ShowPromotionScreen

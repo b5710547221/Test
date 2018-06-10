@@ -6,11 +6,13 @@ import {
     View,
     Text,
     TextInput,
-    Image
+    Image,
+    Platform
 } from 'react-native'
 import { Container, Content, Button } from 'native-base'
 import { Dropdown } from 'react-native-material-dropdown'
 import DatePicker from 'react-native-datepicker'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import axios from 'axios'
 
 import { API, Bakodo_Color } from '../../Config'
@@ -134,6 +136,13 @@ export default class SignUp extends Component {
         if (birthday === '') {
             return Alert.alert('กรุณาใส่วันเดือนปีเกิด')
         }
+        // Validation Phone
+        if (phone === '') {
+            return Alert.alert('กรุณาใส่เบอร์โทรศัพท์')
+        } else if (!NUMBER_REGEX.test(phone)) {
+            return Alert.alert('เบอร์โทรศัพท์ ต้องเป็นตัวเลขเท่านั้น')
+        }
+        
         this.submitForm(this.state.formRegister)
     }
 
@@ -157,7 +166,7 @@ export default class SignUp extends Component {
             const optionRegister = {
                 headers: {
                     'Content-Type': 'application/json',
-                    'crossDomain': true 
+                    //'crossDomain': true 
                 },
                 timeout: 10000
             }
@@ -179,7 +188,7 @@ export default class SignUp extends Component {
             }*/
             console.log(resultRegister)
             if (resultRegister['data']['response']['status'] === 200) {
-                Alert.alert(resultRegister['data']['response']['result'])
+                
                 if(!resultRegister['data']['response']['error']) {
                     const urlLogin = API['base']
                     const dataLogin = {
@@ -192,21 +201,23 @@ export default class SignUp extends Component {
                     const optionLogin = {
                         headers: {
                             'Content-Type': 'application/json',
-                            'crossDomain': true 
+                            //'crossDomain': true 
                         },
                         timeout: 10000
                     }
                     const resultLogin = await axios.post(urlLogin, dataLogin, optionLogin)
                     if (resultLogin['data']['response']['status'] === 200) {
-                        console.log('Generate Token succesfully!')
+                        Alert.alert('New account created!')
                         await AsyncStorage.setItem('userToken', resultLogin['data']['response']['result']['token'])
                         this.navigation.navigate('App')                   
                     } else {
-                        Alert.alert(resultLogin['data']['response']['result'])
+                        Alert.alert(resultLogin['data']['response']['result']) 
                     }
-                } 
+                } else {
+                    Alert.alert(resultRegister['data']['response']['result'])
+                }
             } 
-            Alert.alert(resultRegister['data']['response']['result'])
+            
 
         } catch (error) {
             console.log("Register Error!")
@@ -216,13 +227,12 @@ export default class SignUp extends Component {
         }
     }
 
-    testSubmit = async () => {
-        await AsyncStorage.setItem('userId', 'userId')
-        await AsyncStorage.setItem('token', 'token')
-        this.navigation.goBack()
+    handleScroll(event) {
+        this.setState({ scrollY: event.nativeEvent.contentOffset.y });
     }
 
     render() {
+        _.set(this.refs, 'Content._scrollview.resetCoords', { x: 0, y: this.state.scrollY });
         const { formRegister } = this.state
         const { leftButton, currentPage, rightButton } = this.state.header
         const genderData = [
@@ -237,181 +247,189 @@ export default class SignUp extends Component {
                     rightButton={rightButton}
                     leftFunction={this.navigation.goBack}
                 />
+                {/* <Content ref='Content' onScroll={event => this.handleScroll(event)}> */}
+                <KeyboardAwareScrollView
+                     enableOnAndroid
+                    enableAutomaticScroll
+                     keyboardOpeningTime={0}
+                     extraHeight={Platform.select({ android: 200 })}>
+                    <View style={{flex: 1}}>
+                        <View style={styles['Card']}>
+                            <Text style={styles['Card_Label']}>username</Text>
+                            <TextInput
+                                onChangeText={(email) => { this.updateFormToState('username', email) }}
+                                placeholder='Enter your username'
+                                value={formRegister['username']}
+                                style={styles['Card_Input']}
+                                underlineColorAndroid="transparent"
+                                autoCapitalize = 'none'
+                            />
+                            <Text style={styles['Card_Label']}>Email</Text>
+                            <TextInput
+                                keyboardType="email-address"
+                                onChangeText={(email) => { this.updateFormToState('email', email) }}
+                                placeholder='Enter your email'
+                                value={formRegister['email']}
+                                style={styles['Card_Input']}
+                                underlineColorAndroid="transparent"
+                                autoCapitalize = 'none'
+                            />
+                            <Text style={styles['Card_Label']}>Password</Text>
+                            <TextInput
+                                secureTextEntry={true}
+                                onChangeText={(password) => { this.updateFormToState('password', password) }}
+                                placeholder='Enter your password'
+                                value={formRegister['password']}
+                                style={styles['Card_Input']}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles['Card_Label']}>Confirm Password</Text>
+                            <TextInput
+                                secureTextEntry={true}
+                                onChangeText={(confirmpassword) => { this.updateFormToState('confirmpassword', confirmpassword) }}
+                                placeholder='Confirm your password'
+                                value={formRegister['confirmpassword']}
+                                style={styles['Card_Input']}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles['Card_Label']}>First Name</Text>
+                            <TextInput
+                                onChangeText={(firstname) => { this.updateFormToState('firstname', firstname) }}
+                                placeholder='Enter your first name'
+                                value={formRegister['firstname']}
+                                style={styles['Card_Input']}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles['Card_Label']}>Last Name</Text>
+                            <TextInput
+                                onChangeText={(lastname) => { this.updateFormToState('lastname', lastname) }}
+                                placeholder='Enter your last name'
+                                value={formRegister['lastname']}
+                                style={styles['Card_Input_Last']}
+                                underlineColorAndroid="transparent"
+                            />
+                        </View>
 
-                <Content>
-                    <View style={styles['Card']}>
-                        <Text style={styles['Card_Label']}>username</Text>
-                        <TextInput
-                            onChangeText={(email) => { this.updateFormToState('username', email) }}
-                            placeholder='Enter your username'
-                            value={formRegister['username']}
-                            style={styles['Card_Input']}
-                            underlineColorAndroid="transparent"
-                            autoCapitalize = 'none'
-                        />
-                        <Text style={styles['Card_Label']}>Email</Text>
-                        <TextInput
-                            keyboardType="email-address"
-                            onChangeText={(email) => { this.updateFormToState('email', email) }}
-                            placeholder='Enter your email'
-                            value={formRegister['email']}
-                            style={styles['Card_Input']}
-                            underlineColorAndroid="transparent"
-                            autoCapitalize = 'none'
-                        />
-                        <Text style={styles['Card_Label']}>Password</Text>
-                        <TextInput
-                            secureTextEntry={true}
-                            onChangeText={(password) => { this.updateFormToState('password', password) }}
-                            placeholder='Enter your password'
-                            value={formRegister['password']}
-                            style={styles['Card_Input']}
-                            underlineColorAndroid="transparent"
-                        />
-                        <Text style={styles['Card_Label']}>Confirm Password</Text>
-                        <TextInput
-                            secureTextEntry={true}
-                            onChangeText={(confirmpassword) => { this.updateFormToState('confirmpassword', confirmpassword) }}
-                            placeholder='Confirm your password'
-                            value={formRegister['confirmpassword']}
-                            style={styles['Card_Input']}
-                            underlineColorAndroid="transparent"
-                        />
-                        <Text style={styles['Card_Label']}>First Name</Text>
-                        <TextInput
-                            onChangeText={(firstname) => { this.updateFormToState('firstname', firstname) }}
-                            placeholder='Enter your first name'
-                            value={formRegister['firstname']}
-                            style={styles['Card_Input']}
-                            underlineColorAndroid="transparent"
-                        />
-                        <Text style={styles['Card_Label']}>Last Name</Text>
-                        <TextInput
-                            onChangeText={(lastname) => { this.updateFormToState('lastname', lastname) }}
-                            placeholder='Enter your last name'
-                            value={formRegister['lastname']}
-                            style={styles['Card_Input_Last']}
-                            underlineColorAndroid="transparent"
-                        />
-                    </View>
+                        <View style={styles['Card']}>
+                            <Text style={styles['Card_Label']}>Gender</Text>
+                            <Dropdown
+                                style={styles['Card_Dropdown']}
+                                placeholder='Select your gender'
+                                value={formRegister['gender']}
+                                data={genderData}
+                                onChangeText={(gender) => { this.updateFormToState('gender', gender) }}
+                                containerStyle={styles['Card_Dropdown_Container']}
+                            />
+                            <Text style={styles['Card_Label']}>Birthday</Text>
+                            <DatePicker
+                                style={styles['Card_DatePicker']}
+                                date={formRegister['birthday']}
+                                mode="date"
+                                placeholder="Select your birthday"
+                                format="DD/MM/YYYY"
+                                showIcon={false}
+                                confirmBtnText="Confirm"
+                                cancelBtnText="Cancel"
+                                customStyles={{
+                                    dateInput: {
+                                        alignItems: 'flex-start',
+                                        borderWidth: 0,
+                                    },
+                                    dateText: {
+                                        fontSize: 14.7,
+                                        color: '#838384'
+                                    }
+                                }}
+                                onDateChange={(birthday) => { this.updateFormToState('birthday', birthday) }}
+                            />
+                        </View>
 
-                    <View style={styles['Card']}>
-                        <Text style={styles['Card_Label']}>Gender</Text>
-                        <Dropdown
-                            style={styles['Card_Dropdown']}
-                            placeholder='Select your gender'
-                            value={formRegister['gender']}
-                            data={genderData}
-                            onChangeText={(gender) => { this.updateFormToState('gender', gender) }}
-                            containerStyle={styles['Card_Dropdown_Container']}
-                        />
-                        <Text style={styles['Card_Label']}>Birthday</Text>
-                        <DatePicker
-                            style={styles['Card_DatePicker']}
-                            date={formRegister['birthday']}
-                            mode="date"
-                            placeholder="Select your birthday"
-                            format="DD/MM/YYYY"
-                            showIcon={false}
-                            confirmBtnText="Confirm"
-                            cancelBtnText="Cancel"
-                            customStyles={{
-                                dateInput: {
-                                    alignItems: 'flex-start',
-                                    borderWidth: 0,
-                                },
-                                dateText: {
-                                    fontSize: 14.7,
-                                    color: '#838384'
-                                }
-                            }}
-                            onDateChange={(birthday) => { this.updateFormToState('birthday', birthday) }}
-                        />
-                    </View>
+                        <View style={styles['Card']}>
+                            <Text style={styles['Card_Label']}>Personal ID</Text>
+                            <TextInput
+                                onChangeText={(personId) => { this.updateFormToState('personId', personId) }}
+                                placeholder='Enter your persoanl ID (13 digits)'
+                                value={formRegister['personId']}
+                                maxLength={13}
+                                style={styles['Card_Input_Last']}
+                                underlineColorAndroid="transparent"
+                            />
+                        </View>
 
-                    <View style={styles['Card']}>
-                        <Text style={styles['Card_Label']}>Personal ID</Text>
-                        <TextInput
-                            onChangeText={(personId) => { this.updateFormToState('personId', personId) }}
-                            placeholder='Enter your persoanl ID (13 digits)'
-                            value={formRegister['personId']}
-                            maxLength={13}
-                            style={styles['Card_Input_Last']}
-                            underlineColorAndroid="transparent"
-                        />
+                        <View style={styles['Card']}>
+                            <Text style={styles['Card_Label']}>Address</Text>
+                            <TextInput
+                                onChangeText={(address) => { this.updateFormToState('address', address) }}
+                                placeholder='Enter your address'
+                                value={formRegister['address']}
+                                style={styles['Card_Input']}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles['Card_Label']}>City</Text>
+                            <TextInput
+                                onChangeText={(city) => { this.updateFormToState('city', city) }}
+                                placeholder='Enter your city'
+                                value={formRegister['city']}
+                                style={styles['Card_Input']}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles['Card_Label']}>Post Code</Text>
+                            <TextInput
+                                onChangeText={(zipcode) => { this.updateFormToState('zipcode', zipcode) }}
+                                placeholder='Enter your postal code'
+                                value={formRegister['zipcode']}
+                                style={styles['Card_Input']}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles['Card_Label']}>Country</Text>
+                            <TextInput
+                                onChangeText={(country) => { this.updateFormToState('country', country) }}
+                                placeholder='Enter your country'
+                                value={formRegister['country']}
+                                style={styles['Card_Input']}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles['Card_Label']}>Phone number</Text>
+                            <TextInput
+                                onChangeText={(phone) => { this.updateFormToState('phone', phone) }}
+                                placeholder='08x-xxx-xxxx'
+                                value={formRegister['phone']}
+                                style={styles['Card_Input']}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles['Card_Label']}>Line ID</Text>
+                            <TextInput
+                                onChangeText={(line) => { this.updateFormToState('line', line) }}
+                                placeholder='Enter your Line ID'
+                                value={formRegister['line']}
+                                style={styles['Card_Input']}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles['Card_Label']}>Facebook</Text>
+                            <TextInput
+                                onChangeText={(facebook) => { this.updateFormToState('facebook', facebook) }}
+                                placeholder='Enter your Facebook'
+                                value={formRegister['facebook']}
+                                style={styles['Card_Input']}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles['Card_Label']}>Instagram</Text>
+                            <TextInput
+                                onChangeText={(instagram) => { this.updateFormToState('instagram', instagram) }}
+                                placeholder='Enter your IG'
+                                value={formRegister['instagram']}
+                                style={styles['Card_Input_Last']}
+                                underlineColorAndroid="transparent"
+                            />
+                        </View>
+                        <Button block rounded
+                            onPress={() => { this.formValidation() }} >
+                            <Text>Submit</Text>
+                        </Button>
                     </View>
-
-                    <View style={styles['Card']}>
-                        <Text style={styles['Card_Label']}>Address</Text>
-                        <TextInput
-                            onChangeText={(address) => { this.updateFormToState('address', address) }}
-                            placeholder='Enter your address'
-                            value={formRegister['address']}
-                            style={styles['Card_Input']}
-                            underlineColorAndroid="transparent"
-                        />
-                        <Text style={styles['Card_Label']}>City</Text>
-                        <TextInput
-                            onChangeText={(city) => { this.updateFormToState('city', city) }}
-                            placeholder='Enter your city'
-                            value={formRegister['city']}
-                            style={styles['Card_Input']}
-                            underlineColorAndroid="transparent"
-                        />
-                        <Text style={styles['Card_Label']}>Post Code</Text>
-                        <TextInput
-                            onChangeText={(zipcode) => { this.updateFormToState('zipcode', zipcode) }}
-                            placeholder='Enter your postal code'
-                            value={formRegister['zipcode']}
-                            style={styles['Card_Input']}
-                            underlineColorAndroid="transparent"
-                        />
-                        <Text style={styles['Card_Label']}>Country</Text>
-                        <TextInput
-                            onChangeText={(country) => { this.updateFormToState('country', country) }}
-                            placeholder='Enter your country'
-                            value={formRegister['country']}
-                            style={styles['Card_Input']}
-                            underlineColorAndroid="transparent"
-                        />
-                        <Text style={styles['Card_Label']}>Phone number</Text>
-                        <TextInput
-                            onChangeText={(phone) => { this.updateFormToState('phone', phone) }}
-                            placeholder='08x-xxx-xxxx'
-                            value={formRegister['phone']}
-                            style={styles['Card_Input']}
-                            underlineColorAndroid="transparent"
-                        />
-                        <Text style={styles['Card_Label']}>Line ID</Text>
-                        <TextInput
-                            onChangeText={(line) => { this.updateFormToState('line', line) }}
-                            placeholder='Enter your Line ID'
-                            value={formRegister['line']}
-                            style={styles['Card_Input']}
-                            underlineColorAndroid="transparent"
-                        />
-                        <Text style={styles['Card_Label']}>Facebook</Text>
-                        <TextInput
-                            onChangeText={(facebook) => { this.updateFormToState('facebook', facebook) }}
-                            placeholder='Enter your Facebook'
-                            value={formRegister['facebook']}
-                            style={styles['Card_Input']}
-                            underlineColorAndroid="transparent"
-                        />
-                        <Text style={styles['Card_Label']}>Instagram</Text>
-                        <TextInput
-                            onChangeText={(instagram) => { this.updateFormToState('instagram', instagram) }}
-                            placeholder='Enter your IG'
-                            value={formRegister['instagram']}
-                            style={styles['Card_Input_Last']}
-                            underlineColorAndroid="transparent"
-                        />
-                    </View>
-                    <Button block rounded
-                        onPress={() => { this.formValidation() }} >
-                        <Text>Submit</Text>
-                    </Button>
-                </Content>
+                {/* </Content> */}
+                </KeyboardAwareScrollView>
+                
             </Container>
         )
     }

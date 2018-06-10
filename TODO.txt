@@ -1,8 +1,10 @@
 1. Log in and Register
 
-
-
-
+- alert does not work in real ios device
+- alert for log in wrong password
+- post request 
+- sign up user name exist error return false
+- react-native-keyboard-aware-scroll-view
 - deal with the case that have expired token in AuthLoading.js
 - clean up and organize navigation in AppNew.js
 - change Main.js

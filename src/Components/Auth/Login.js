@@ -65,7 +65,7 @@ export default class Login extends Component {
     tokenIsValid = async(userToken) => {
         const urlLogin = API['base']
         const dataLogin = {
-            'name' : 'generateTokenLogin',
+            'name' : 'getUserDetails',
             'params': {
                 'token': userToken
             }
@@ -73,12 +73,15 @@ export default class Login extends Component {
         const optionLogin = {
             headers: {
                 'Content-Type': 'application/json',
-                'crossDomain': true 
+                //'crossDomain': true 
             },
             timeout: 10000
         }
-        await axios.post(urlLogin, dataLogin, optionLogin)
-        return resultLogin['data']['response']['error']
+        console.log('222')
+        result = await axios.post(urlLogin, dataLogin, optionLogin)
+        console.log(result)
+        console.log('333')
+        return result['data']['response']['error']
     }
 
     onLogin = async () => {
@@ -89,44 +92,43 @@ export default class Login extends Component {
             Alert.alert('Internet not connection')
         } else {
             try {
-                this.setState({ isLoading: true })
+                await this.setState({ isLoading: true })
 
                 const urlLogin = API['base']
                 const dataLogin = {
-                    'name' : 'generateTokenLogin',
+                    'name': 'generateTokenLogin',
                     'params': {
-                        'username' : this.state.email,
-                        'password' : this.state.password
+                        'username' : email,
+                        'password' : password
                     }
                 }
                 const optionLogin = {
                     headers: {
-                        'Content-Type': 'application/json',
-                        'crossDomain': true 
+                        'Content-Type': 'application/json'
+                        //'crossDomain': true 
                     },
                     timeout: 10000
                 }
-                const resultLogin = await axios.post(urlLogin, dataLogin, optionLogin)
-                console.log(resultLogin)
+                console.log(dataLogin)
+                const resultLogin = await axios.post(urlLogin, JSON.stringify(dataLogin), optionLogin)
+                console.log(resultLogin)        
                 if (resultLogin['data']['response']['status'] === 200) {
                     console.log('Generate Token succesfully!')
                     await AsyncStorage.setItem('userToken', resultLogin['data']['response']['result']['token'])
-                   
-                    userToken = resultLogin['data']['response']['result']['token']
+                    const userToken = resultLogin['data']['response']['result']['token']
+                    console.log('111')
                     if(this.tokenIsValid(userToken))
-                        this.onChangePage('App')
-                } 
-                await this.setState({
-                    isLoading: false
-                })               
-                Alert.alert(resultLogin['data']['response']['result'])
+                      this.onChangePage('App')
+                } else {
+                    await this.setState({
+                        isLoading: false
+                    })   
+                }
 
             } catch (error) {
-                 console.log('Request Error!')
+                 console.log('Request Error! = ')
                  console.log(error)
-                if (error['response']['status'] === 400) {
-                    Alert.alert('Login Failed')
-                }
+                Alert.alert('Login Failed')
                 await this.setState({
                     isLoading: false
                 })
@@ -225,7 +227,6 @@ export default class Login extends Component {
         )
     }
 }
-// TODO: sdf
 const styles = StyleSheet.create({
     Button_Login: {
         height: '12%',

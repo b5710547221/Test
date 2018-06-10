@@ -39,6 +39,7 @@ export default class EditProfile extends Component {
 			shouldProfileUpdate: true,
 			validForm: true,
 		}
+		console.log('To change profile')
 
 		this.navigation = props.navigation
 	}

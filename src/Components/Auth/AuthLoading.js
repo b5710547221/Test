@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { AsyncStorage } from 'react-native'
+import axios from 'axios'
 
 import Loading from '../Common/Loading'
 import { API } from '../../Config'
@@ -18,7 +19,7 @@ export default class AuthLoading extends Component {
     tokenIsValid = async(userToken) => {
         const urlLogin = API['base']
         const dataLogin = {
-            'name' : 'generateTokenLogin',
+            'name' : 'getUserDetails',
             'params': {
                 'token': userToken
             }
@@ -30,8 +31,8 @@ export default class AuthLoading extends Component {
             },
             timeout: 10000
         }
-        await axios.post(urlLogin, dataLogin, optionLogin)
-        return resultLogin['data']['response']['error']
+        const result = await axios.post(urlLogin, dataLogin, optionLogin)
+        return result['data']['response']['error']
     }
 
     _checkAuthOnStart = async () => {
@@ -40,7 +41,7 @@ export default class AuthLoading extends Component {
         if(userToken) {
             console.log('A token was stored!')
             try {
-                this.props.navigation.navigate(this.tokenIsValid ? 'App' : 'Auth')
+                this.props.navigation.navigate(this.tokenIsValid(userToken) ? 'App' : 'Auth')
             } catch (error) {
                 this.props.navigation.navigate('Auth')
             }        
