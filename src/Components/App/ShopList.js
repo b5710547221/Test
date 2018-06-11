@@ -41,6 +41,8 @@ export default class ShopList extends Component {
 		GPSState.addListener(async (status) => { await this.checkStatusGPS(status) })
 	}
 
+	
+
 	checkStatusGPS = async (status) => {
 		if (status === 3 || status === 4 || this.state.simulator) {
 			setTimeout(async () => {
@@ -62,9 +64,15 @@ export default class ShopList extends Component {
 		Alert.alert('Click Card : ' + id)
 	}
 
+	componentWillUnmount(){
+		GPSState.removeListener();
+	}
+	
+
 	render() {
 
 		const { data, isLoading, isNoGPS } = this.state
+
 
 		return (
 			<ScrollView>

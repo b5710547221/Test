@@ -3,6 +3,7 @@ package com.barkodo_customer;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import br.com.dopaminamob.gpsstate.GPSStatePackage;
 import org.reactnative.camera.RNCameraPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.facebook.react.ReactNativeHost;
@@ -25,6 +26,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new GPSStatePackage(),
             new RNCameraPackage(),
             new SplashScreenReactPackage()
       );
