@@ -41,11 +41,11 @@ export default class ShopList extends Component {
 		GPSState.addListener(async (status) => { await this.checkStatusGPS(status) })
 	}
 
-	
+
 
 	checkStatusGPS = async (status) => {
 		if (status === 3 || status === 4 || this.state.simulator) {
-			setTimeout(async () => {
+			setTimeout( async () => {
 				await this.setState({
 					data: mockUpData,
 					isLoading: false,
@@ -72,6 +72,7 @@ export default class ShopList extends Component {
 	render() {
 
 		const { data, isLoading, isNoGPS } = this.state
+		const { welcomeProList} = this.props
 
 
 		return (
@@ -81,9 +82,9 @@ export default class ShopList extends Component {
 						: isNoGPS ? <NoGPS />
 							:
 							<FlatList
-								data={data}
+								data={ welcomeProList }
 								renderItem={({ item, index }) => {
-									return <Card type='Shop List' data={item} onClick={this.onGetPromotion} />
+									return <Card type='2' data={item} onClick={this.onGetPromotion} />
 								}}
 							/>
 				}

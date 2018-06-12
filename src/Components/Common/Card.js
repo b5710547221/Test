@@ -5,26 +5,28 @@ import clockIcon from '../../images/pointicon.png'
 import pinIcon from '../../images/pointicon2.png'
 import calendarIcon from '../../images/pointicon3.png'
 
+import Image_1 from '../../images/banner.png'
+
 export default class Card extends PureComponent {
     render() {
         const { type, data, onClick } = this.props
-        const { id, image, name, promotion_name, promotion_detail, distance, promotion_end } = data
+        const { BranchId, PromotionId, ImageUrl, PromotionName, BranchName, Description, EndDate } = data
 
         return (
             <View style={styles['Card']}>
                 {/* <View style={styles['Card_Container_Image']}>
-					<Image style={styles['Card_Image']} source={{ uri: image }} />
+					<Image style={styles['Card_Image']} source={{ uri: ImageUrl }} />
 				</View> */}
                 < View style={styles['Card_Container_Image']}>
-                    <Image style={styles['Card_Image']} source={image} />
+                    <Image style={styles['Card_Image']} source={Image_1} />
                 </View>
                 {
-                    type === 'Shop List' ?
+                    type === '2' ?
                         (
                             <View style={styles['Card_Container_Content']}>
-                                <Text style={styles['Card_Content_Header']}>{name}</Text>
-                                <Text style={styles['Card_Content_SubHeader']}>{promotion_name}</Text>
-                                <Text style={styles['Card_Content_Detail']}>{promotion_detail}</Text>
+                                <Text style={styles['Card_Content_Header']}>{BranchName}</Text>
+                                <Text style={styles['Card_Content_SubHeader']}>{PromotionName}</Text>
+                                <Text style={styles['Card_Content_Detail']}>{Description}</Text>
                                 <View style={styles['Card_Content_SubDetail']}>
                                     <View style={styles['Card_Container_Icon']}>
                                         <View style={styles['Card_Icon']}>
@@ -32,19 +34,19 @@ export default class Card extends PureComponent {
                                                 style={{ height: 10, width: 10 }}
                                                 source={clockIcon}
                                             />
-                                            <Text style={styles['Card_Icon_Text']}>{promotion_end}</Text>
+                                            <Text style={styles['Card_Icon_Text']}>{EndDate}</Text>
                                         </View>
                                         <View style={styles['Card_Icon']}>
                                             <Image
                                                 style={{ height: 10, width: 8 }}
                                                 source={pinIcon}
                                             />
-                                            <Text style={styles['Card_Icon_Text']}>{distance}</Text>
+                                            <Text style={styles['Card_Icon_Text']}>500 m(hardcoded)</Text>
                                         </View>
                                     </View>
                                     <View style={styles['Card_Button_Container']}>
                                         <TouchableOpacity
-                                            onPress={() => { onClick(id) }}
+                                            onPress={() => { onClick(PromotionId) }}
                                             style={styles['Card_Button']}
                                         >
                                             <Text style={styles['Card_Button_Text']}>Get</Text>
@@ -56,16 +58,16 @@ export default class Card extends PureComponent {
                         : type === 'Gift' ?
                             (
                                 <View style={styles['Card_Container_Content']}>
-                                    <Text style={styles['Card_Content_Header']}>{name}</Text>
-                                    <Text style={styles['Card_Content_SubHeader']}>{promotion_name}</Text>
-                                    <Text style={styles['Card_Content_Detail']}>{promotion_detail}</Text>
+                                    <Text style={styles['Card_Content_Header']}>{PromotionName}</Text>
+                                    <Text style={styles['Card_Content_SubHeader']}>{BranchName}</Text>
+                                    <Text style={styles['Card_Content_Detail']}>{Description}</Text>
                                     <View style={styles['Card_Container_Icon']}>
                                         <View style={styles['Card_Icon']}>
                                             <Image
                                                 style={{ height: 10, width: 10 }}
                                                 source={clockIcon}
                                             />
-                                            <Text style={styles['Card_Icon_Text']}>{promotion_end}</Text>
+                                            <Text style={styles['Card_Icon_Text']}>{EndDate}</Text>
                                         </View>
                                     </View>
                                 </View>

@@ -120,14 +120,15 @@ export default class Login extends Component {
                     if(this.tokenIsValid(userToken))
                       this.onChangePage('App')
                 } else {
+                    Alert.alert(resultLogin['data']['response']['result'])
                     await this.setState({
                         isLoading: false
                     })   
                 }
 
             } catch (error) {
-                 console.log('Request Error! = ')
-                 console.log(error)
+                console.log('Request Error! = ')
+                console.log(error)
                 Alert.alert('Login Failed')
                 await this.setState({
                     isLoading: false

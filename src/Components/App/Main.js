@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { AsyncStorage, Alert, BackHandler, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Container, Content, Button, Icon } from 'native-base'
+import axios from 'axios'
 
 import CameraView from './Scan'
-// import Wallet from './MyWallet'
+import Wallet from './MyWallet'
 import ShopList from './ShopList'
 import EditProfile from './EditProfile'
 
@@ -11,6 +12,8 @@ import { Loading_Color } from '../../Config'
 import { SearchIcon, BackIcon, HiddenIcon } from '../Common/Icon'
 import Header from '../Common/Header'
 import Footer from '../Common/Footer'
+
+import { API } from '../../Config'
 
 export default class Main extends Component {
 
@@ -29,16 +32,44 @@ export default class Main extends Component {
                 rightFunction: null
             },
             currentPage: 'Shop List',
-            historyPage: ['Shop List']
+            historyPage: ['Shop List'],
+            welcomeProList: [],
+            gitfs: [],
         }
 
         this.navigation = props.navigation
     }
 
-    componentDidMount = () => {
+    componentDidMount = async() => {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.onBackPage)
         }
+        // fetch welcome promotion list
+        const url = API['base']
+        const data = {
+            'name': 'GetAllWelcomePromotionList',
+            'params': {
+                'campaign_type_id' : '2'
+            }
+        }
+        const option = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            timeout: 10000
+        }
+        try {
+           result = await axios.post(url, data, option) 
+            console.log(result)
+           if(result['data']['response']['status'] === 200) {
+                await this.setState({ 
+                    welcomeProList : result['data']['response']['result']
+                })
+           }
+        } catch(err) {
+            Alert.alert('Error loading Welcome Promotion!')
+        }
+
     }
 
     componentWillUnmount = () => {
@@ -112,7 +143,7 @@ export default class Main extends Component {
     }
 
     render() {
-        const { currentPage } = this.state
+        const { currentPage, welcomeProList } = this.state
         const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header
 
         return (
@@ -125,10 +156,10 @@ export default class Main extends Component {
                     rightFunction={rightFunction}
                 />
                 {
-                    currentPage === 'Shop List' ? (<ShopList />)
+                    currentPage === 'Shop List' ? (<ShopList welcomeProList={ welcomeProList } />)
                         : currentPage === 'Scan' ? (<CameraView />)
-                            : /* currentPage === 'My Wallet' ? (<Wallet />)
-                                :*/ currentPage === 'Edit Profile' ? (<EditProfile navigation={this.navigation} />)
+                            :  currentPage === 'My Wallet' ? (<Wallet />)
+                                : currentPage === 'Edit Profile' ? (<EditProfile navigation={this.navigation} />)
                                     : <View></View>
                 }
                 {
