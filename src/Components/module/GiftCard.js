@@ -19,7 +19,6 @@ export default class GiftCard extends Component {
 	}
 
 	render() {
-
 		const { datas } = this.state
 		const { dataWallet } = this.props
 		const { navigate } = this.navigation

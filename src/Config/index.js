@@ -1,6 +1,6 @@
 // SET API Server
 export const API = {
-	base: 'http://worldenergystation.com/Barkodo/api/V1/'
+	base: 'http://www.worldenergystation.com/Barkodo2/index.php/response'
 	//base: "http://192.168.1.85:8888/Barkodo/api/V1/"
 };
 

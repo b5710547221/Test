@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Image, Text, TouchableOpacity, StyleSheet, Alert, AsyncStorage } from 'react-native'
 
 import clockIcon from '../../images/pointicon.png'
 import pinIcon from '../../images/pointicon2.png'
@@ -8,9 +8,34 @@ import calendarIcon from '../../images/pointicon3.png'
 import Image_1 from '../../images/banner.png'
 
 export default class Card extends PureComponent {
+    onGetPress = () => {
+        console.log('On get pressed')
+        AsyncStorage.getItem('userId').then((userId) => {
+            const params = {
+                "user_id" : userId,
+                "campaign_type_id" : "2",
+                "branch_id" : this.props.data.BranchId,
+                "promotion_id" : this.props.data.PromotionId
+            }    
+            this.props.onClick(params)        
+        })
+    }    
+
     render() {
-        const { type, data, onClick } = this.props
+        const { type, data} = this.props
         const { BranchId, PromotionId, ImageUrl, PromotionName, BranchName, Description, EndDate } = data
+        const { Name, ExpiredDate } = data
+
+        //const userId = await AsyncStorage.getItem('userId')
+        /*const params = 8{
+            "user_id" : userId,
+            "campaign_type_id" : "2",
+            "branch_id" : BranchId,
+            "promotion_id" : PromotionId
+        }*/
+        console.log(type)
+
+
 
         return (
             <View style={styles['Card']}>
@@ -21,7 +46,7 @@ export default class Card extends PureComponent {
                     <Image style={styles['Card_Image']} source={Image_1} />
                 </View>
                 {
-                    type === '2' ?
+                    type === 'Shop List' ?
                         (
                             <View style={styles['Card_Container_Content']}>
                                 <Text style={styles['Card_Content_Header']}>{BranchName}</Text>
@@ -46,7 +71,7 @@ export default class Card extends PureComponent {
                                     </View>
                                     <View style={styles['Card_Button_Container']}>
                                         <TouchableOpacity
-                                            onPress={() => { onClick(PromotionId) }}
+                                            onPress={this.onGetPress.bind(this)}
                                             style={styles['Card_Button']}
                                         >
                                             <Text style={styles['Card_Button_Text']}>Get</Text>
@@ -57,20 +82,22 @@ export default class Card extends PureComponent {
                         )
                         : type === 'Gift' ?
                             (
-                                <View style={styles['Card_Container_Content']}>
-                                    <Text style={styles['Card_Content_Header']}>{PromotionName}</Text>
-                                    <Text style={styles['Card_Content_SubHeader']}>{BranchName}</Text>
-                                    <Text style={styles['Card_Content_Detail']}>{Description}</Text>
-                                    <View style={styles['Card_Container_Icon']}>
-                                        <View style={styles['Card_Icon']}>
-                                            <Image
-                                                style={{ height: 10, width: 10 }}
-                                                source={clockIcon}
-                                            />
-                                            <Text style={styles['Card_Icon_Text']}>{EndDate}</Text>
+                                <TouchableOpacity onPress={() => Alert.alert('Pressed')}>
+                                    <View style={styles['Card_Container_Content']}>
+                                        <Text style={styles['Card_Content_Header']}>{Name}</Text>
+                                        <Text style={styles['Card_Content_SubHeader']}>{BranchName}</Text>
+                                        <Text style={styles['Card_Content_Detail']}>{Description}</Text>
+                                        <View style={styles['Card_Container_Icon']}>
+                                            <View style={styles['Card_Icon']}>
+                                                <Image
+                                                    style={{ height: 10, width: 10 }}
+                                                    source={clockIcon}
+                                                />
+                                                <Text style={styles['Card_Icon_Text']}>{ExpiredDate}</Text>
+                                            </View>
                                         </View>
                                     </View>
-                                </View>
+                                </TouchableOpacity>
                             )
                             :
                             (

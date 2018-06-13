@@ -62,7 +62,7 @@ export default class Login extends Component {
         })
     }
 
-    tokenIsValid = async(userToken) => {
+    getUserId = async(userToken) => {
         const urlLogin = API['base']
         const dataLogin = {
             'name' : 'getUserDetails',
@@ -73,15 +73,12 @@ export default class Login extends Component {
         const optionLogin = {
             headers: {
                 'Content-Type': 'application/json',
-                //'crossDomain': true 
             },
             timeout: 10000
         }
-        console.log('222')
         result = await axios.post(urlLogin, dataLogin, optionLogin)
-        console.log(result)
-        console.log('333')
-        return result['data']['response']['error']
+        console.log('User Id: ', result['data']['response']['result']['userId'])
+        return result['data']['response']['result']['userId']
     }
 
     onLogin = async () => {
@@ -105,20 +102,23 @@ export default class Login extends Component {
                 const optionLogin = {
                     headers: {
                         'Content-Type': 'application/json'
-                        //'crossDomain': true 
                     },
                     timeout: 10000
                 }
                 console.log(dataLogin)
                 const resultLogin = await axios.post(urlLogin, JSON.stringify(dataLogin), optionLogin)
                 console.log(resultLogin)        
-                if (resultLogin['data']['response']['status'] === 200) {
+                if (resultLogin['data']['response']['status'] === 200 && 
+                !resultLogin['data']['error']) {
                     console.log('Generate Token succesfully!')
-                    await AsyncStorage.setItem('userToken', resultLogin['data']['response']['result']['token'])
+                   
                     const userToken = resultLogin['data']['response']['result']['token']
-                    console.log('111')
-                    if(this.tokenIsValid(userToken))
-                      this.onChangePage('App')
+                    const userId = await this.getUserId(userToken)
+                    console.log(userToken)
+                    console.log(userId)
+                    await AsyncStorage.setItem('userToken', userToken)
+                    await AsyncStorage.setItem('userId', userId)
+                    this.navigation.navigate('App')
                 } else {
                     Alert.alert(resultLogin['data']['response']['result'])
                     await this.setState({
@@ -127,7 +127,7 @@ export default class Login extends Component {
                 }
 
             } catch (error) {
-                console.log('Request Error! = ')
+                console.log('Request Errordddd! = ')
                 console.log(error)
                 Alert.alert('Login Failed')
                 await this.setState({

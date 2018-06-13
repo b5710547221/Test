@@ -87,6 +87,7 @@ export default class ShopList extends Component {
 
 	onGetPromotion = (id) => {
 		Alert.alert('Click Card : ' + id)
+		
 	}
 
 	render() {

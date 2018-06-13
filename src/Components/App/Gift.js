@@ -31,14 +31,15 @@ export default class Gift extends Component {
 	render() {
 
 		const { isLoading, data } = this.state
-
+		const { gifts } = this.props
+		console.log(gifts)
 		return (
 			<ScrollView style={styles['Gift']}>
 				{
 					isLoading ? <Loading />
 						:
 						<FlatList
-							data={data}
+							data={gifts}
 							renderItem={({ item, index }) => {
 								return <Card type='Gift' data={item} />
 							}}

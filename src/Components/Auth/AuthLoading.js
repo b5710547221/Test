@@ -12,7 +12,7 @@ export default class AuthLoading extends Component {
 
     constructor(props) {
         super(props)
-
+        console.log('Auth Loading')
         this._checkAuthOnStart()
     }
 

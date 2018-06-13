@@ -44,32 +44,61 @@ export default class Main extends Component {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.onBackPage)
         }
-        // fetch welcome promotion list
-        const url = API['base']
-        const data = {
-            'name': 'GetAllWelcomePromotionList',
-            'params': {
-                'campaign_type_id' : '2'
-            }
-        }
-        const option = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 10000
-        }
+
+        await this.setWelcomeList()
+        await this.setGifts()
+    }
+
+    setWelcomeList = async() => {
         try {
-           result = await axios.post(url, data, option) 
-            console.log(result)
+            result = await this.getAPI('GetAllWelcomePromotionList', { 'campaign_type_id' : '2' })
            if(result['data']['response']['status'] === 200) {
                 await this.setState({ 
                     welcomeProList : result['data']['response']['result']
                 })
            }
         } catch(err) {
+            console.log(err)
             Alert.alert('Error loading Welcome Promotion!')
         }
+    }
 
+    setGifts = async() => {
+       const userId = await AsyncStorage.getItem('userId')
+       console.log('Main user id', userId)
+        try {
+            result = await this.getAPI('getUserWallet', { 
+                "user_id" : userId,
+                "campaign_type_id" : "2"
+            })
+            console.log(result)
+            const gifts = result['data']['response']['result']
+            console.log(gifts)
+           if(result['data']['response']['status'] === 200) {
+                await this.setState({ 
+                    gifts : result['data']['response']['result']
+                })
+                console.log(this.state.gifts)
+           }
+        } catch(err) {
+            console.log(err)
+            Alert.alert('Error loading Gifts')
+        }  
+    }
+
+    getAPI = async(name, params) => {
+        const url = API['base']
+        const option = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            timeout: 10000
+        }
+        const body = {
+            'name' : name,
+            'params' : params
+        }
+        return await axios.post(url, body, option) 
     }
 
     componentWillUnmount = () => {
@@ -142,8 +171,15 @@ export default class Main extends Component {
         }
     }
 
+    //TODO: implement 
+    onRefresh = async() => {
+        console.log('Refresh all')
+        await this.setWelcomeList()
+        await this.setGifts()
+    }
+
     render() {
-        const { currentPage, welcomeProList } = this.state
+        const { currentPage, welcomeProList, gifts } = this.state
         const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header
 
         return (
@@ -156,9 +192,10 @@ export default class Main extends Component {
                     rightFunction={rightFunction}
                 />
                 {
-                    currentPage === 'Shop List' ? (<ShopList welcomeProList={ welcomeProList } />)
-                        : currentPage === 'Scan' ? (<CameraView />)
-                            :  currentPage === 'My Wallet' ? (<Wallet />)
+                    currentPage === 'Shop List' ? (<ShopList welcomeProList={welcomeProList}
+                        onRefresh = {this.onRefresh} />)
+                        : currentPage === 'Scan' ? (<CameraView/>)
+                            :  currentPage === 'My Wallet' ? (<Wallet gifts={gifts} />)
                                 : currentPage === 'Edit Profile' ? (<EditProfile navigation={this.navigation} />)
                                     : <View></View>
                 }

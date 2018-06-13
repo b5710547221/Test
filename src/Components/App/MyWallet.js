@@ -36,8 +36,9 @@ export default class MyWallet extends Component {
 	}
 
 	render() {
-
+		const { gifts } = this.props
 		const { showPage } = this.state
+		console.log(showPage)
 
 		return (
 			<View style={styles['Wallet_Container']}>
@@ -77,7 +78,7 @@ export default class MyWallet extends Component {
 				</View>
 				{
 					showPage === 'Gifts' ?
-						(<GiftCard />)
+						(<GiftCard gifts={gifts}/>)
 						: showPage === 'Collects' ?
 							(<CollectCard />)
 							:

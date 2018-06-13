@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { ActivityIndicator, Alert, AsyncStorage, FlatList, Image, StyleSheet, ScrollView, Text } from 'react-native'
+import { ActivityIndicator, Alert, AsyncStorage, FlatList, Image, StyleSheet, ScrollView } from 'react-native'
 import { Container, Content, Button } from 'native-base'
 import GPSState from 'react-native-gps-state'
 import axios from 'axios'
 
-import { Loading_Color } from '../../Config'
+import { API, Loading_Color } from '../../Config'
 import { SearchIcon, HiddenIcon } from '../Common/Icon'
 
 import Header from '../Common/Header'
@@ -60,8 +60,33 @@ export default class ShopList extends Component {
 		}
 	}
 
-	onGetPromotion = (id) => {
-		Alert.alert('Click Card : ' + id)
+    getAPI = async(name, params) => {
+        const url = API['base']
+        const option = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            timeout: 10000
+        }
+        const body = {
+            'name' : name,
+            'params' : params
+        }
+        return await axios.post(url, body, option) 
+	}
+	
+	onGetPromotion = async(params) => {
+		console.log(params)
+		try {
+			const result = await this.getAPI('confirmWelComePromotionToWallet', params)
+			console.log(result)
+			if(result['data']['response']['status'] === 200) {
+				Alert.alert(result['data']['response']['result'])
+			}
+		} catch(err) {
+			console.log(err)
+		}
+		this.props.onRefresh()
 	}
 
 	componentWillUnmount(){
@@ -84,7 +109,7 @@ export default class ShopList extends Component {
 							<FlatList
 								data={ welcomeProList }
 								renderItem={({ item, index }) => {
-									return <Card type='2' data={item} onClick={this.onGetPromotion} />
+									return <Card type='Shop List' data={item} onClick={this.onGetPromotion} />
 								}}
 							/>
 				}
