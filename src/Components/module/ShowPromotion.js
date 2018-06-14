@@ -3,11 +3,11 @@ import { Platform, StyleSheet, Alert, View, Text, Image, TouchableOpacity } from
 import { Container, Content, Button } from 'native-base'
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import StatusBar from '../common/StatusBar'
-import Header from '../common/Header'
-import Carousel from '../common/Carousel'
+import StatusBar from '../Common/StatusBar'
+import Header from '../Common/Header'
+import Carousel from '../Common/Carousel'
 
-import { Bakodo_Color } from '../../config/config'
+import { Bakodo_Color, Loading_Color } from '../../Config'
 
 import ImageBackIcon from '../../images/left.png'
 import ImageClockIcon from '../../images/pointicon.png'
@@ -40,6 +40,7 @@ export default class ShowPromotion extends Component {
         }
 
         this.navigation = props.navigation
+        console.log(Bakodo_Color)
     }
 
     componentDidMount = async () => {
@@ -73,11 +74,17 @@ export default class ShowPromotion extends Component {
         })
     }
 
+    onClaim = () => {
+        console.log('Claim Now')
+        this.navigation.navigate('AddCode', { data : this.props.navigation.state.params.data})
+    }
+
     render() {
 
         const { leftMenu, currentPage, rightMenu } = this.state.header
-        const { id, image, name, promotion_name, promotion_detail, distance, promotion_end } = this.props.navigation.state.params
-
+        const { PromotionName, BranchName, Description, ExpiredDate } = this.props.navigation.state.params.data
+        console.log(leftMenu)
+        console.log(BranchName)
         return (
             <Container style={styles['Container']}>
                 <StatusBar />
@@ -88,8 +95,8 @@ export default class ShowPromotion extends Component {
                 />
                 <Content>
                     <View style={styles['Content']}>
-                        <Text style={styles['Header']}>{name}</Text>
-                        <Text style={styles['SubHeader']}>{promotion_name}</Text>
+                        <Text style={styles['Header']}>{BranchName}</Text>
+                        <Text style={styles['SubHeader']}>{PromotionName}</Text>
 
                         <View style={styles['Carousel']}>
                             <Carousel />
@@ -98,16 +105,16 @@ export default class ShowPromotion extends Component {
                         <View style={styles['FlexDirection_Row']}>
                             <View style={{ flexDirection: 'row' }}>
                                 <Image
-                                    style={{ height: 15, width: 15, marginRight: 10 }}
+                                    style={{ height: 15, width: 15, marginRight: 10}}
                                     source={ImageClockIcon}
                                 />
-                                <Text>{promotion_end}</Text>
+                                <Text style={{color: Loading_Color}}>{ExpiredDate}</Text>
                             </View>
-                            <Text style={{ flex: 1, textAlign: 'right' }}>11:00 - 21:00</Text>
+                            <Text style={{ flex: 1, textAlign: 'right', color: '#F3F3F3' }}>11:00 - 21:00</Text>
                         </View>
 
                         <View style={[styles['FlexDirection_Row'], { maxHeight: 120, paddingHorizontal: 20 }]}>
-                            <Text>{promotion_detail}</Text>
+                            <Text style={styles['Normal_Text']}>{Description}</Text>
                         </View>
 
                         <View style={styles['FlexDirection_Row']}>
@@ -115,7 +122,7 @@ export default class ShowPromotion extends Component {
                                 style={{ height: 15, width: 12, marginRight: 10 }}
                                 source={ImagePinIcon}
                             />
-                            <Text>qq dessert of Taiwan, Chatuchak, Bangkok 10900</Text>
+                            <Text style={styles['Normal_Text']}>qq dessert of Taiwan, Chatuchak, Bangkok 10900</Text>
                         </View>
 
                         <View style={styles['FlexDirection_Row']}>
@@ -142,7 +149,7 @@ export default class ShowPromotion extends Component {
                             </TouchableOpacity>
                         </View>
 
-                        <Button style={styles['Button']}>
+                        <Button style={styles['Button']} onPress={this.onClaim}>
                             <Text style={styles['Button_Text']}>Claim now</Text>
                         </Button>
                     </View>
@@ -225,5 +232,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#FFFFFF',
         flex: 1
+    },
+    Normal_Text: {
+        color: '#737373'
     }
+
 })

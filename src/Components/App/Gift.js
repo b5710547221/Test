@@ -16,7 +16,7 @@ export default class Gift extends Component {
 			data: [],
 			isLoading: true
 		}
-
+		this.navigation = props.navigation
 	}
 
 	componentDidMount = () => {
@@ -28,10 +28,17 @@ export default class Gift extends Component {
 		}, 1000)
 	}
 
+	onClick = (item) => {
+		console.log('On Click in Gift')
+		this.navigation.navigate('ShowPromotion', {
+			data: item 
+		})
+	}
+
 	render() {
 
 		const { isLoading, data } = this.state
-		const { gifts } = this.props
+		const { gifts, onClick } = this.props
 		console.log(gifts)
 		return (
 			<ScrollView style={styles['Gift']}>
@@ -41,7 +48,7 @@ export default class Gift extends Component {
 						<FlatList
 							data={gifts}
 							renderItem={({ item, index }) => {
-								return <Card type='Gift' data={item} />
+								return <Card type='Gift' data={item} onClick={this.onClick.bind(this, item)}/>
 							}}
 						/>
 				}

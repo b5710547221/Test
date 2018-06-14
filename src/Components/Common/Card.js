@@ -12,17 +12,17 @@ export default class Card extends PureComponent {
         console.log('On get pressed')
         AsyncStorage.getItem('userId').then((userId) => {
             const params = {
-                "user_id" : userId,
-                "campaign_type_id" : "2",
-                "branch_id" : this.props.data.BranchId,
-                "promotion_id" : this.props.data.PromotionId
-            }    
-            this.props.onClick(params)        
+                "user_id": userId,
+                "campaign_type_id": "2",
+                "branch_id": this.props.data.BranchId,
+                "promotion_id": this.props.data.PromotionId
+            }
+            this.props.onClick(params)
         })
-    }    
+    }
 
     render() {
-        const { type, data} = this.props
+        const { type, data, onClick } = this.props
         const { BranchId, PromotionId, ImageUrl, PromotionName, BranchName, Description, EndDate } = data
         const { Name, ExpiredDate } = data
 
@@ -82,18 +82,27 @@ export default class Card extends PureComponent {
                         )
                         : type === 'Gift' ?
                             (
-                                <TouchableOpacity onPress={() => Alert.alert('Pressed')}>
+                                <TouchableOpacity onPress={onClick}>
                                     <View style={styles['Card_Container_Content']}>
-                                        <Text style={styles['Card_Content_Header']}>{Name}</Text>
-                                        <Text style={styles['Card_Content_SubHeader']}>{BranchName}</Text>
+                                        <Text style={styles['Card_Content_Header']}>{BranchName}</Text>
+                                        <Text style={styles['Card_Content_SubHeader']}>{PromotionName}</Text>
                                         <Text style={styles['Card_Content_Detail']}>{Description}</Text>
-                                        <View style={styles['Card_Container_Icon']}>
-                                            <View style={styles['Card_Icon']}>
-                                                <Image
-                                                    style={{ height: 10, width: 10 }}
-                                                    source={clockIcon}
-                                                />
-                                                <Text style={styles['Card_Icon_Text']}>{ExpiredDate}</Text>
+                                        <View style={styles['Card_Content_SubDetail']}>
+                                            <View style={styles['Card_Container_Icon']}>
+                                                <View style={styles['Card_Icon']}>
+                                                    <Image
+                                                        style={{ height: 10, width: 10 }}
+                                                        source={clockIcon}
+                                                    />
+                                                    <Text style={styles['Card_Icon_Text']}>{ExpiredDate}</Text>
+                                                </View>
+                                                <View style={styles['Card_Icon']}>
+                                                    <Image
+                                                        style={{ height: 10, width: 8 }}
+                                                        source={pinIcon}
+                                                    />
+                                                    <Text style={styles['Card_Icon_Text']}>500 m(hardcoded)</Text>
+                                                </View>
                                             </View>
                                         </View>
                                     </View>

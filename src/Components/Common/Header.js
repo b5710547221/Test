@@ -7,8 +7,9 @@ import backImage from '../../images/left.png'
 
 export default class Header extends Component {
     render() {
+        console.log('Header is rendered')
 
-        const { titlePage, leftButton, rightButton } = this.props
+        const { titlePage, leftMenu, rightMenu } = this.props
         const { leftFunction, rightFunction } = this.props
 
         return (
@@ -17,7 +18,7 @@ export default class Header extends Component {
                     style={styles['Left']}
                     onPress={() => { leftFunction ? leftFunction() : {} }}
                 >
-                    {leftButton}
+                    {leftMenu}
                 </TouchableOpacity>
                 <View style={styles['Center']}>
                     <Text style={styles['Center_Text']}>{titlePage ? titlePage : ''}</Text>
@@ -26,7 +27,7 @@ export default class Header extends Component {
                     style={styles['Right']}
                     onPress={() => { rightFunction ? rightFunction() : {} }}
                 >
-                    {rightButton}
+                    {rightMenu}
                 </TouchableOpacity>
             </View>
         )

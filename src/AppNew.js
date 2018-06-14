@@ -11,7 +11,8 @@ import MainScreen from './Components/App/Main'
 import ScanScreen from './Components/App/Scan'
 // import MyWalletScreen from './Components/App/MyWallet'
 // import EditProfileScreen from './Components/screen/EditProfile' 
-//import ShowPromotionScreen from './Components/module/ShowPromotion'
+import ShowPromotionScreen from './Components/module/ShowPromotion'
+import AddCodeScreen from './Components/module/AddCode'
 import Main from './Components/Main'
 
 // const LoginScreen = ''
@@ -29,7 +30,8 @@ const AppStack = createStackNavigator({
     Scan: ScanScreen,
     // MyWallet: MyWalletScreen,
     // EditProfile: EditProfileScreen,
-    //ShowPromotion: ShowPromotionScreen
+    ShowPromotion: ShowPromotionScreen,
+    AddCode: AddCodeScreen
 })
 // const MemberStack = StackNavigator({
 //     ShopList: ShopListScreen,
