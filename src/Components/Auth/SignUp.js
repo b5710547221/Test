@@ -243,8 +243,8 @@ export default class SignUp extends Component {
             <Container>
                 <Header
                     titlePage={currentPage}
-                    leftButton={leftButton}
-                    rightButton={rightButton}
+                    leftMenu={leftButton}
+                    rightMenu={rightButton}
                     leftFunction={this.navigation.goBack}
                 />
                 {/* <Content ref='Content' onScroll={event => this.handleScroll(event)}> */}

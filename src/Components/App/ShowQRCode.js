@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Image } from 'react-native'
 import { Container, Content, Button } from 'native-base'
-import { SafeAreaView } from 'react-navigation'
+import Svg, { Circle, Rect } from 'react-native-svg'
+import QRCode from 'react-native-qrcode-svg'
 
 import { Bakodo_Color, Loading_Color } from '../../Config'
 import Header from '../Common/Header'
@@ -10,6 +11,7 @@ import StatusBar from '../Common/StatusBar'
 import Carousel from '../Common/Carousel'
 
 import ImageBackIcon from '../../images/left.png'
+
 
 const hiddenButton = (
     <Button
@@ -82,18 +84,10 @@ export default class AddCode extends Component {
         })
     }
 
-    onRedeem = () => {
-        this.navigation.navigate('ShowQRCode', {
-            data : this.navigation.state.params.data
-        })
-    }
-
     render() {
         const { leftMenu, currentPage, rightMenu } = this.state.header
-        console.log('Navigation', this.navigation.state.params.data)
-        const { PromotionName, BranchName, Description, ExpiredDate } = this.navigation.state.params.data
+        const { PromotionName, BranchName, Description, ExpiredDate } = this.props.navigation.state.params.data
         const { isPassCode } = this.state
-        console.log('pc 2', isPassCode[2])
         console.log(leftMenu)
         return (
             <Container style={styles['Container']}>
@@ -105,32 +99,21 @@ export default class AddCode extends Component {
                 />
                 <Content>
                     <View style={styles['Content']}>
-                        <Text style={styles['Header']}>{BranchName}</Text>
-                        <Text style={styles['SubHeader']}>{PromotionName}</Text>
-                        <View style={styles['Carousel']}>
-                            <Carousel />
+                        <View style={styles['QRCode_Instruction']}>
+                            <Text style={styles['Header']}>Please show this code in</Text>
+                            <Text style={styles['Timer']}>180</Text>
+                            <Text style={styles['Timer_Unit']}>second</Text>
+                            <Text style={styles['Detail']}>to {BranchName} for redeem of {PromotionName}</Text>
                         </View>
-                        <View style={styles['AddCode_Container']}>
-                            <Text style={styles['AddCode_Text']}>Add your code for redeem</Text>
-                            <View style={styles['AddCode_PassCode']} >
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[0] ? '*' : ''}</Text>
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[1] ? '*' : ''}</Text>
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[2] ? '*' : ''}</Text>
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[3] ? '*' : ''}</Text>
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[4] ? '*' : ''}</Text>
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[5] ? '*' : ''}</Text>
-                                <TextInput
-                                    value={isPassCode}
-                                    onChangeText={(text) => { this.enterPassCode(text) }}
-                                    maxLength={6}
-                                    keyboardType='numeric'
-                                    style={styles['AddCode_Input']}
-                                />
-                            </View>                        
+                        <View style={styles['QRCode_Container']}>
+                            <View style={styles['QRCode_Content']}>
+                                <QRCode value='123456' size='170'/>    
+                            </View>                         
+                            <Text style={styles['QRCode_Text']}>169273</Text>
                         </View>
 
-                        <Button style={styles['Button']} onPress={this.onRedeem}>
-                            <Text style={styles['Button_Text']}>Redeem</Text>
+                        <Button style={styles['Button']}>
+                            <Text style={styles['Button_Text']}>Go to my Wallet</Text>
                         </Button>
                     </View>
                 </Content>
@@ -142,18 +125,59 @@ export default class AddCode extends Component {
 }
 
 const styles = StyleSheet.create({
+    QRCode_Instruction: {
+        width: '80%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+        flex: 1,
+        marginBottom: 20
+    },
+    QRCode_Container: {
+        backgroundColor: Bakodo_Color,
+        flexDirection: 'column',
+        width: '80%',
+        alignSelf: 'center',
+        justifyContent: 'space-between'
+    },
+    QRCode_Content: {
+        marginTop: 10,
+        padding: 20,
+        backgroundColor: '#FFFFFF',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center'
+    },
+    QRCode_Text: {
+        color: '#FFFFFF',
+        textAlign: 'center',
+        margin: 5
+    },
     Carousel: {
         height: 200
     },
     Header: {
-        color: '#6E69CC',
-        fontSize: 22,
+        color: '#737373',
+        fontSize: 18,
         textAlign: 'center'
     },
-    SubHeader: {
+    Timer: {
+        color: Loading_Color,
+        fontWeight: 'bold',
+        marginTop: 5,
+        fontSize: 35,
+        textAlign: 'center'
+    },
+    Timer_Unit: {
+        color: Loading_Color,
+        fontSize: 18,
+        textAlign: 'center'
+    },
+    Detail: {
         color: '#737373',
         textAlign: 'center',
-        paddingBottom: 15
+        marginTop: 10
     },
     Header_Icon: {
         width: 60,
@@ -202,9 +226,6 @@ const styles = StyleSheet.create({
     },
     AddCode_PassCode_Text: {
         textAlign: 'center',
-        fontWeight: 'bold',
-        fontSize: 30,
-        color: Loading_Color,
         flex: 1,
     },
     AddCode_Input: {
@@ -225,15 +246,17 @@ const styles = StyleSheet.create({
     },
     Button: {
         width: '80%',
-        backgroundColor: Loading_Color,
+        backgroundColor: '#FDFDFD',
         borderRadius: 20,
         padding: 20,
         marginTop: 10,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        borderColor: Loading_Color,
+        borderWidth: 1
     },
     Button_Text: {
         textAlign: 'center',
-        color: '#FFFFFF',
+        color: Loading_Color,
         flex: 1
     },
 })

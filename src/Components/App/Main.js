@@ -61,7 +61,7 @@ export default class Main extends Component {
                 await this.setState({
                     welcomeProList: result['data']['response']['result']
                 })
-                
+
             }
         } catch (err) {
             console.log(err)
@@ -125,11 +125,17 @@ export default class Main extends Component {
         historyPage.push(goToPage)
         // }
         let header = this.setHeader(goToPage)
-        await this.setState({
-            header: header,
-            currentPage: goToPage,
-            historyPage: historyPage
-        })
+        if(goToPage == 'Edit Profile') {
+            this.navigation.navigate('EditProfile')
+        }
+        else{
+            await this.setState({
+                header: header,
+                currentPage: goToPage,
+                historyPage: historyPage
+            })              
+        }
+
         // console.log(this.state.historyPage)
     }
 
@@ -184,6 +190,7 @@ export default class Main extends Component {
         await this.setGifts()
     }
 
+
     render() {
         const { currentPage, welcomeProList, gifts } = this.state
         const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header
@@ -201,9 +208,8 @@ export default class Main extends Component {
                     currentPage === 'Shop List' ? (<ShopList welcomeProList={welcomeProList}
                         onRefresh={this.onRefresh} />)
                         : currentPage === 'Scan' ? (<CameraView />)
-                            : currentPage === 'My Wallet' ? (<Wallet gifts={gifts} navigation={this.navigation}/>)
-                                : currentPage === 'Edit Profile' ? (<EditProfile navigation={this.navigation} />)
-                                    : <View></View>
+                            : currentPage === 'My Wallet' ? (<Wallet gifts={gifts} navigation={this.navigation} />)
+                                : <View></View>
                 }
                 {
                     currentPage !== 'Edit Profile'

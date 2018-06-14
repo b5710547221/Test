@@ -6,13 +6,14 @@ import axios from 'axios'
 
 import { API, Bakodo_Color } from '../../Config'
 
+import { BackIcon, HiddenIcon } from '../Common/Icon'
 import Header from '../Common/Header'
 
 export default class EditProfile extends Component {
 
-	static navigationOptions = {
-		header: null
-	}
+    static navigationOptions = {
+        header: null
+    }
 
 	constructor(props) {
 		super(props)
@@ -38,6 +39,11 @@ export default class EditProfile extends Component {
 			},
 			shouldProfileUpdate: true,
 			validForm: true,
+			header: {
+                currentPage: 'Edit Profile',
+                leftButton: BackIcon,
+                rightButton: HiddenIcon
+            }
 		}
 		console.log('To change profile')
 
@@ -57,12 +63,17 @@ export default class EditProfile extends Component {
 	}
 
 	render() {
-
+		const { leftButton, currentPage, rightButton } = this.state.header
 		const { profile } = this.state
 
 		return (
 			<Container>
-
+                <Header
+                    titlePage={currentPage}
+                    leftMenu={leftButton}
+                    rightMenu={rightButton}
+                    leftFunction={this.navigation.goBack}
+                />
 				<Content>
 					<View style={styles['Profile_Container']}>
 						<Image
