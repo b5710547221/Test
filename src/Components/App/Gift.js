@@ -30,7 +30,7 @@ export default class Gift extends Component {
 
 	onClick = (item) => {
 		console.log('On Click in Gift')
-		this.navigation.navigate('ShowPromotion', {
+		this.navigation.navigate('ShowGiftPromotion', {
 			data: item 
 		})
 	}

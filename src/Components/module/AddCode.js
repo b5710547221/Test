@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
 import { Container, Content, Button } from 'native-base'
+import Svg, { Circle }from 'react-native-svg';
 import { SafeAreaView } from 'react-navigation'
 
 import { Bakodo_Color, Loading_Color } from '../../Config'
@@ -18,6 +19,12 @@ const hiddenButton = (
     >
         <Text></Text>
     </Button>
+)
+
+const hiddenPass = (
+    <Svg height="16" width="16">
+        <Circle cx="8" cy="8" r="8" fill = {Loading_Color} />
+    </Svg>
 )
 
 export default class AddCode extends Component {
@@ -113,12 +120,12 @@ export default class AddCode extends Component {
                         <View style={styles['AddCode_Container']}>
                             <Text style={styles['AddCode_Text']}>Add your code for redeem</Text>
                             <View style={styles['AddCode_PassCode']} >
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[0] ? '*' : ''}</Text>
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[1] ? '*' : ''}</Text>
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[2] ? '*' : ''}</Text>
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[3] ? '*' : ''}</Text>
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[4] ? '*' : ''}</Text>
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[5] ? '*' : ''}</Text>
+                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[0] ? hiddenPass : ''}</Text>
+                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[1] ? hiddenPass : ''}</Text>
+                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[2] ? hiddenPass : ''}</Text>
+                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[3] ? hiddenPass : ''}</Text>
+                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[4] ? hiddenPass : ''}</Text>
+                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[5] ? hiddenPass : ''}</Text>
                                 <TextInput
                                     value={isPassCode}
                                     onChangeText={(text) => { this.enterPassCode(text) }}

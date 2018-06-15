@@ -32,7 +32,7 @@ export default class AddCode extends Component {
         super(props)
 
         this.state = {
-            isPassCode: '',
+            remainingSeconds: 20,
             header: {
                 leftMenu: null,
                 currentPage: null,
@@ -45,6 +45,20 @@ export default class AddCode extends Component {
 
     componentDidMount = async () => {
         await this.setHeader()
+        this.intervalId = setInterval(() => {
+            this.setState((prevState) => {
+                return { remainingSeconds: prevState.remainingSeconds - 1}
+            }, () => {
+                if (this.state.remainingSeconds === 0) {
+                    clearInterval(this.intervalId)
+                    this.navigation.goBack()
+                }
+            })
+        }, 1000)
+    }
+
+    componentWillUnmount = () => {
+        clearInterval(this.intervalId)
     }
 
 
@@ -87,7 +101,7 @@ export default class AddCode extends Component {
     render() {
         const { leftMenu, currentPage, rightMenu } = this.state.header
         const { PromotionName, BranchName, Description, ExpiredDate } = this.props.navigation.state.params.data
-        const { isPassCode } = this.state
+        const { remainingSeconds } = this.state
         console.log(leftMenu)
         return (
             <Container style={styles['Container']}>
@@ -101,7 +115,7 @@ export default class AddCode extends Component {
                     <View style={styles['Content']}>
                         <View style={styles['QRCode_Instruction']}>
                             <Text style={styles['Header']}>Please show this code in</Text>
-                            <Text style={styles['Timer']}>180</Text>
+                            <Text style={styles['Timer']}>{remainingSeconds}</Text>
                             <Text style={styles['Timer_Unit']}>second</Text>
                             <Text style={styles['Detail']}>to {BranchName} for redeem of {PromotionName}</Text>
                         </View>
@@ -201,48 +215,6 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
         alignSelf: 'center',
         overflow: 'hidden'
-    },
-    AddCode_Container: {
-        backgroundColor: '#FFFFFF',
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 30
-    },
-    AddCode_Text: {
-        color: '#737373',
-        fontSize: 18,
-        fontWeight: 'bold'
-    },
-    AddCode_PassCode: {
-        height: 50,
-        width: '60%',
-        borderBottomWidth: 1,
-        borderColor: '#6E69CC',
-        marginVertical: 15,
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row'
-    },
-    AddCode_PassCode_Text: {
-        textAlign: 'center',
-        flex: 1,
-    },
-    AddCode_Input: {
-        color: '#FFFFFF',
-        width: '100%',
-        opacity: 0,
-        position: 'absolute'
-    },
-    AddCode_Button: {
-        width: '80%',
-        backgroundColor: '#F27261',
-        padding: 10,
-        borderRadius: 20,
-        alignItems: 'center'
-    },
-    AddCode_Button_Text: {
-        color: '#FFFFFF'
     },
     Button: {
         width: '80%',
