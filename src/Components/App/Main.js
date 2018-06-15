@@ -207,7 +207,7 @@ export default class Main extends Component {
                 {
                     currentPage === 'Shop List' ? (<ShopList welcomeProList={welcomeProList}
                         onRefresh={this.onRefresh} />)
-                        : currentPage === 'Scan' ? (<CameraView />)
+                        : currentPage === 'Scan' ? (<CameraView onScanSuccess={this.onRefresh}/>)
                             : currentPage === 'My Wallet' ? (<Wallet gifts={gifts} navigation={this.navigation} />)
                                 : <View></View>
                 }
