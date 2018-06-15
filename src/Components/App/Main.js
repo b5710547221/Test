@@ -190,6 +190,16 @@ export default class Main extends Component {
         await this.setGifts()
     }
 
+    onAddPromotion = async () => {
+        console.log('Added to wallet')
+        await this.setWelcomeList()
+        await this.setGifts()
+
+        // TODO: need this for package and collect
+        this.onChangePage('My Wallet')
+
+    }
+
 
     render() {
         const { currentPage, welcomeProList, gifts } = this.state
@@ -207,7 +217,9 @@ export default class Main extends Component {
                 {
                     currentPage === 'Shop List' ? (<ShopList welcomeProList={welcomeProList}
                         onRefresh={this.onRefresh} />)
-                        : currentPage === 'Scan' ? (<CameraView onScanSuccess={this.onRefresh}/>)
+                        : currentPage === 'Scan' ? (<CameraView 
+                            onScanSuccess={this.onRefresh} navigation={this.navigation} 
+                            onAddPromotion={this.onAddPromotion}/>)
                             : currentPage === 'My Wallet' ? (<Wallet gifts={gifts} navigation={this.navigation} />)
                                 : <View></View>
                 }

@@ -11,6 +11,7 @@ export default class Scan extends Component {
 
     constructor(props) {
         super(props)
+        this.navigation = this.props.navigation
     }
 
     getAPI = async (name, params) => {
@@ -39,9 +40,16 @@ export default class Scan extends Component {
         this.props.onScanSuccess()
         console.log(result)
         if(result['data']['response']['status'] == 200) {
-            // const addPromotionResult = await this.getAPI('confirmPromotionToWallet', result['data']['response']['result'])
-            // console.log(addPromotionResult)
-            
+            if(!result['data']['error']) {
+                const addPromotionResult = await this.getAPI('confirmPromotionToWallet', result['data']['response']['result'])
+                console.log('addPromotionResult', addPromotionResult)
+                if(addPromotionResult['data']['response']['status'] == 200 && !addPromotionResult['data']['error']) {
+                    Alert.alert('Add promotion to wallet successfully')
+                    this.props.onAddPromotion()
+                }                
+            } else {
+                Alert.alert('This QRCode is used or expired')
+            } 
         }        
        } catch(err) {
            console.log(err)
