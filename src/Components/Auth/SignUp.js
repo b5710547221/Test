@@ -35,43 +35,28 @@ export default class SignUp extends Component {
                 leftButton: BackIcon,
                 rightButton: HiddenIcon
             },
-            // formRegister: {
-            //     email: 'tonn2@gmail.com',
-            //     password: 'Ton_12345',
-            //     confirmpassword: 'Ton_12345',
-            //     firstname: 'Ton',
-            //     lastname: 'Supanyo',
-            //     gender: 'MALE',
-            //     birthday: '11/11/2561',
-            //     personId: '1234567890123',
-            //     address: 'Ladparo 23',
-            //     city: 'Bangkok',
-            //     zipcode: '12345',
-            //     country: 'Thailand',
-            //     phone: '0901234567',
-            //     line: '',
-            //     facebook: '',
-            //     instagram: ''
-            // }
             formRegister: {
-                username: '',
-                email: '',
-                password: '',
-                confirmpassword: '',
-                firstname: '',
-                lastname: '',
-                gender: '',
-                birthday: '',
-                personId: '',
-                address: '',
-                city: '',
-                zipcode: '',
-                country: '',
-                phone: '',
-                line: '',
-                facebook: '',
-                instagram: ''
-            }
+                username: 'new7',
+                email: 'new7@gmail.com',
+                password: '12341234',
+                confirmpassword: '12341234',
+                firstname: 'D',
+                lastname: 'S',
+                gender: 'MALE',
+                birthday: '11/11/2561',
+                phone: '0901234567'
+             }
+            // formRegister: {
+            //     username: '',
+            //     email: '',
+            //     password: '',
+            //     confirmpassword: '',
+            //     firstname: '',
+            //     lastname: '',
+            //     gender: '',
+            //     birthday: '',
+            //     phone: ''
+            // }
         }
 
         this.navigation = props.navigation
@@ -87,8 +72,7 @@ export default class SignUp extends Component {
 
     formValidation = () => {
         const { username, email, password, confirmpassword,
-            firstname, lastname, gender, birthday, personId,
-            address, city, zipcode, country, phone
+            firstname, lastname, gender, birthday, phone
         } = this.state.formRegister
 
         const EMAIL_REGEX = RegExp(/^(([^<>()\[\]\\.,:\s@"]+(\.[^<>()\[\]\\.,:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
@@ -146,6 +130,25 @@ export default class SignUp extends Component {
         this.submitForm(this.state.formRegister)
     }
 
+    getUserId = async(userToken) => {
+        const urlLogin = API['base']
+        const dataLogin = {
+            'name' : 'getUserDetails',
+            'params': {
+                'token': userToken
+            }
+        }
+        const optionLogin = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            timeout: 10000
+        }
+        result = await axios.post(urlLogin, dataLogin, optionLogin)
+        console.log('User Id: ', result['data']['response']['result']['userId'])
+        return result['data']['response']['result']['userId']
+    }
+
     submitForm = async (data) => {
         try {
             const urlRegister = API['base']
@@ -166,7 +169,6 @@ export default class SignUp extends Component {
             const optionRegister = {
                 headers: {
                     'Content-Type': 'application/json',
-                    //'crossDomain': true 
                 },
                 timeout: 10000
             }
@@ -188,8 +190,10 @@ export default class SignUp extends Component {
             }*/
             console.log(resultRegister)
             if (resultRegister['data']['response']['status'] === 200) {
-                
-                if(!resultRegister['data']['response']['error']) {
+                console.log(resultRegister['data'])
+                console.log(resultRegister['data']['error'])
+                if(!resultRegister['data']['error']) {
+                    console.log('why here')
                     const urlLogin = API['base']
                     const dataLogin = {
                         'name' : 'generateTokenLogin',
@@ -201,19 +205,22 @@ export default class SignUp extends Component {
                     const optionLogin = {
                         headers: {
                             'Content-Type': 'application/json',
-                            //'crossDomain': true 
                         },
                         timeout: 10000
                     }
                     const resultLogin = await axios.post(urlLogin, dataLogin, optionLogin)
-                    if (resultLogin['data']['response']['status'] === 200) {
+                    if (resultLogin['data']['response']['status'] === 200 && !resultLogin['data']['error']) {
                         Alert.alert('New account created!')
-                        await AsyncStorage.setItem('userToken', resultLogin['data']['response']['result']['token'])
+                        const userToken = resultLogin['data']['response']['result']['token']
+                        const userId = await this.getUserId(userToken)
+                        await AsyncStorage.setItem('userToken', userToken)
+                        await AsyncStorage.setItem('userId', userId)
                         this.navigation.navigate('App')                   
                     } else {
                         Alert.alert(resultLogin['data']['response']['result']) 
                     }
                 } else {
+                    console.log('Err here')
                     Alert.alert(resultRegister['data']['response']['result'])
                 }
             } 
@@ -221,9 +228,9 @@ export default class SignUp extends Component {
 
         } catch (error) {
             console.log("Register Error!")
-            if (error['response']['status'] === 400) {
-                Alert.alert('Registration Failed')
-            }
+            console.log(error)
+            Alert.alert('Registration Failed')
+            
         }
     }
 
@@ -345,50 +352,6 @@ export default class SignUp extends Component {
                         </View>
 
                         <View style={styles['Card']}>
-                            <Text style={styles['Card_Label']}>Personal ID</Text>
-                            <TextInput
-                                onChangeText={(personId) => { this.updateFormToState('personId', personId) }}
-                                placeholder='Enter your persoanl ID (13 digits)'
-                                value={formRegister['personId']}
-                                maxLength={13}
-                                style={styles['Card_Input_Last']}
-                                underlineColorAndroid="transparent"
-                            />
-                        </View>
-
-                        <View style={styles['Card']}>
-                            <Text style={styles['Card_Label']}>Address</Text>
-                            <TextInput
-                                onChangeText={(address) => { this.updateFormToState('address', address) }}
-                                placeholder='Enter your address'
-                                value={formRegister['address']}
-                                style={styles['Card_Input']}
-                                underlineColorAndroid="transparent"
-                            />
-                            <Text style={styles['Card_Label']}>City</Text>
-                            <TextInput
-                                onChangeText={(city) => { this.updateFormToState('city', city) }}
-                                placeholder='Enter your city'
-                                value={formRegister['city']}
-                                style={styles['Card_Input']}
-                                underlineColorAndroid="transparent"
-                            />
-                            <Text style={styles['Card_Label']}>Post Code</Text>
-                            <TextInput
-                                onChangeText={(zipcode) => { this.updateFormToState('zipcode', zipcode) }}
-                                placeholder='Enter your postal code'
-                                value={formRegister['zipcode']}
-                                style={styles['Card_Input']}
-                                underlineColorAndroid="transparent"
-                            />
-                            <Text style={styles['Card_Label']}>Country</Text>
-                            <TextInput
-                                onChangeText={(country) => { this.updateFormToState('country', country) }}
-                                placeholder='Enter your country'
-                                value={formRegister['country']}
-                                style={styles['Card_Input']}
-                                underlineColorAndroid="transparent"
-                            />
                             <Text style={styles['Card_Label']}>Phone number</Text>
                             <TextInput
                                 onChangeText={(phone) => { this.updateFormToState('phone', phone) }}
@@ -397,37 +360,12 @@ export default class SignUp extends Component {
                                 style={styles['Card_Input']}
                                 underlineColorAndroid="transparent"
                             />
-                            <Text style={styles['Card_Label']}>Line ID</Text>
-                            <TextInput
-                                onChangeText={(line) => { this.updateFormToState('line', line) }}
-                                placeholder='Enter your Line ID'
-                                value={formRegister['line']}
-                                style={styles['Card_Input']}
-                                underlineColorAndroid="transparent"
-                            />
-                            <Text style={styles['Card_Label']}>Facebook</Text>
-                            <TextInput
-                                onChangeText={(facebook) => { this.updateFormToState('facebook', facebook) }}
-                                placeholder='Enter your Facebook'
-                                value={formRegister['facebook']}
-                                style={styles['Card_Input']}
-                                underlineColorAndroid="transparent"
-                            />
-                            <Text style={styles['Card_Label']}>Instagram</Text>
-                            <TextInput
-                                onChangeText={(instagram) => { this.updateFormToState('instagram', instagram) }}
-                                placeholder='Enter your IG'
-                                value={formRegister['instagram']}
-                                style={styles['Card_Input_Last']}
-                                underlineColorAndroid="transparent"
-                            />
                         </View>
                         <Button block rounded
                             onPress={() => { this.formValidation() }} >
                             <Text>Submit</Text>
                         </Button>
                     </View>
-                {/* </Content> */}
                 </KeyboardAwareScrollView>
                 
             </Container>

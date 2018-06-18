@@ -50,6 +50,7 @@ export default class Main extends Component {
     }
 
     setWelcomeList = async () => {
+        
         const userId = await AsyncStorage.getItem('userId')
         console.log('test', userId)
         try {
