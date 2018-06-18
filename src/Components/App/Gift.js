@@ -13,23 +13,20 @@ export default class Gift extends Component {
 		super(props)
 
 		this.state = {
-			data: [],
 			isLoading: true
 		}
 		this.navigation = props.navigation
 	}
 
-	componentDidMount = () => {
-		setTimeout(async () => {
-			await this.setState({
-				data: mockUpData,
-				isLoading: false
-			})
-		}, 1000)
+	componentDidMount = async() => {
+		await this.setState({
+			isLoading: false
+		})
 	}
 
 	onClick = (item) => {
 		console.log('On Click in Gift')
+		console.log(item)
 		this.navigation.navigate('ShowGiftPromotion', {
 			data: item 
 		})

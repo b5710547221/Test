@@ -10,15 +10,15 @@ import Image_1 from '../../images/banner.png'
 export default class Card extends PureComponent {
     onGetPress = () => {
         console.log('On get pressed')
-        AsyncStorage.getItem('userId').then((userId) => {
+        /*AsyncStorage.getItem('userId').then((userId) => {
             const params = {
                 "user_id": userId,
-                "campaign_type_id": "2",
                 "branch_id": this.props.data.BranchId,
                 "promotion_id": this.props.data.PromotionId
             }
             this.props.onClick(params)
-        })
+        })*/
+        this.props.onClick()
     }
 
     render() {
@@ -27,7 +27,7 @@ export default class Card extends PureComponent {
         const { Name, ExpiredDate } = data
 
         //const userId = await AsyncStorage.getItem('userId')
-        /*const params = 8{
+        /*const params = {
             "user_id" : userId,
             "campaign_type_id" : "2",
             "branch_id" : BranchId,
