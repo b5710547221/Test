@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native'
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Alert } from 'react-native'
 import { Container, Content, Button } from 'native-base'
 import Svg, { Circle }from 'react-native-svg';
 import { SafeAreaView } from 'react-navigation'
@@ -54,7 +54,7 @@ export default class AddCode extends Component {
 
 
     enterPassCode = async (text) => {
-        if (text.length <= 6) {
+        if (text.length <= 4) {
             await this.setState({
                 isPassCode: text
             })
@@ -90,9 +90,14 @@ export default class AddCode extends Component {
     }
 
     onRedeem = () => {
-        this.navigation.navigate('ShowQRCode', {
-            data : this.navigation.state.params.data
-        })
+        if(this.state.isPassCode === '1234') {
+            this.navigation.navigate('ShowQRCode', {
+                data : this.navigation.state.params.data
+            })              
+        } else {
+            Alert.alert('Wrong Pin!')
+        }
+
     }
 
     render() {
@@ -124,8 +129,6 @@ export default class AddCode extends Component {
                                 <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[1] ? hiddenPass : ''}</Text>
                                 <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[2] ? hiddenPass : ''}</Text>
                                 <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[3] ? hiddenPass : ''}</Text>
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[4] ? hiddenPass : ''}</Text>
-                                <Text style={styles['AddCode_PassCode_Text']}>{isPassCode[5] ? hiddenPass : ''}</Text>
                                 <TextInput
                                     value={isPassCode}
                                     onChangeText={(text) => { this.enterPassCode(text) }}
