@@ -62,6 +62,10 @@ export default class EditProfile extends Component {
 		this.navigation = props.navigation
 	}
 
+	test = () => {
+		console.log('what')
+	}
+
 	componentDidMount = async () => {
 		await this.setHeader()
 	}
@@ -71,7 +75,7 @@ export default class EditProfile extends Component {
 		const backButton = (
 			<Button
 				style={styles['Header_Icon']}
-				onPress={() => { goBack() }}
+				// onPress={() => { this.test() }}
 				transparent
 			>
 				<Image
@@ -184,7 +188,7 @@ export default class EditProfile extends Component {
 
 		const { profile } = this.state
 		const { leftMenu, currentPage, rightMenu } = this.state.header
-
+		console.log(leftMenu)
 		return (
 			<Container>
 				<Header

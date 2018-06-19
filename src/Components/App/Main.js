@@ -6,8 +6,6 @@ import axios from 'axios'
 import CameraView from './Scan'
 import Wallet from './MyWallet'
 import ShopList from './ShopList'
-import EditProfile from './EditProfile'
-
 import { Loading_Color } from '../../Config'
 import { SearchIcon, BackIcon, HiddenIcon } from '../Common/Icon'
 import Header from '../Common/Header'
@@ -50,7 +48,7 @@ export default class Main extends Component {
     }
 
     setWelcomeList = async () => {
-        
+
         const userId = await AsyncStorage.getItem('userId')
         console.log('test', userId)
         try {
@@ -205,6 +203,7 @@ export default class Main extends Component {
     render() {
         const { currentPage, welcomeProList, gifts } = this.state
         const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header
+        console.log('Current Page', currentPage)
 
         return (
             <Container>

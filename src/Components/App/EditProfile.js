@@ -8,7 +8,17 @@ import { API, Bakodo_Color } from '../../Config'
 
 import { BackIcon, HiddenIcon } from '../Common/Icon'
 import Header from '../Common/Header'
+import Loading from '../Common/Loading'
+import ImageBackIcon from '../../images/left.png'
 
+const hiddenButton = (
+	<Button
+		style={{ width: 40 }}
+		transparent
+	>
+		<Text></Text>
+	</Button>
+)
 export default class EditProfile extends Component {
 
     static navigationOptions = {
@@ -19,41 +29,91 @@ export default class EditProfile extends Component {
 		super(props)
 
 		this.state = {
-			keys: {
-				email: '',
-				keytoken: '',
-			},
-			profile: {
-				avatar: null,
-				email: 'Email',
-				password: '*****',
-				firstname: 'Firstname',
-				lastname: 'Lastname',
-				gender: 'Gender',
-				birthday: 'DD/MM/YYYY',
-				personId: 'X-XXXX-XXXXX-XX-X',
-				address: 'Address',
-				city: 'City',
-				zipcode: 'Zip Code',
-				country: 'Country'
-			},
+			isLoading: true,
+			profile: {},
 			shouldProfileUpdate: true,
 			validForm: true,
 			header: {
-                currentPage: 'Edit Profile',
-                leftButton: BackIcon,
-                rightButton: HiddenIcon
+                currentPage: null,
+                leftMenu: null,
+                rightMenu: null
             }
 		}
 		console.log('To change profile')
 
 		this.navigation = props.navigation
 	}
+
+	getAPI = async (name, params) => {
+        const url = API['base']
+        const option = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            timeout: 10000
+        }
+        const body = {
+            'name': name,
+            'params': params
+        }
+        return await axios.post(url, body, option)
+    }
+
+	componentDidMount = async() => {
+		await this.setHeader()
+		const userToken = await AsyncStorage.getItem('userToken')
+		try{
+			const result = await this.getAPI('getUserDetails', { 'token': userToken })
+			const userProfile = result['data']['response']['result']
+			await this.setState({
+				profile: { ... userProfile, 'avatar' : null},
+				isLoading: false
+			})
+			console.log('Component succesfully mounted!')
+		}catch(err){
+			console.log(err)
+		}
+	}
+
 	updateFormToState = async (key, value) => {
 		const { profile } = this.state
 		profile[key] = value
 		await this.setState({
 			profile: profile
+		})
+	}
+
+	checkFormValid = (key) => {
+		const { firstname, lastname, email } = this.state.profile
+	}
+
+	testButton = () => {
+		console.log('wthat is happing')
+	}
+
+	setHeader = () => {
+		const { goBack } = this.navigation
+		const backButton = (
+			<Button
+				style={styles['Header_Icon']}
+				onPress={() => {goBack()}}
+				transparent
+			>
+				<Image
+					style={{
+						height: 15,
+						width: 15
+					}}
+					source={ImageBackIcon}
+				/>
+			</Button>
+		)
+		this.setState({
+			header: {
+				leftMenu: backButton,
+				currentPage: 'Edit Profile',
+				rightMenu: hiddenButton
+			}
 		})
 	}
 
@@ -63,17 +123,19 @@ export default class EditProfile extends Component {
 	}
 
 	render() {
-		const { leftButton, currentPage, rightButton } = this.state.header
-		const { profile } = this.state
+		const { leftMenu, currentPage, rightMenu } = this.state.header
+		const { profile, isLoading } = this.state
+		console.log(leftMenu)
 
 		return (
 			<Container>
                 <Header
                     titlePage={currentPage}
-                    leftMenu={leftButton}
-                    rightMenu={rightButton}
+                    leftMenu={leftMenu}
+                    rightMenu={rightMenu}
                     leftFunction={this.navigation.goBack}
                 />
+				{isLoading ? <Loading /> :
 				<Content>
 					<View style={styles['Profile_Container']}>
 						<Image
@@ -87,10 +149,17 @@ export default class EditProfile extends Component {
 					</View>
 					<View style={styles['Card_Container']}>
 						<View style={styles['Card']}>
-							<Text style={styles['Card_Label']}>Name</Text>
+							<Text style={styles['Card_Label']}>First Name</Text>
 							<TextInput
-								// onChangeText={(firstname) => { this.updateFormToState('firstname', firstname) }}
-								value={profile['firstname'] + ' ' + profile['lastname']}
+								onChangeText={(firstname) => { this.updateFormToState('firstname', firstname) }}
+								value={profile['firstname']}
+								style={styles['Card_Input']}
+								underlineColorAndroid="transparent"
+							/>
+							<Text style={styles['Card_Label']}>Last Name</Text>
+							<TextInput
+								onChangeText={(lastname) => { this.updateFormToState('lastname', lastname) }}
+								value={profile['lastname']}
 								style={styles['Card_Input']}
 								underlineColorAndroid="transparent"
 							/>
@@ -122,24 +191,6 @@ export default class EditProfile extends Component {
 						</View>
 
 						<View style={styles['Card']}>
-							<Text style={styles['Card_Label']}>Password</Text>
-							<TextInput
-								secureTextEntry={true}
-								onChangeText={(password) => this.updateFormToState('password', password)}
-								value={profile['password']}
-								style={styles['Card_Input']}
-								underlineColorAndroid="transparent"
-							/>
-							<Text style={styles['Card_Label']}>Personal ID</Text>
-							<TextInput
-								onChangeText={(personId) => this.updateFormToState('personId', personId)}
-								value={profile['personId']}
-								style={styles['Card_Input_Last']}
-								underlineColorAndroid="transparent"
-							/>
-						</View>
-
-						<View style={styles['Card']}>
 							<Text style={styles['Card_Label']}>Address</Text>
 							<TextInput
 								onChangeText={(address) => this.updateFormToState('address', address)}
@@ -165,6 +216,22 @@ export default class EditProfile extends Component {
 							<TextInput
 								onChangeText={(country) => this.updateFormToState('country', country)}
 								value={profile['country']}
+								style={styles['Card_Input_Last']}
+								underlineColorAndroid="transparent"
+							/>
+						</View>
+						<View style={styles['Card']}>
+						<Text style={styles['Card_Label']}>Phone Number</Text>
+							<TextInput
+								onChangeText={(phonenumber) => this.updateFormToState('phonenumber', phonenumber)}
+								value={profile['phonenumber']}
+								style={styles['Card_Input']}
+								underlineColorAndroid="transparent"
+							/>
+							<Text style={styles['Card_Label']}>Facebook ID</Text>
+							<TextInput
+								onChangeText={(facebookId) => this.updateFormToState('facebookId', facebookId)}
+								value={profile['phonenumber']}
 								style={styles['Card_Input_Last']}
 								underlineColorAndroid="transparent"
 							/>
@@ -210,6 +277,7 @@ export default class EditProfile extends Component {
 						</Button>
 					</View>
 				</Content>
+				}
 			</Container>
 		)
 	}

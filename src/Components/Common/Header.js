@@ -6,6 +6,10 @@ import { Bakodo_Color } from '../../Config'
 import backImage from '../../images/left.png'
 
 export default class Header extends Component {
+
+    test = () => {
+        console.log('what is')
+    }
     render() {
         console.log('Header is rendered')
 
