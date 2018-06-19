@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { Alert, BackHandler, StyleSheet, View, Image, Text, TouchableOpacity, TextInput, AsyncStorage, Modal, TouchableHighlight, } from 'react-native'
 import { NavigationActions } from 'react-navigation'
 import { Container, Content, Button } from 'native-base'
+import DatePicker from 'react-native-datepicker'
+import { Dropdown } from 'react-native-material-dropdown'
 import axios from 'axios'
 
 import { API, Bakodo_Color } from '../../Config'
@@ -31,6 +33,11 @@ export default class EditProfile extends Component {
 		this.state = {
 			isLoading: true,
 			profile: {},
+			inputError: {
+				firstname: false,
+				lastname: false,
+				email: false
+			},
 			shouldProfileUpdate: true,
 			validForm: true,
 			header: {
@@ -65,6 +72,7 @@ export default class EditProfile extends Component {
 		try{
 			const result = await this.getAPI('getUserDetails', { 'token': userToken })
 			const userProfile = result['data']['response']['result']
+			console.log('User Profile', userProfile)
 			await this.setState({
 				profile: { ... userProfile, 'avatar' : null},
 				isLoading: false
@@ -76,19 +84,26 @@ export default class EditProfile extends Component {
 	}
 
 	updateFormToState = async (key, value) => {
-		const { profile } = this.state
-		profile[key] = value
 		await this.setState({
-			profile: profile
+			profile: {...this.state.profile, [key]: value}
 		})
+		if((key === 'firstname' || key === 'lastname') || key == 'email' )
+			await this.checkFormValid(key)
 	}
 
-	checkFormValid = (key) => {
-		const { firstname, lastname, email } = this.state.profile
-	}
+	checkFormValid = async(key) => {
+		const text = this.state.profile[key]
+		if(text.trim() === "") {
+			await this.setState({
+				inputError: {...this.state.inputError, [key]: true}
+			})
+		} else {
+			await this.setState({
+				inputError: {...this.state.inputError, [key]: false}
+			})
+		}
 
-	testButton = () => {
-		console.log('wthat is happing')
+
 	}
 
 	setHeader = () => {
@@ -122,10 +137,47 @@ export default class EditProfile extends Component {
 		this.navigation.navigate('Auth')
 	}
 
+	onUpdateUserProfile = async() => {
+		const userId = await AsyncStorage.getItem('userId')
+		const { profile } = this.state
+		try{
+			const params = { 
+				"user_id": userId,
+				"email": profile.email,
+				"firstname": profile.firstname,
+				"lastname": profile.lastname,
+				"phonenumber": profile.phoneNumber,
+				"gender": profile.gender,
+				"facebookId": profile.facebookId,
+				"address": profile.address,
+				"city": profile.city,
+				"zipcode": profile.zipcode,
+				"country": profile.country,
+				"birthday": profile.birthday
+			}
+			console.log('params', params)
+			const result = await this.getAPI('editUserProfile', params)
+			console.log(result)
+			if(result['data']['response']['status'] === 200 && !result['data']['error']) {
+				Alert.alert(result['data']['response']['result'])
+				this.navigation.goBack()
+			}			
+		}catch(err){
+			console.log(err)
+			Alert.alert('Failed Updating profile')
+		}
+
+	}
+
 	render() {
 		const { leftMenu, currentPage, rightMenu } = this.state.header
-		const { profile, isLoading } = this.state
-		console.log(leftMenu)
+		const { profile, isLoading, inputError } = this.state
+		const formIsValid = (!inputError.firstname && !inputError.lastname) && !inputError.email
+		const genderData = [
+            { value: 'MALE' },
+            { value: 'FEMALE' }
+		]
+		console.log(profile.birthday, ' ', profile.phoneNumber)
 
 		return (
 			<Container>
@@ -156,6 +208,7 @@ export default class EditProfile extends Component {
 								style={styles['Card_Input']}
 								underlineColorAndroid="transparent"
 							/>
+							{ inputError.firstname ? <Text style={styles['Error_Text']}>First Name cannot be empty</Text>  : (<View></View>) }
 							<Text style={styles['Card_Label']}>Last Name</Text>
 							<TextInput
 								onChangeText={(lastname) => { this.updateFormToState('lastname', lastname) }}
@@ -163,6 +216,7 @@ export default class EditProfile extends Component {
 								style={styles['Card_Input']}
 								underlineColorAndroid="transparent"
 							/>
+							{ inputError.lastname ? <Text style={styles['Error_Text']}>Last Name cannot be empty</Text> : (<View></View>) }
 							<Text style={styles['Card_Label']}>Email</Text>
 							<TextInput
 								keyboardType="email-address"
@@ -171,23 +225,40 @@ export default class EditProfile extends Component {
 								style={styles['Card_Input_Last']}
 								underlineColorAndroid="transparent"
 							/>
+							{ inputError.email ?<Text style={styles['Error_Text']}>Email cannot be empty</Text>: (<View></View>) }
 						</View>
 
 						<View style={styles['Card']}>
 							<Text style={styles['Card_Label']}>Birthday</Text>
-							<TextInput
-								onChangeText={(birthday) => this.updateFormToState('birthday', birthday)}
-								value={profile['birthday']}
-								style={styles['Card_Input']}
-								underlineColorAndroid="transparent"
-							/>
+                            <DatePicker
+                                style={styles['Card_DatePicker']}
+                                date={profile['birthday']}
+                                mode="date"
+								// format="DD/MM/YYYY"
+								format="YYYY-MM-DD"
+                                showIcon={false}
+                                confirmBtnText="Confirm"
+                                cancelBtnText="Cancel"
+                                customStyles={{
+                                    dateInput: {
+                                        alignItems: 'flex-start',
+                                        borderWidth: 0,
+                                    },
+                                    dateText: {
+                                        fontSize: 14.7,
+                                        color: '#838384'
+                                    }
+                                }}
+                                onDateChange={(birthday) => { this.updateFormToState('birthday', birthday) }}
+                            />							
 							<Text style={styles['Card_Label']}>Gender</Text>
-							<TextInput
-								onChangeText={(gender) => this.updateFormToState('gender', gender)}
-								value={profile['gender']}
-								style={styles['Card_Input_Last']}
-								underlineColorAndroid="transparent"
-							/>
+                            <Dropdown
+                                style={styles['Card_Dropdown']}
+                                value={profile['gender']}
+                                data={genderData}
+                                onChangeText={(gender) => { this.updateFormToState('gender', gender) }}
+                                containerStyle={styles['Card_Dropdown_Container']}
+                            />
 						</View>
 
 						<View style={styles['Card']}>
@@ -223,25 +294,25 @@ export default class EditProfile extends Component {
 						<View style={styles['Card']}>
 						<Text style={styles['Card_Label']}>Phone Number</Text>
 							<TextInput
-								onChangeText={(phonenumber) => this.updateFormToState('phonenumber', phonenumber)}
-								value={profile['phonenumber']}
+								onChangeText={(phoneNumber) => this.updateFormToState('phonenumber', phoneNumber)}
+								value={profile['phoneNumber']}
 								style={styles['Card_Input']}
 								underlineColorAndroid="transparent"
 							/>
 							<Text style={styles['Card_Label']}>Facebook ID</Text>
 							<TextInput
 								onChangeText={(facebookId) => this.updateFormToState('facebookId', facebookId)}
-								value={profile['phonenumber']}
+								value={profile['facebookId']}
 								style={styles['Card_Input_Last']}
 								underlineColorAndroid="transparent"
 							/>
 						</View>
 					</View>
 					<View>
-						{this.state.validForm === true ?
+						{formIsValid === true ?
 							<Button
 								title="Logout"
-								onPress={() => this.onLogout()}
+								onPress={() => this.onUpdateUserProfile()}
 								success full large rounded
 							>
 								<Text style={{
@@ -338,5 +409,20 @@ const styles = StyleSheet.create({
 		paddingBottom: 10,
 		color: '#838384',
 		fontSize: 16
-	}
+	},
+	Error_Text : {
+		color: '#FF0000',	
+		fontSize: 12,
+		marginBottom: 5
+	},
+	Card_Dropdown: {
+        fontSize: 14.7,
+        color: '#838384'
+    },
+    Card_Dropdown_Container: {
+        marginTop: -20
+	},
+	Card_DatePicker: {
+        width: '100%'
+    }
 })

@@ -333,7 +333,8 @@ export default class SignUp extends Component {
                                 date={formRegister['birthday']}
                                 mode="date"
                                 placeholder="Select your birthday"
-                                format="DD/MM/YYYY"
+                                // format="DD/MM/YYYY"
+                                format="YYYY-MM-DD"
                                 showIcon={false}
                                 confirmBtnText="Confirm"
                                 cancelBtnText="Cancel"
