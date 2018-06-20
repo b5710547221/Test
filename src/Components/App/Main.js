@@ -11,7 +11,7 @@ import { SearchIcon, BackIcon, HiddenIcon } from '../Common/Icon'
 import Header from '../Common/Header'
 import Footer from '../Common/Footer'
 
-import { API } from '../../Config'
+import { getAPI} from '../../Config'
 
 export default class Main extends Component {
 
@@ -33,6 +33,7 @@ export default class Main extends Component {
             historyPage: ['Shop List'],
             welcomeProList: [],
             gitfs: [],
+            packages: []
         }
 
         this.navigation = props.navigation
@@ -45,6 +46,7 @@ export default class Main extends Component {
 
         await this.setWelcomeList()
         await this.setGifts()
+        await this.setPackages()
     }
 
     setWelcomeList = async () => {
@@ -52,7 +54,7 @@ export default class Main extends Component {
         const userId = await AsyncStorage.getItem('userId')
         console.log('test', userId)
         try {
-            result = await this.getAPI('GetAllWelcomePromotionList', {
+            result = await getAPI('GetAllWelcomePromotionList', {
                 'user_id': userId,
                 'campaign_type_id': '2'
             })
@@ -70,9 +72,8 @@ export default class Main extends Component {
 
     setGifts = async () => {
         const userId = await AsyncStorage.getItem('userId')
-        console.log('Main user id', userId)
         try {
-            result = await this.getAPI('getUserWallet', {
+            result = await getAPI('getUserWallet', {
                 "user_id": userId,
                 "campaign_type_id": "2"
             })
@@ -91,19 +92,26 @@ export default class Main extends Component {
         }
     }
 
-    getAPI = async (name, params) => {
-        const url = API['base']
-        const option = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 10000
+    setPackages = async() => {
+        const userId = await AsyncStorage.getItem('userId')
+        try {
+            result = await getAPI('getUserWallet', {
+                "user_id": userId,
+                "campaign_type_id": "3"
+            })
+            console.log(result)
+            const packages = result['data']['response']['result']
+            console.log(packages)
+            if (result['data']['response']['status'] === 200) {
+                await this.setState({
+                    packages: result['data']['response']['result']
+                })
+                console.log(this.state.packages)
+            }
+        } catch (err) {
+            console.log(err)
+            Alert.alert('Error loading Packages')
         }
-        const body = {
-            'name': name,
-            'params': params
-        }
-        return await axios.post(url, body, option)
     }
 
     componentWillUnmount = () => {
@@ -187,12 +195,12 @@ export default class Main extends Component {
         console.log('Refresh all')
         await this.setWelcomeList()
         await this.setGifts()
+        await this.setPackages()
     }
 
     onAddPromotion = async () => {
         console.log('Added to wallet')
-        await this.setWelcomeList()
-        await this.setGifts()
+        await this.onRefresh()
 
         // TODO: need this for package and collect
         this.onChangePage('My Wallet')
@@ -201,7 +209,7 @@ export default class Main extends Component {
 
 
     render() {
-        const { currentPage, welcomeProList, gifts } = this.state
+        const { currentPage, welcomeProList, gifts, packages } = this.state
         const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header
         console.log('Current Page', currentPage)
 
@@ -220,7 +228,8 @@ export default class Main extends Component {
                         : currentPage === 'Scan' ? (<CameraView 
                             onScanSuccess={this.onRefresh} navigation={this.navigation} 
                             onAddPromotion={this.onAddPromotion}/>)
-                            : currentPage === 'My Wallet' ? (<Wallet gifts={gifts} navigation={this.navigation} />)
+                            : currentPage === 'My Wallet' ? (<Wallet gifts={gifts} packages={packages}
+                                navigation={this.navigation}  />)
                                 : <View></View>
                 }
                 {

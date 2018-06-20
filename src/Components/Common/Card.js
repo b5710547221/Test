@@ -24,15 +24,8 @@ export default class Card extends PureComponent {
     render() {
         const { type, data, onClick } = this.props
         const { BranchId, PromotionId, ImageUrl, PromotionName, BranchName, Description, EndDate } = data
-        const { Name, ExpiredDate } = data
+        const { ExpiredDate } = data
 
-        //const userId = await AsyncStorage.getItem('userId')
-        /*const params = {
-            "user_id" : userId,
-            "campaign_type_id" : "2",
-            "branch_id" : BranchId,
-            "promotion_id" : PromotionId
-        }*/
         console.log(type)
 
 
@@ -109,10 +102,11 @@ export default class Card extends PureComponent {
                                 </TouchableOpacity>
                             )
                             :
+                            type === 'Collect' ?
                             (
                                 <View style={styles['Card_Container_Content']}>
 
-                                    <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>heading</Text>
+                                    <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>Header</Text>
                                     <Text style={styles['Card_Content_Special']}>{Math.floor(Math.random() * 100) + 1} points</Text>
                                     <View style={styles['Card_Container_Icon']}>
                                         <View style={styles['Card_Icon']}>
@@ -125,6 +119,23 @@ export default class Card extends PureComponent {
                                     </View>
                                 </View>
                             )
+                            :
+                            (
+                                <View style={styles['Card_Container_Content']}>
+
+                                    <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>{name}</Text>
+                                    <Text style={styles['Card_Content_Special']}>Unlimited</Text>
+                                    <View style={styles['Card_Container_Icon']}>
+                                        <View style={styles['Card_Icon']}>
+                                            <Image
+                                                style={{ height: 10, width: 10 }}
+                                                source={calendarIcon}
+                                            />
+                                            <Text style={styles['Card_Icon_Text']}>vaild: {ExpiredDate}</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                            )                            
                 }
             </View >
         )

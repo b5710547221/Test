@@ -12,6 +12,7 @@ import ScanScreen from './Components/App/Scan'
 // import MyWalletScreen from './Components/App/MyWallet'
 import EditProfileScreen from './Components/App/EditProfile' 
 import ShowGiftPromotionScreen from './Components/module/ShowGiftPromotion'
+import ShowPackagePromotionScreen from './Components/module/ShowPackagePromotion'
 import AddCodeScreen from './Components/module/AddCode'
 import ShowQRCodeScreen from './Components/App/ShowQRCode'
 import Main from './Components/Main'
@@ -32,6 +33,7 @@ const AppStack = createStackNavigator({
     // MyWallet: MyWalletScreen,
     EditProfile: EditProfileScreen,
     ShowGiftPromotion: ShowGiftPromotionScreen,
+    ShowPackagePromotion: ShowPackagePromotionScreen,
     AddCode: AddCodeScreen,
     ShowQRCode: ShowQRCodeScreen
 })

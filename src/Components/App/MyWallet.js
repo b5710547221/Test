@@ -36,7 +36,7 @@ export default class MyWallet extends Component {
 	}
 
 	render() {
-		const { gifts } = this.props
+		const { gifts, packages } = this.props
 		const { showPage } = this.state
 		console.log(showPage)
 
@@ -82,7 +82,7 @@ export default class MyWallet extends Component {
 						: showPage === 'Collects' ?
 							(<CollectCard />)
 							:
-							(<PackageCard />)
+							(<PackageCard packages={packages} navigation={this.navigation}/>)
 				}
 			</View>
 		)
