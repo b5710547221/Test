@@ -4,7 +4,7 @@ import { Container, Content, Button } from 'native-base'
 import GPSState from 'react-native-gps-state'
 import axios from 'axios'
 
-import { API, Loading_Color } from '../../Config'
+import { getAPI, Loading_Color } from '../../Config'
 import { SearchIcon, HiddenIcon } from '../Common/Icon'
 
 import Header from '../Common/Header'
@@ -60,26 +60,12 @@ export default class ShopList extends Component {
 		}
 	}
 
-    getAPI = async(name, params) => {
-        const url = API['base']
-        const option = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 10000
-        }
-        const body = {
-            'name' : name,
-            'params' : params
-        }
-        return await axios.post(url, body, option) 
-	}
 	
 	onGetPromotion = async(params) => {
-		console.log(params)
+		console.log('params', params)
 		try {
-			const result = await this.getAPI('confirmWelComePromotionToWallet', params)
-			console.log(result)
+			const result = await getAPI('confirmWelComePromotionToWallet', params)
+			console.log('the resulttt', result)
 			if(result['data']['response']['status'] === 200) {
 				Alert.alert(result['data']['response']['result'])
 			}

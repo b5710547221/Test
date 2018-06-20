@@ -10,15 +10,15 @@ import Image_1 from '../../images/banner.png'
 export default class Card extends PureComponent {
     onGetPress = () => {
         console.log('On get pressed')
-        /*AsyncStorage.getItem('userId').then((userId) => {
+        AsyncStorage.getItem('userId').then((userId) => {
             const params = {
                 "user_id": userId,
                 "branch_id": this.props.data.BranchId,
-                "promotion_id": this.props.data.PromotionId
+                "promotion_id": this.props.data.PromotionId,
+                "campaign_type_id": "2"
             }
             this.props.onClick(params)
-        })*/
-        this.props.onClick()
+        })
     }
 
     render() {

@@ -35,28 +35,28 @@ export default class SignUp extends Component {
                 leftButton: BackIcon,
                 rightButton: HiddenIcon
             },
-            formRegister: {
-                username: 'new7',
-                email: 'new7@gmail.com',
-                password: '12341234',
-                confirmpassword: '12341234',
-                firstname: 'D',
-                lastname: 'S',
-                gender: 'MALE',
-                birthday: '11/11/2561',
-                phone: '0901234567'
-             }
             // formRegister: {
-            //     username: '',
-            //     email: '',
-            //     password: '',
-            //     confirmpassword: '',
-            //     firstname: '',
-            //     lastname: '',
-            //     gender: '',
-            //     birthday: '',
-            //     phone: ''
-            // }
+            //     username: 'new7',
+            //     email: 'new7@gmail.com',
+            //     password: '12341234',
+            //     confirmpassword: '12341234',
+            //     firstname: 'D',
+            //     lastname: 'S',
+            //     gender: 'MALE',
+            //     birthday: '11/11/2561',
+            //     phone: '0901234567'
+            //  }
+            formRegister: {
+                username: '',
+                email: '',
+                password: '',
+                confirmpassword: '',
+                firstname: '',
+                lastname: '',
+                gender: '',
+                birthday: '',
+                phone: ''
+            }
         }
 
         this.navigation = props.navigation
