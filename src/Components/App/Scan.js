@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { View, Image, Linking,StyleSheet, Text, TouchableOpacity, AsyncStorage, Alert } from 'react-native'
+import { View, Image, Linking, StyleSheet, Text, TouchableOpacity, AsyncStorage, Alert } from 'react-native'
 
 import QRCodeScanner from 'react-native-qrcode-scanner'
 import { RNCamera } from 'react-native-camera';
 import axios from 'axios'
 
-import { API } from '../../Config'
+import { getAPI } from '../../Config'
+
 
 export default class Scan extends Component {
 
@@ -14,49 +15,34 @@ export default class Scan extends Component {
         this.navigation = this.props.navigation
     }
 
-    getAPI = async (name, params) => {
-        const url = API['base']
-        const option = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 10000
+    onSuccess = async (e) => {
+        const qr_code = e.data
+        const user_id = await AsyncStorage.getItem('userId')
+        console.log(qr_code, ' ', user_id)
+        try {
+            const result = await getAPI('QrcodeGetPromotionDetails', { user_id, qr_code })
+            this.props.onScanSuccess()
+            console.log(result)
+            if (result['data']['response']['status'] == 200 ) {
+                if (!result['data']['error']) {
+                    const addPromotionResult = await getAPI('confirmPromotionToWallet', result['data']['response']['result'])
+                    console.log('addPromotionResult', addPromotionResult)
+                    if (addPromotionResult['data']['response']['status'] == 200 && !addPromotionResult['data']['error']) {
+                        Alert.alert('Add promotion to wallet successfully')
+                        this.props.onAddPromotion()
+                    } else {
+                        console.log('Add Promotion Result', addPromotionResult)
+                    }
+                } else {
+                    Alert.alert('This QRCode is used or expired')
+                }
+            }
+        } catch (err) {
+            console.log(err)
+            Alert.alert('Error Scanning Code')
         }
-        const body = {
-            'name': name,
-            'params': params
-        }
-        return await axios.post(url, body, option)
-    }
 
-    onSuccess = async(e) => {
-       const qr_code = e.data
-       const user_id = await AsyncStorage.getItem('userId')
-       console.log(qr_code, ' ', user_id)
-       try{
-        const result = await this.getAPI('QrcodeGetPromotionDetails', {
-            user_id, qr_code
-        })   
-        this.props.onScanSuccess()
-        console.log(result)
-        if(result['data']['response']['status'] == 200) {
-            if(!result['data']['error']) {
-                const addPromotionResult = await this.getAPI('confirmPromotionToWallet', result['data']['response']['result'])
-                console.log('addPromotionResult', addPromotionResult)
-                if(addPromotionResult['data']['response']['status'] == 200 && !addPromotionResult['data']['error']) {
-                    Alert.alert('Add promotion to wallet successfully')
-                    this.props.onAddPromotion()
-                }                
-            } else {
-                Alert.alert('This QRCode is used or expired')
-            } 
-        }        
-       } catch(err) {
-           console.log(err)
-           Alert.alert('Error Scanning Code')
-       }
 
-       
     }
 
     render() {
@@ -66,14 +52,14 @@ export default class Scan extends Component {
                     onRead={this.onSuccess.bind(this)}
                     topContent={
                         <Text style={styles.centerText}>
-                          Go to <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on your computer and scan the QR code.
+                            Go to <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on your computer and scan the QR code.
                         </Text>
-                      }
-                      bottomContent={
+                    }
+                    bottomContent={
                         <TouchableOpacity style={styles.buttonTouchable}>
-                          <Text style={styles.buttonText}>OK. Got it!</Text>
+                            <Text style={styles.buttonText}>OK. Got it!</Text>
                         </TouchableOpacity>
-                      }
+                    }
                 />
             </View>
         )
@@ -103,7 +89,7 @@ export default class Scan extends Component {
     //       </View>
     //     );
     // }
-    
+
     // takePicture = async function() {
     //     if (this.camera) {
     //         const options = { quality: 0.5, base64: true };

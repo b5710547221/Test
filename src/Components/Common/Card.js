@@ -125,7 +125,10 @@ export default class Card extends PureComponent {
                                         <View style={styles['Card_Container_Content']}>
 
                                             <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>{BranchName}</Text>
-                                            <Text style={styles['Card_Content_Special']}>{Timeslimit == '0' ? 'Unlimited' : 'Limited'}</Text>
+                                            <Text style={styles['Card_Content_Special']}>
+                                            { Timeslimit == '0' ? 'Unlimited' : 
+                                            Times + '/' + Timeslimit}
+                                            </Text>
                                             <View style={styles['Card_Container_Icon']}>
                                                 <View style={styles['Card_Icon']}>
                                                     <Image
