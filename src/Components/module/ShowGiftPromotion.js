@@ -102,15 +102,15 @@ export default class ShowPromotion extends Component {
                             <Carousel />
                         </View>
 
-                        <View style={styles['FlexDirection_Row']}>
+                        <View style={styles['FlexDirection_Row_Last']}>
                             <View style={{ flexDirection: 'row' }}>
                                 <Image
                                     style={{ height: 15, width: 15, marginRight: 10}}
                                     source={ImageClockIcon}
                                 />
-                                <Text style={{color: Loading_Color}}>{ExpiredDate}</Text>
+                                <Text style={{color: Loading_Color, fontSize: 12}}>{ExpiredDate}</Text>
                             </View>
-                            <Text style={{ flex: 1, textAlign: 'right', color: '#F3F3F3' }}>11:00 - 21:00</Text>
+                            <Text style={{ flex: 1, textAlign: 'right', color: '#737373', fontSize: 12 }}>Mon - Sun 11:00 - 21:00</Text>
                         </View>
 
                         <View style={[styles['FlexDirection_Row'], { maxHeight: 120, paddingHorizontal: 20 }]}>
@@ -122,7 +122,7 @@ export default class ShowPromotion extends Component {
                                 style={{ height: 15, width: 12, marginRight: 10 }}
                                 source={ImagePinIcon}
                             />
-                            <Text style={styles['Normal_Text']}>qq dessert of Taiwan, Chatuchak, Bangkok 10900</Text>
+                            <Text style={[styles['Normal_Text'], {flex: 1}]}>qq dessert of Taiwan, Chatuchak, Bangkok 10900</Text>
                         </View>
 
                         <View style={styles['FlexDirection_Row']}>
@@ -202,6 +202,11 @@ const styles = StyleSheet.create({
         borderColor: '#CCCCCC',
         flexDirection: 'row'
     },
+    FlexDirection_Row_Last: {
+        padding: 10,
+        borderColor: '#CCCCCC',
+        flexDirection: 'row'
+    }, 
     Contract_Container: {
         flex: 1,
         justifyContent: 'center',

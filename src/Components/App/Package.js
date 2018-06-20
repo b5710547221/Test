@@ -22,34 +22,34 @@ export default class Package extends Component {
 	}
 
 	componentDidMount = () => {
-		// setTimeout(async () => {
-		// 	await this.setState({
-		// 		isLoading: false
-		// 	})
-		// }, 1000
-		const { packages } = this.props
+		setTimeout(async () => {
+			await this.setState({
+				isLoading: false
+			})
+		}, 1000)
+		// const { packages } = this.props
 
-		let promiseAPIRequests = packages.map( packagePromotion => { 
-			return getAPIPromise('getPromotionDetails', {
-				"campaign_type_id" : "3",
-				"branch_id" : packagePromotion.BranchId,
-				"promotion_id" : packagePromotion.PromotionId
-			}).then(res => res['data']['response']['result'])
-			.catch(err =>{ console.log('Error get package promotion') })
-		});
+		// let promiseAPIRequests = packages.map( packagePromotion => { 
+		// 	return getAPIPromise('getPromotionDetails', {
+		// 		"campaign_type_id" : "3",
+		// 		"branch_id" : packagePromotion.BranchId,
+		// 		"promotion_id" : packagePromotion.PromotionId
+		// 	}).then(res => res['data']['response']['result'])
+		// 	.catch(err =>{ console.log('Error get package promotion') })
+		// });
 		
-		Promise.all(promiseAPIRequests).then(resultsPackages => {
-		   // do something after the loop finishes
-		   console.log('Load lists of package successfully')
-		   console.log(resultsPackages)
-		   this.setState({
-			   data: resultsPackages
-		   })
-		}).catch(err =>{
-		   // do something when any of the promises in array are rejected
-		   console.log('Error loading list of Package Promotion')			
-			}
-		)
+		// Promise.all(promiseAPIRequests).then(resultsPackages => {
+		//    // do something after the loop finishes
+		//    console.log('Load lists of package successfully')
+		//    console.log(resultsPackages)
+		//    this.setState({
+		// 	   data: resultsPackages
+		//    })
+		// }).catch(err =>{
+		//    // do something when any of the promises in array are rejected
+		//    console.log('Error loading list of Package Promotion')			
+		// 	}
+		// )
 	}
 
 	onClick = (item) => {
@@ -62,14 +62,14 @@ export default class Package extends Component {
 
 	render() {
 		const { isLoading, data } = this.state
-
+		const { packages } = this.props
 		return (
 			<ScrollView style={styles['Package']}>
 				{
 					isLoading ? <Loading />
 						:
 						<FlatList
-							data={data}
+							data={packages}
 							renderItem={({ item, index }) => {
 								return <Card type='Package' data={item} onClick={this.onClick.bind(this, item)}/>
 							}}

@@ -24,7 +24,7 @@ export default class Card extends PureComponent {
     render() {
         const { type, data, onClick } = this.props
         const { BranchId, PromotionId, ImageUrl, PromotionName, BranchName, Description, EndDate } = data
-        const { ExpiredDate } = data
+        const { ExpiredDate, Timeslimit, Times } = data
 
         console.log(type)
 
@@ -103,39 +103,41 @@ export default class Card extends PureComponent {
                             )
                             :
                             type === 'Collect' ?
-                            (
-                                <View style={styles['Card_Container_Content']}>
+                                (
+                                    <View style={styles['Card_Container_Content']}>
 
-                                    <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>Header</Text>
-                                    <Text style={styles['Card_Content_Special']}>{Math.floor(Math.random() * 100) + 1} points</Text>
-                                    <View style={styles['Card_Container_Icon']}>
-                                        <View style={styles['Card_Icon']}>
-                                            <Image
-                                                style={{ height: 10, width: 10 }}
-                                                source={calendarIcon}
-                                            />
-                                            <Text style={styles['Card_Icon_Text']}>vaild: 01-01-2561</Text>
+                                        <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>Header</Text>
+                                        <Text style={styles['Card_Content_Special']}>{Math.floor(Math.random() * 100) + 1} points</Text>
+                                        <View style={styles['Card_Container_Icon']}>
+                                            <View style={styles['Card_Icon']}>
+                                                <Image
+                                                    style={{ height: 10, width: 10 }}
+                                                    source={calendarIcon}
+                                                />
+                                                <Text style={styles['Card_Icon_Text']}>vaild: 01-01-2561</Text>
+                                            </View>
                                         </View>
                                     </View>
-                                </View>
-                            )
-                            :
-                            (
-                                <View style={styles['Card_Container_Content']}>
+                                )
+                                :
+                                (
+                                    <TouchableOpacity onPress={onClick}>
+                                        <View style={styles['Card_Container_Content']}>
 
-                                    <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>{name}</Text>
-                                    <Text style={styles['Card_Content_Special']}>Unlimited</Text>
-                                    <View style={styles['Card_Container_Icon']}>
-                                        <View style={styles['Card_Icon']}>
-                                            <Image
-                                                style={{ height: 10, width: 10 }}
-                                                source={calendarIcon}
-                                            />
-                                            <Text style={styles['Card_Icon_Text']}>vaild: {ExpiredDate}</Text>
+                                            <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>{BranchName}</Text>
+                                            <Text style={styles['Card_Content_Special']}>{Timeslimit == '0' ? 'Unlimited' : 'Limited'}</Text>
+                                            <View style={styles['Card_Container_Icon']}>
+                                                <View style={styles['Card_Icon']}>
+                                                    <Image
+                                                        style={{ height: 10, width: 10 }}
+                                                        source={calendarIcon}
+                                                    />
+                                                    <Text style={styles['Card_Icon_Text']}>vaild: {ExpiredDate}</Text>
+                                                </View>
+                                            </View>
                                         </View>
-                                    </View>
-                                </View>
-                            )                            
+                                    </TouchableOpacity>
+                                )
                 }
             </View >
         )
