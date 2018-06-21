@@ -204,10 +204,6 @@ export default class Main extends Component {
     onAddPromotion = async () => {
         console.log('Added to wallet')
         await this.onRefresh()
-
-        // TODO: need this for package and collect
-        this.onChangePage('My Wallet')
-
     }
 
 
