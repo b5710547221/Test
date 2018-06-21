@@ -93,13 +93,16 @@ export default class Main extends Component {
     }
 
     setPackages = async() => {
+       
         const userId = await AsyncStorage.getItem('userId')
+        console.log('packages user Id', userId)
         try {
+
             result = await getAPI('getUserWallet', {
                 "user_id": userId,
                 "campaign_type_id": "3"
             })
-            console.log(result)
+             
             const packages = result['data']['response']['result']
             console.log(packages)
             if (result['data']['response']['status'] === 200) {

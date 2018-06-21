@@ -8,7 +8,7 @@ import Loading from '../Common/Loading'
 import WelcomeBox from '../display/Box-WelcomeBox'
 import AlertBox from '../Common/AlertBox'
 
-import { API } from '../../Config'
+import { API, getAPI } from '../../Config'
 
 export default class Login extends Component {
 
@@ -90,28 +90,13 @@ export default class Login extends Component {
         } else {
             try {
                 await this.setState({ isLoading: true })
-
-                const urlLogin = API['base']
-                const dataLogin = {
-                    'name': 'generateTokenLogin',
-                    'params': {
-                        'username' : email,
-                        'password' : password
-                    }
-                }
-                const optionLogin = {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    timeout: 10000
-                }
-                console.log(dataLogin)
-                const resultLogin = await axios.post(urlLogin, JSON.stringify(dataLogin), optionLogin)
+                const resultLogin = await getAPI('generateTokenLogin', {
+                    'email' : email,
+                    'password' : password
+                })
                 console.log(resultLogin)        
-                if (resultLogin['data']['response']['status'] === 200 && 
-                !resultLogin['data']['error']) {
+                if (resultLogin['data']['response']['status'] === 200 && !resultLogin['data']['error']) {
                     console.log('Generate Token succesfully!')
-                   
                     const userToken = resultLogin['data']['response']['result']['token']
                     const userId = await this.getUserId(userToken)
                     console.log(userToken)

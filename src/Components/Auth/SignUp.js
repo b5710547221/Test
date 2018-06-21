@@ -15,7 +15,7 @@ import DatePicker from 'react-native-datepicker'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import axios from 'axios'
 
-import { API, Bakodo_Color } from '../../Config'
+import { API, Bakodo_Color, getAPI } from '../../Config'
 import { BackIcon, HiddenIcon } from '../Common/Icon'
 
 import Header from '../Common/Header'
@@ -82,7 +82,7 @@ export default class SignUp extends Component {
         // Validation username
         if (username === '') {
             return Alert.alert('กรุณาใส่ username')
-        }   
+        }
 
         // Validation Email
         if (email === '') {
@@ -126,14 +126,14 @@ export default class SignUp extends Component {
         } else if (!NUMBER_REGEX.test(phone)) {
             return Alert.alert('เบอร์โทรศัพท์ ต้องเป็นตัวเลขเท่านั้น')
         }
-        
+
         this.submitForm(this.state.formRegister)
     }
 
-    getUserId = async(userToken) => {
+    getUserId = async (userToken) => {
         const urlLogin = API['base']
         const dataLogin = {
-            'name' : 'getUserDetails',
+            'name': 'getUserDetails',
             'params': {
                 'token': userToken
             }
@@ -152,28 +152,17 @@ export default class SignUp extends Component {
     submitForm = async (data) => {
         try {
             const urlRegister = API['base']
-            const dataRegister = {
-                'name' : 'registerNewAccount',
-                'params': {
-                    'username' : data['username'],
-                    'password' : data['password'],
-                    'firstname': data['firstname'],
-                    'lastname': data['lastname'],
-                    'email': data['email'],
-                    'confirmPassword': data['confirmpassword'],
-                    'gender': data['gender'],
-                    'birthday': data['birthday'],
-                    'phoneNumber': data['phone']
-                }
-            }
-            const optionRegister = {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                timeout: 10000
-            }
-            console.log(dataRegister)
-            const resultRegister = await axios.post(urlRegister, dataRegister, optionRegister)
+            const resultRegister = await getAPI('registerNewAccount', {
+                'username': data['username'],
+                'password': data['password'],
+                'firstname': data['firstname'],
+                'lastname': data['lastname'],
+                'email': data['email'],
+                'confirmPassword': data['confirmpassword'],
+                'gender': data['gender'],
+                'birthday': data['birthday'],
+                'phoneNumber': data['phone']
+            })
             /*{
                 "response": {
                     "status": 200,
@@ -190,47 +179,32 @@ export default class SignUp extends Component {
             }*/
             console.log(resultRegister)
             if (resultRegister['data']['response']['status'] === 200) {
-                console.log(resultRegister['data'])
-                console.log(resultRegister['data']['error'])
-                if(!resultRegister['data']['error']) {
-                    console.log('why here')
-                    const urlLogin = API['base']
-                    const dataLogin = {
-                        'name' : 'generateTokenLogin',
-                        'params': {
-                            'username' : data['username'],
-                            'password' : data['password']
-                        }
-                    }
-                    const optionLogin = {
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        timeout: 10000
-                    }
-                    const resultLogin = await axios.post(urlLogin, dataLogin, optionLogin)
+                if (!resultRegister['data']['error']) {
+                    Alert.alert('New account created!')
+                    const resultLogin = await getAPI('generateTokenLogin', {
+                        'email': data['email'],
+                        'password': data['password']
+                    })
+                    console.log('resultLogin', resultLogin)
                     if (resultLogin['data']['response']['status'] === 200 && !resultLogin['data']['error']) {
-                        Alert.alert('New account created!')
                         const userToken = resultLogin['data']['response']['result']['token']
                         const userId = await this.getUserId(userToken)
                         await AsyncStorage.setItem('userToken', userToken)
                         await AsyncStorage.setItem('userId', userId)
-                        this.navigation.navigate('App')                   
+                        this.navigation.navigate('App')
                     } else {
-                        Alert.alert(resultLogin['data']['response']['result']) 
+                        Alert.alert(resultLogin['data']['response']['result'])
                     }
                 } else {
                     console.log('Err here')
                     Alert.alert(resultRegister['data']['response']['result'])
                 }
-            } 
-            
-
+            }
         } catch (error) {
-            console.log("Register Error!")
+            console.log("Register or Logi Error!")
             console.log(error)
-            Alert.alert('Registration Failed')
-            
+            Alert.alert('Registration or Login Failed')
+
         }
     }
 
@@ -256,11 +230,11 @@ export default class SignUp extends Component {
                 />
                 {/* <Content ref='Content' onScroll={event => this.handleScroll(event)}> */}
                 <KeyboardAwareScrollView
-                     enableOnAndroid
+                    enableOnAndroid
                     enableAutomaticScroll
-                     keyboardOpeningTime={0}
-                     extraHeight={Platform.select({ android: 200 })}>
-                    <View style={{flex: 1}}>
+                    keyboardOpeningTime={0}
+                    extraHeight={Platform.select({ android: 200 })}>
+                    <View style={{ flex: 1 }}>
                         <View style={styles['Card']}>
                             <Text style={styles['Card_Label']}>username</Text>
                             <TextInput
@@ -269,7 +243,7 @@ export default class SignUp extends Component {
                                 value={formRegister['username']}
                                 style={styles['Card_Input']}
                                 underlineColorAndroid="transparent"
-                                autoCapitalize = 'none'
+                                autoCapitalize='none'
                             />
                             <Text style={styles['Card_Label']}>Email</Text>
                             <TextInput
@@ -279,7 +253,7 @@ export default class SignUp extends Component {
                                 value={formRegister['email']}
                                 style={styles['Card_Input']}
                                 underlineColorAndroid="transparent"
-                                autoCapitalize = 'none'
+                                autoCapitalize='none'
                             />
                             <Text style={styles['Card_Label']}>Password</Text>
                             <TextInput
@@ -368,7 +342,7 @@ export default class SignUp extends Component {
                         </Button>
                     </View>
                 </KeyboardAwareScrollView>
-                
+
             </Container>
         )
     }
