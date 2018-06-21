@@ -12,7 +12,12 @@ export default class Scan extends Component {
 
     constructor(props) {
         super(props)
+
+        this.state = {
+            enabled: true
+        }
         this.navigation = this.props.navigation
+
     }
 
     onSuccess = async (e) => {
@@ -29,12 +34,18 @@ export default class Scan extends Component {
                     console.log('addPromotionResult', addPromotionResult)
                     if (addPromotionResult['data']['response']['status'] == 200 && !addPromotionResult['data']['error']) {
                         Alert.alert('Add promotion to wallet successfully')
-                        this.props.onAddPromotion()
+                        await this.props.onAddPromotion()
+                        await this.setState({
+                            enabled: false
+                        })
                     } else {
                         console.log('Add Promotion Result', addPromotionResult)
                     }
                 } else {
                     Alert.alert('This QRCode is used or expired')
+                    await this.setState({
+                        enabled: false
+                    })
                 }
             }
         } catch (err) {
@@ -45,10 +56,19 @@ export default class Scan extends Component {
 
     }
 
+    onScanAgain = async() => {
+        await this.setState({
+            enabled: true
+        })
+        this.scanner.reactivate()
+    }
+
     render() {
+        const { enabled } = this.state
         return (
             <View style={styles['Scan']}>
-                <QRCodeScanner
+                <QRCodeScanner 
+                    ref={(node) => { this.scanner = node }}
                     onRead={this.onSuccess.bind(this)}
                     topContent={
                         <Text style={styles.centerText}>
@@ -56,8 +76,9 @@ export default class Scan extends Component {
                         </Text>
                     }
                     bottomContent={
-                        <TouchableOpacity style={styles.buttonTouchable}>
-                            <Text style={styles.buttonText}>OK. Got it!</Text>
+                        enabled ? <View></View> :
+                        <TouchableOpacity style={styles.buttonTouchable} onPress={this.onScanAgain.bind(this)}>
+                            <Text style={styles.buttonText}>Scan Again</Text>
                         </TouchableOpacity>
                     }
                 />
@@ -105,7 +126,15 @@ const styles = StyleSheet.create({
     Scan: {
         backgroundColor: '#000000',
         flex: 1
-    }
+    },
+    buttonTouchable: {
+        padding: 16,
+        backgroundColor: '#FFFFFF'
+    },
+    buttonText: {
+        fontSize: 21,
+        color: 'rgb(0,122,255)',
+    },
 });
 
 // const styles = StyleSheet.create({
