@@ -76,7 +76,7 @@ export default class Card extends PureComponent {
                         : type === 'Gift' ?
                             (
                                 <TouchableOpacity onPress={onClick}>
-                                    <View style={styles['Card_Container_Content']}>
+                                    <View style={[styles['Card_Container_Content'], {}]}>
                                         <Text style={styles['Card_Content_Header']}>{BranchName}</Text>
                                         <Text style={styles['Card_Content_SubHeader']}>{PromotionName}</Text>
                                         <Text style={styles['Card_Content_Detail']}>{Description}</Text>
@@ -149,7 +149,7 @@ export default class Card extends PureComponent {
 
 const styles = StyleSheet.create({
     Card: {
-        width: '90%',
+        width: '95%',
         marginTop: 5,
         padding: 5,
         flexDirection: 'row',
@@ -174,7 +174,8 @@ const styles = StyleSheet.create({
         width: 100
     },
     Card_Container_Content: {
-        flex: 1.5
+        flex: 1.5,
+        width: 200
     },
     Card_Content_Header: {
         color: '#6E69CC',
