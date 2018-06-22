@@ -17,7 +17,7 @@ export default class Card extends PureComponent {
                 "promotion_id": this.props.data.PromotionId,
                 "campaign_type_id": "2"
             }
-            this.props.onClick(params)
+            this.props.onGet(params)
         })
     }
 
@@ -34,15 +34,19 @@ export default class Card extends PureComponent {
             <View style={styles['Card']}>
                 {/* <View style={styles['Card_Container_Image']}>
 					<Image style={styles['Card_Image']} source={{ uri: ImageUrl }} />
-				</View> */}
-                < View style={styles['Card_Container_Image']}>
-                    <Image style={styles['Card_Image']} source={Image_1} />
-                </View>
+                </View> */}
+                <TouchableOpacity onPress={onClick}>
+                    < View style={styles['Card_Container_Image']}>
+                        <Image style={styles['Card_Image']} source={Image_1} />
+                    </View>
+                </TouchableOpacity>
                 {
                     type === 'Shop List' ?
                         (
                             <View style={styles['Card_Container_Content']}>
-                                <Text style={styles['Card_Content_Header']}>{BranchName}</Text>
+                                <TouchableOpacity onPress={onClick}>
+                                    <Text style={styles['Card_Content_Header']}>{BranchName}</Text>
+                                </TouchableOpacity>
                                 <Text style={styles['Card_Content_SubHeader']}>{PromotionName}</Text>
                                 <Text style={styles['Card_Content_Detail']}>{Description}</Text>
                                 <View style={styles['Card_Content_SubDetail']}>
@@ -126,8 +130,8 @@ export default class Card extends PureComponent {
 
                                             <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>{BranchName}</Text>
                                             <Text style={styles['Card_Content_Special']}>
-                                            { Timeslimit == '0' ? 'Unlimited' : 
-                                            Times + '/' + Timeslimit}
+                                                {Timeslimit == '0' ? 'Unlimited' :
+                                                    Times + '/' + Timeslimit}
                                             </Text>
                                             <View style={styles['Card_Container_Icon']}>
                                                 <View style={styles['Card_Icon']}>

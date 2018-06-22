@@ -78,8 +78,14 @@ export default class ShopList extends Component {
 	componentWillUnmount(){
 		GPSState.removeListener();
 	}
-	
 
+	onClick = (item) => {
+		this.navigation.navigate('ShowWelcomePromotion', {
+			data: item,
+			onGet: this.onGetPromotion
+		})
+	}
+	
 	render() {
 
 		const { data, isLoading, isNoGPS } = this.state
@@ -95,7 +101,8 @@ export default class ShopList extends Component {
 							<FlatList
 								data={ welcomeProList }
 								renderItem={({ item, index }) => {
-									return <Card type='Shop List' data={item} onClick={this.onGetPromotion} />
+									return <Card type='Shop List' data={item} onClick={this.onClick.bind(this, item)}
+									onGet={this.onGetPromotion}/>
 								}}
 							/>
 				}

@@ -223,7 +223,7 @@ export default class Main extends Component {
                 />
                 {
                     currentPage === 'Shop List' ? (<ShopList welcomeProList={welcomeProList}
-                        onRefresh={this.onRefresh} />)
+                        onRefresh={this.onRefresh} navigation={this.navigation}/>)
                         : currentPage === 'Scan' ? (<CameraView 
                             onScanSuccess={this.onRefresh} navigation={this.navigation} 
                             onAddPromotion={this.onAddPromotion}/>)
