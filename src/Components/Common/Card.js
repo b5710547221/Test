@@ -171,7 +171,9 @@ const styles = StyleSheet.create({
     Card_Container_Image: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginLeft: 20,
+        marginRight: 20
     },
     Card_Image: {
         height: 100,
