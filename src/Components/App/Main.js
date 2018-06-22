@@ -10,6 +10,7 @@ import { Loading_Color } from '../../Config'
 import { SearchIcon, BackIcon, HiddenIcon } from '../Common/Icon'
 import Header from '../Common/Header'
 import Footer from '../Common/Footer'
+import Search from './Search'
 
 import { getAPI} from '../../Config'
 
@@ -33,7 +34,9 @@ export default class Main extends Component {
             historyPage: ['Shop List'],
             welcomeProList: [],
             gitfs: [],
-            packages: []
+            packages: [],
+            searchStatus: false,
+            searchText: ''
         }
 
         this.navigation = props.navigation
@@ -43,7 +46,7 @@ export default class Main extends Component {
         if (Platform.OS === 'android') {
             BackHandler.addEventListener('hardwareBackPress', this.onBackPage)
         }
-
+        console.log('Component Did mount')
         await this.setWelcomeList()
         await this.setGifts()
         await this.setPackages()
@@ -206,21 +209,39 @@ export default class Main extends Component {
         await this.onRefresh()
     }
 
+    onToggleSearchStatus = () => {
+        console.log('toggle')
+        this.setState({
+            searchStatus: !this.state.searchStatus
+        })
+    }
+
 
     render() {
-        const { currentPage, welcomeProList, gifts, packages } = this.state
+        const { currentPage, welcomeProList, gifts, packages, searchStatus } = this.state
         const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header
         console.log('Current Page', currentPage)
 
         return (
             <Container>
+                {
+                    (currentPage == 'Shop List' || currentPage == 'My Wallet') ? 
                 <Header
                     titlePage={currentPage}
-                    leftButton={leftButton}
-                    rightButton={rightButton}
+                    leftMenu={leftButton}
+                    rightMenu={<Search searchStatus={searchStatus} onToggle={this.onToggleSearchStatus.bind(this)}/>}
+                    leftFunction={leftFunction}
+                    rightFunction={rightFunction}
+                />                
+                :
+                <Header
+                    titlePage={currentPage}
+                    leftMenu={leftButton}
+                    rightMenu={rightButton}
                     leftFunction={leftFunction}
                     rightFunction={rightFunction}
                 />
+                }
                 {
                     currentPage === 'Shop List' ? (<ShopList welcomeProList={welcomeProList}
                         onRefresh={this.onRefresh} navigation={this.navigation}/>)
