@@ -16,7 +16,7 @@ export default class Collect extends Component {
 			data: [],
 			isLoading: true
 		}
-
+		this.navigation = props.navigation
 	}
 
 	componentDidMount = () => {
@@ -26,6 +26,14 @@ export default class Collect extends Component {
 				isLoading: false
 			})
 		}, 1000)
+	}
+
+	onClick = (item) => {
+		console.log('On Click in Collect')
+		console.log(item)
+		this.navigation.navigate('ShowCollectPromotion', {
+			data: item 
+		})
 	}
 
 	render() {
@@ -40,7 +48,7 @@ export default class Collect extends Component {
 						<FlatList
 							data={data}
 							renderItem={({ item }) => {
-								return <Card type='Collect' data={item} />
+								return <Card type='Collect' data={item} onClick={this.onClick.bind(this, item)}/>
 							}}
 						/>
 				}

@@ -77,111 +77,113 @@ export default class Card extends PureComponent {
                                 </View>
                             </View>
                         )
-                        : type === 'Used Shop List' ? 
-                        (
-                            <View style={styles['Card_Container_Content']}>
-                                <TouchableOpacity onPress={onClick}>
-                                    <Text style={styles['Card_Content_Header']}>{BranchName}</Text>
-                                </TouchableOpacity>
-                                <Text style={styles['Card_Content_SubHeader']}>{PromotionName}</Text>
-                                <Text style={styles['Card_Content_Detail']}>{Description}</Text>
-                                <View style={styles['Card_Content_SubDetail']}>
-                                    <View style={styles['Card_Container_Icon']}>
-                                        <View style={styles['Card_Icon']}>
-                                            <Image
-                                                style={{ height: 10, width: 10 }}
-                                                source={clockIcon}
-                                            />
-                                            <Text style={styles['Card_Icon_Text']}>{EndDate}</Text>
-                                        </View>
-                                        <View style={styles['Card_Icon']}>
-                                            <Image
-                                                style={{ height: 10, width: 8 }}
-                                                source={pinIcon}
-                                            />
-                                            <Text style={styles['Card_Icon_Text']}>500 m(hardcoded)</Text>
-                                        </View>
-                                    </View>
-                                    <View style={styles['Card_Button_Container']}>
-                                        <TouchableOpacity
-                                            onPress={this.onGetPress.bind(this)}
-                                            style={styles['Used_Card_Button']}
-                                            disabled
-                                        >
-                                            <Text style={styles['Used_Card_Button_Text']}>Get</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            </View>
-                        )
-                        : type === 'Gift' ?
+                        : type === 'Used Shop List' ?
                             (
-                                <TouchableOpacity onPress={onClick}>
-                                    <View style={[styles['Card_Container_Content'], {}]}>
+                                <View style={styles['Card_Container_Content']}>
+                                    <TouchableOpacity onPress={onClick}>
                                         <Text style={styles['Card_Content_Header']}>{BranchName}</Text>
-                                        <Text style={styles['Card_Content_SubHeader']}>{PromotionName}</Text>
-                                        <Text style={styles['Card_Content_Detail']}>{Description}</Text>
-                                        <View style={styles['Card_Content_SubDetail']}>
-                                            <View style={styles['Card_Container_Icon']}>
-                                                <View style={styles['Card_Icon']}>
-                                                    <Image
-                                                        style={{ height: 10, width: 10 }}
-                                                        source={clockIcon}
-                                                    />
-                                                    <Text style={styles['Card_Icon_Text']}>{ExpiredDate}</Text>
-                                                </View>
-                                                <View style={styles['Card_Icon']}>
-                                                    <Image
-                                                        style={{ height: 10, width: 8 }}
-                                                        source={pinIcon}
-                                                    />
-                                                    <Text style={styles['Card_Icon_Text']}>500 m(hardcoded)</Text>
-                                                </View>
-                                            </View>
-                                        </View>
-                                    </View>
-                                </TouchableOpacity>
-                            )
-                            :
-                            type === 'Collect' ?
-                                (
-                                    <View style={styles['Card_Container_Content']}>
-
-                                        <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>Header</Text>
-                                        <Text style={styles['Card_Content_Special']}>{Math.floor(Math.random() * 100) + 1} points</Text>
+                                    </TouchableOpacity>
+                                    <Text style={styles['Card_Content_SubHeader']}>{PromotionName}</Text>
+                                    <Text style={styles['Card_Content_Detail']}>{Description}</Text>
+                                    <View style={styles['Card_Content_SubDetail']}>
                                         <View style={styles['Card_Container_Icon']}>
                                             <View style={styles['Card_Icon']}>
                                                 <Image
                                                     style={{ height: 10, width: 10 }}
-                                                    source={calendarIcon}
+                                                    source={clockIcon}
                                                 />
-                                                <Text style={styles['Card_Icon_Text']}>vaild: 01-01-2561</Text>
+                                                <Text style={styles['Card_Icon_Text']}>{EndDate}</Text>
+                                            </View>
+                                            <View style={styles['Card_Icon']}>
+                                                <Image
+                                                    style={{ height: 10, width: 8 }}
+                                                    source={pinIcon}
+                                                />
+                                                <Text style={styles['Card_Icon_Text']}>500 m(hardcoded)</Text>
                                             </View>
                                         </View>
+                                        <View style={styles['Card_Button_Container']}>
+                                            <TouchableOpacity
+                                                onPress={this.onGetPress.bind(this)}
+                                                style={styles['Used_Card_Button']}
+                                                disabled
+                                            >
+                                                <Text style={styles['Used_Card_Button_Text']}>Get</Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
-                                )
-                                :
+                                </View>
+                            )
+                            : type === 'Gift' ?
                                 (
                                     <TouchableOpacity onPress={onClick}>
-                                        <View style={styles['Card_Container_Content']}>
-
-                                            <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>{BranchName}</Text>
-                                            <Text style={styles['Card_Content_Special']}>
-                                                {Timeslimit == '0' ? 'Unlimited' :
-                                                    Times + '/' + Timeslimit}
-                                            </Text>
-                                            <View style={styles['Card_Container_Icon']}>
-                                                <View style={styles['Card_Icon']}>
-                                                    <Image
-                                                        style={{ height: 10, width: 10 }}
-                                                        source={calendarIcon}
-                                                    />
-                                                    <Text style={styles['Card_Icon_Text']}>vaild: {ExpiredDate}</Text>
+                                        <View style={[styles['Card_Container_Content'], {}]}>
+                                            <Text style={styles['Card_Content_Header']}>{BranchName}</Text>
+                                            <Text style={styles['Card_Content_SubHeader']}>{PromotionName}</Text>
+                                            <Text style={styles['Card_Content_Detail']}>{Description}</Text>
+                                            <View style={styles['Card_Content_SubDetail']}>
+                                                <View style={styles['Card_Container_Icon']}>
+                                                    <View style={styles['Card_Icon']}>
+                                                        <Image
+                                                            style={{ height: 10, width: 10 }}
+                                                            source={clockIcon}
+                                                        />
+                                                        <Text style={styles['Card_Icon_Text']}>{ExpiredDate}</Text>
+                                                    </View>
+                                                    <View style={styles['Card_Icon']}>
+                                                        <Image
+                                                            style={{ height: 10, width: 8 }}
+                                                            source={pinIcon}
+                                                        />
+                                                        <Text style={styles['Card_Icon_Text']}>500 m(hardcoded)</Text>
+                                                    </View>
                                                 </View>
                                             </View>
                                         </View>
                                     </TouchableOpacity>
                                 )
+                                :
+                                type === 'Collect' ?
+                                    (
+                                        <TouchableOpacity onPress={onClick}>
+                                            <View style={styles['Card_Container_Content']}>
+
+                                                <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>{PromotionName}</Text>
+                                                <Text style={styles['Card_Content_Special']}>{Math.floor(Math.random() * 100) + 1} points</Text>
+                                                <View style={styles['Card_Container_Icon']}>
+                                                    <View style={styles['Card_Icon']}>
+                                                        <Image
+                                                            style={{ height: 10, width: 10 }}
+                                                            source={calendarIcon}
+                                                        />
+                                                        <Text style={styles['Card_Icon_Text']}>vaild: 01-01-2561</Text>
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        </TouchableOpacity>
+                                    )
+                                    :
+                                    (
+                                        <TouchableOpacity onPress={onClick}>
+                                            <View style={styles['Card_Container_Content']}>
+
+                                                <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>{BranchName}</Text>
+                                                <Text style={styles['Card_Content_Special']}>
+                                                    {Timeslimit == '0' ? 'Unlimited' :
+                                                        Times + '/' + Timeslimit}
+                                                </Text>
+                                                <View style={styles['Card_Container_Icon']}>
+                                                    <View style={styles['Card_Icon']}>
+                                                        <Image
+                                                            style={{ height: 10, width: 10 }}
+                                                            source={calendarIcon}
+                                                        />
+                                                        <Text style={styles['Card_Icon_Text']}>vaild: {ExpiredDate}</Text>
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        </TouchableOpacity>
+                                    )
                 }
             </View >
         )

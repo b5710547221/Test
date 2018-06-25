@@ -80,7 +80,7 @@ export default class MyWallet extends Component {
 					showPage === 'Gifts' ?
 						(<GiftCard gifts={gifts} navigation={this.navigation}/>)
 						: showPage === 'Collects' ?
-							(<CollectCard />)
+							(<CollectCard navigation={this.navigation}/>)
 							:
 							(<PackageCard packages={packages} navigation={this.navigation}/>)
 				}

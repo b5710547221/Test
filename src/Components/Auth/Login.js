@@ -22,8 +22,8 @@ export default class Login extends Component {
         this.state = {
             isLoading: false,
             isInternet: true,
-            email: '',
-            password: ''
+            email: 'new@gmail.com',
+            password: '12341234'
         }
 
         this.navigation = props.navigation

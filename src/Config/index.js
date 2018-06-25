@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // SET API Server
 export const API = {
-	base: 'http://www.worldenergystation.com/Barkodo2/index.php/response'
+	base: 'http://www.worldenergystation.com/barkodo/index.php/response'
 	//base: "http://192.168.1.85:8888/Barkodo/api/V1/"
 	// base: 'http://localhost:8888/Barkodo2/index.php/response'
 };
@@ -11,7 +11,7 @@ export const API = {
 export const Bakodo_Color = '#B7A5EF'
 export const Loading_Color = '#6E69CC'
 export const getAPI = async (name, params) => {
-	const url = 'http://www.worldenergystation.com/Barkodo2/index.php/response'
+	const url = 'http://www.worldenergystation.com/barkodo/index.php/response'
 	const option = {
 		headers: {
 			'Content-Type': 'application/json'
@@ -26,7 +26,7 @@ export const getAPI = async (name, params) => {
 }
 
 export const getAPIPromise = (name, params) => {
-	const url = 'http://www.worldenergystation.com/Barkodo2/index.php/response'
+	const url = 'http://www.worldenergystation.com/barkodo/index.php/response'
 	const option = {
 		headers: {
 			'Content-Type': 'application/json'
