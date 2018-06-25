@@ -77,6 +77,43 @@ export default class Card extends PureComponent {
                                 </View>
                             </View>
                         )
+                        : type === 'Used Shop List' ? 
+                        (
+                            <View style={styles['Card_Container_Content']}>
+                                <TouchableOpacity onPress={onClick}>
+                                    <Text style={styles['Card_Content_Header']}>{BranchName}</Text>
+                                </TouchableOpacity>
+                                <Text style={styles['Card_Content_SubHeader']}>{PromotionName}</Text>
+                                <Text style={styles['Card_Content_Detail']}>{Description}</Text>
+                                <View style={styles['Card_Content_SubDetail']}>
+                                    <View style={styles['Card_Container_Icon']}>
+                                        <View style={styles['Card_Icon']}>
+                                            <Image
+                                                style={{ height: 10, width: 10 }}
+                                                source={clockIcon}
+                                            />
+                                            <Text style={styles['Card_Icon_Text']}>{EndDate}</Text>
+                                        </View>
+                                        <View style={styles['Card_Icon']}>
+                                            <Image
+                                                style={{ height: 10, width: 8 }}
+                                                source={pinIcon}
+                                            />
+                                            <Text style={styles['Card_Icon_Text']}>500 m(hardcoded)</Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles['Card_Button_Container']}>
+                                        <TouchableOpacity
+                                            onPress={this.onGetPress.bind(this)}
+                                            style={styles['Used_Card_Button']}
+                                            disabled
+                                        >
+                                            <Text style={styles['Used_Card_Button_Text']}>Get</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        )
                         : type === 'Gift' ?
                             (
                                 <TouchableOpacity onPress={onClick}>
@@ -235,8 +272,24 @@ const styles = StyleSheet.create({
         marginTop: 5,
         alignSelf: 'flex-end'
     },
+    Used_Card_Button: {
+        borderWidth: 1,
+        borderColor: '#737373',
+        borderRadius: 13,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '80%',
+        paddingVertical: 6,
+        marginRight: 7,
+        marginTop: 5,
+        alignSelf: 'flex-end'
+    },
     Card_Button_Text: {
         color: '#6E69CC',
+        fontSize: 12
+    },
+    Used_Card_Button_Text: {
+        color: '#737373',
         fontSize: 12
     }
 })

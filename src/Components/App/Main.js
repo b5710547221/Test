@@ -33,6 +33,7 @@ export default class Main extends Component {
             currentPage: 'Shop List',
             historyPage: ['Shop List'],
             welcomeProList: [],
+            usedWelcome: [],
             gitfs: [],
             packages: [],
             searchStatus: false,
@@ -71,6 +72,23 @@ export default class Main extends Component {
             console.log(err)
             Alert.alert('Error loading Welcome Promotion!')
         }
+
+        try {
+            result = await getAPI('getUserWallet', {
+                'user_id': userId,
+                'campaign_type_id': '2'
+            })
+            if (result['data']['response']['status'] === 200) {
+                await this.setState({
+                    usedWelcome: result['data']['response']['result']
+                })
+
+            }
+        } catch (err) {
+            console.log(err)
+            Alert.alert('Error loading Used Welcome Promotion!')
+        }
+
     }
 
     setGifts = async () => {
@@ -78,7 +96,7 @@ export default class Main extends Component {
         try {
             result = await getAPI('getUserWallet', {
                 "user_id": userId,
-                "campaign_type_id": "2"
+                "campaign_type_id": "1"
             })
             console.log(result)
             const gifts = result['data']['response']['result']
@@ -218,7 +236,7 @@ export default class Main extends Component {
 
 
     render() {
-        const { currentPage, welcomeProList, gifts, packages, searchStatus } = this.state
+        const { currentPage, welcomeProList, usedWelcome, gifts, packages, searchStatus } = this.state
         const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header
         console.log('Current Page', currentPage)
 
@@ -243,7 +261,7 @@ export default class Main extends Component {
                 />
                 }
                 {
-                    currentPage === 'Shop List' ? (<ShopList welcomeProList={welcomeProList}
+                    currentPage === 'Shop List' ? (<ShopList welcomeProList={welcomeProList} usedWelcome={usedWelcome}
                         onRefresh={this.onRefresh} navigation={this.navigation}/>)
                         : currentPage === 'Scan' ? (<CameraView 
                             onScanSuccess={this.onRefresh} navigation={this.navigation} 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ActivityIndicator, Alert, AsyncStorage, FlatList, Image, StyleSheet, ScrollView } from 'react-native'
+import { ActivityIndicator, Text, Alert, AsyncStorage, FlatList, Image, StyleSheet, ScrollView, View } from 'react-native'
 import { Container, Content, Button } from 'native-base'
 import GPSState from 'react-native-gps-state'
 import axios from 'axios'
@@ -85,11 +85,19 @@ export default class ShopList extends Component {
 			onGet: this.onGetPromotion
 		})
 	}
+
+	onUsedClick = (item) => {
+		this.navigation.navigate('ShowWelcomePromotion', {
+			data: item,
+			used: true,
+			onGet: this.onGetPromotion
+		})		
+	}
 	
 	render() {
 
 		const { data, isLoading, isNoGPS } = this.state
-		const { welcomeProList} = this.props
+		const { welcomeProList, usedWelcome} = this.props
 
 
 		return (
@@ -98,13 +106,27 @@ export default class ShopList extends Component {
 					isLoading ? <Loading />
 						: isNoGPS ? <NoGPS />
 							:
-							<FlatList
-								data={ welcomeProList }
-								renderItem={({ item, index }) => {
-									return <Card type='Shop List' data={item} onClick={this.onClick.bind(this, item)}
-									onGet={this.onGetPromotion}/>
-								}}
-							/>
+							<View>
+								<FlatList
+									data={ welcomeProList }
+									renderItem={({ item, index }) => {
+										return <Card type='Shop List' data={item} onClick={this.onClick.bind(this, item)}
+										onGet={this.onGetPromotion}/>
+									}}
+								/>	
+								<View style={styles['Used_Promotion_Header']}>
+									<Text>Used Welcome Promotions</Text>
+								</View>
+								<FlatList
+									data={ usedWelcome }
+									renderItem={({ item, index }) => {
+										return <Card type='Used Shop List' data={item} onClick={this.onUsedClick.bind(this, item)}
+										onGet={this.onGetPromotion}/>
+									}}
+								/>								
+							</View>
+
+
 				}
 			</ScrollView>
 		)
@@ -116,5 +138,13 @@ const styles = StyleSheet.create({
 		marginBottom: 5,
 		flex: 1,
 		justifyContent: 'center',
+	},
+	Used_Promotion_Header: {
+		width: '50%',
+		padding: 5,
+		margin: 5,
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'center'
 	}
 })

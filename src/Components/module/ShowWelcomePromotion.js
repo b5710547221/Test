@@ -93,6 +93,7 @@ export default class ShowPromotion extends Component {
 
         const { leftMenu, currentPage, rightMenu } = this.state.header
         const { PromotionName, BranchName, Description, ExpiredDate } = this.navigation.state.params.data
+        const { used } = this.navigation.state.params
         console.log(leftMenu)
         console.log(BranchName)
         return (
@@ -158,10 +159,12 @@ export default class ShowPromotion extends Component {
                                 </View>
                             </TouchableOpacity>
                         </View>
-
-                        <Button style={styles['Button']} onPress={this.onGetPress.bind(this)}>
-                            <Text style={styles['Button_Text']}>Get</Text>
-                        </Button>
+                        { used ? 
+                            <View></View> : 
+                            <Button style={styles['Button']} onPress={this.onGetPress.bind(this)}>
+                                <Text style={styles['Button_Text']}>Get</Text>
+                            </Button>
+                        }
                     </View>
                 </Content>
             </Container>
