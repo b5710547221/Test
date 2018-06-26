@@ -25,7 +25,7 @@ export default class Collect extends Component {
 				data: mockUpData,
 				isLoading: false
 			})
-		}, 1000)
+		}, 0)
 	}
 
 	onClick = (item) => {

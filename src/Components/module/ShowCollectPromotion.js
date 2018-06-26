@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { Platform, StyleSheet, Alert, View, Text, Image, TouchableOpacity } from 'react-native'
 import { Container, Content, Button } from 'native-base'
 import Icon from 'react-native-vector-icons/Ionicons';
+import Grid from 'react-native-grid-component';
+import Svg, { Circle } from 'react-native-svg'
 
 import StatusBar from '../Common/StatusBar'
 import Header from '../Common/Header'
@@ -14,7 +16,6 @@ import ImageClockIcon from '../../images/pointicon.png'
 import ImagePinIcon from '../../images/pointicon2.png'
 import ImageCalendarIcon from '../../images/pointicon3.png'
 import Loading from '../Common/Loading';
-import { Circle } from 'react-native-svg';
 
 const hiddenButton = (
     <Button
@@ -40,7 +41,9 @@ export default class ShowPromotion extends Component {
                 currentPage: null,
                 rightMenu: null
             },
-            circles: []
+            circles: [],
+            width: 0,
+            height: 0
         }
 
         this.navigation = props.navigation
@@ -87,17 +90,27 @@ export default class ShowPromotion extends Component {
         this.navigation.navigate('AddCode', { data: this.props.navigation.state.params.data })
     }
 
+
     renderCircles = () => {
         console.log('circles : ', this.state.circles)
-        let circleElements = this.state.circles.map((item, index) => (<Text key={index}>{item}</Text>))
+        let circleElements = this.state.circles.map((item, index) =>
+            (
+            <View style={styles['Circle_Container']}>
+                <View style={[styles['Circle'], item.isCurrent ? {backgroundColor: 'white'} : {}]}>
+                    <Text style={styles['Circle_Text']} key={index}>{item.number}</Text>
+                </View>
+            </View>))
         console.log(circleElements)
-        return (<View>{circleElements}</View>)
+        return (circleElements)
     }
 
     createCircles = async () => {
         let circles = []
         for (var i = 0; i < 10; i++) {
-            circles.push(i + 1)
+            circles.push({
+                number: i+1,
+                isCurrent: i === 0 ? true : false 
+            })
         }
         console.log(circles)
         await this.setState({
@@ -106,11 +119,11 @@ export default class ShowPromotion extends Component {
         console.log('state ', this.state)
     }
 
-
     render() {
         console.log('ShowCollectionPromotion is rendered!')
         const { leftMenu, currentPage, rightMenu } = this.state.header
         const { PromotionName, BranchName, Description, ExpiredDate, Timeslimit, Times } = this.props.navigation.state.params.data
+        const { circles } = this.state
         const isLimited = Timeslimit != '0'
         return (
             <Container style={styles['Container']}>
@@ -141,16 +154,9 @@ export default class ShowPromotion extends Component {
 
                         <View style={styles['Banner']}>
                             <Text style={styles['Banner_Text']}>1/20 points</Text>
-                            { this.renderCircles() }
-                            {/* {
-                                this.state.circles.map((value) => {
-                                    return (
-                                        <Text>
-                                            {value}
-                                        </Text>
-                                    )
-                                })
-                            } */}
+                            <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap', flexGrow: 0 }}>
+                                {this.renderCircles()}
+                            </View>
                         </View>
                         <View style={styles['FlexDirection_Column']}>
                             <Text style={{ fontWeight: 'bold' }}>Prize</Text>
@@ -203,7 +209,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     Header_Icon_Text: {
-        color: '#FFFFFF',
+        color: '#FDFDFD',
         paddingLeft: 5
     },
     Container: {
@@ -297,20 +303,39 @@ const styles = StyleSheet.create({
         color: '#737373'
     },
     Banner_Text: {
-        color: '#FFFFFF',
-        fontWeight: 'bold'
-    },
-    Banner_Number: {
-        fontSize: 24,
+        color: '#FDFDFD',
         fontWeight: 'bold',
-        color: '#FFFFFF',
-        marginBottom: 10
+        marginTop: 5
     },
     More_Info_Text: {
         textDecorationLine: 'underline',
         fontSize: 10,
         fontWeight: 'bold',
         color: Loading_Color
+    },
+    Circle_Container: {
+        flexBasis: '20%',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 50,
+        width: 50,
+        marginVertical: 5
+    },
+    Circle: {
+        height: 50,
+        width: 50,     
+        borderRadius: 100, 
+        borderWidth: 2,
+        borderStyle: 'dashed', 
+        borderColor: '#FFFFFF',   
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    Circle_Text: {
+        fontWeight: 'bold',
+        fontSize: 22,
+        color: '#FDFDFD'
     }
-
 })

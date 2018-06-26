@@ -51,7 +51,7 @@ export default class ShopList extends Component {
 					isLoading: false,
 					isNoGPS: false
 				})
-			}, 2000)
+			}, 0)
 		} else {
 			await this.setState({
 				isLoading: false,
