@@ -75,7 +75,7 @@ export default class EditProfile extends Component {
 			const userProfile = result['data']['response']['result']
 			console.log('User Profile', userProfile)
 			await this.setState({
-				profile: { ...userProfile, 'avatar': null },
+				profile: { ...userProfile, 'imageUrl': null },
 				isLoading: false
 			})
 			console.log('Component succesfully mounted!')
@@ -178,7 +178,10 @@ export default class EditProfile extends Component {
 			cropping: true,
 			cropperCircleOverlay: true
 		  }).then(image => {
-			console.log(image);
+			console.log(image)
+			this.setState({
+				profile: {...this.state.profile, imageUrl: image.path}
+			})
 		  });
 	}
 
@@ -191,6 +194,7 @@ export default class EditProfile extends Component {
 			{ value: 'FEMALE' }
 		]
 		console.log(profile.birthday, ' ', profile.phoneNumber)
+		console.log('avatar: ', profile.imageUrl)
 
 		return (
 			<Container>
@@ -207,9 +211,9 @@ export default class EditProfile extends Component {
 								<Image
 									style={styles['Profile_Image']}
 									source={
-										profile['avatar'] === null
+										profile['imageUrl'] === null
 											? require('../../images/profile.png')
-											: profile['avatar']
+											: {uri: profile['imageUrl']}
 									}
 								/>
 							</TouchableOpacity>
