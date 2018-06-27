@@ -5,6 +5,7 @@ import { Container, Content, Button } from 'native-base'
 import DatePicker from 'react-native-datepicker'
 import { Dropdown } from 'react-native-material-dropdown'
 import axios from 'axios'
+import ImagePicker from 'react-native-image-crop-picker';
 
 import { API, Bakodo_Color } from '../../Config'
 
@@ -23,9 +24,9 @@ const hiddenButton = (
 )
 export default class EditProfile extends Component {
 
-    static navigationOptions = {
-        header: null
-    }
+	static navigationOptions = {
+		header: null
+	}
 
 	constructor(props) {
 		super(props)
@@ -41,10 +42,10 @@ export default class EditProfile extends Component {
 			shouldProfileUpdate: true,
 			validForm: true,
 			header: {
-                currentPage: null,
-                leftMenu: null,
-                rightMenu: null
-            }
+				currentPage: null,
+				leftMenu: null,
+				rightMenu: null
+			}
 		}
 		console.log('To change profile')
 
@@ -52,54 +53,54 @@ export default class EditProfile extends Component {
 	}
 
 	getAPI = async (name, params) => {
-        const url = API['base']
-        const option = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 10000
-        }
-        const body = {
-            'name': name,
-            'params': params
-        }
-        return await axios.post(url, body, option)
-    }
+		const url = API['base']
+		const option = {
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			timeout: 10000
+		}
+		const body = {
+			'name': name,
+			'params': params
+		}
+		return await axios.post(url, body, option)
+	}
 
-	componentDidMount = async() => {
+	componentDidMount = async () => {
 		await this.setHeader()
 		const userToken = await AsyncStorage.getItem('userToken')
-		try{
+		try {
 			const result = await this.getAPI('getUserDetails', { 'token': userToken })
 			const userProfile = result['data']['response']['result']
 			console.log('User Profile', userProfile)
 			await this.setState({
-				profile: { ... userProfile, 'avatar' : null},
+				profile: { ...userProfile, 'avatar': null },
 				isLoading: false
 			})
 			console.log('Component succesfully mounted!')
-		}catch(err){
+		} catch (err) {
 			console.log(err)
 		}
 	}
 
 	updateFormToState = async (key, value) => {
 		await this.setState({
-			profile: {...this.state.profile, [key]: value}
+			profile: { ...this.state.profile, [key]: value }
 		})
-		if((key === 'firstname' || key === 'lastname') || key == 'email' )
+		if ((key === 'firstname' || key === 'lastname') || key == 'email')
 			await this.checkFormValid(key)
 	}
 
-	checkFormValid = async(key) => {
+	checkFormValid = async (key) => {
 		const text = this.state.profile[key]
-		if(text.trim() === "") {
+		if (text.trim() === "") {
 			await this.setState({
-				inputError: {...this.state.inputError, [key]: true}
+				inputError: { ...this.state.inputError, [key]: true }
 			})
 		} else {
 			await this.setState({
-				inputError: {...this.state.inputError, [key]: false}
+				inputError: { ...this.state.inputError, [key]: false }
 			})
 		}
 
@@ -111,7 +112,7 @@ export default class EditProfile extends Component {
 		const backButton = (
 			<Button
 				style={styles['Header_Icon']}
-				onPress={() => {goBack()}}
+				onPress={() => { goBack() }}
 				transparent
 			>
 				<Image
@@ -137,11 +138,11 @@ export default class EditProfile extends Component {
 		this.navigation.navigate('Auth')
 	}
 
-	onUpdateUserProfile = async() => {
+	onUpdateUserProfile = async () => {
 		const userId = await AsyncStorage.getItem('userId')
 		const { profile } = this.state
-		try{
-			const params = { 
+		try {
+			const params = {
 				"user_id": userId,
 				"email": profile.email,
 				"firstname": profile.firstname,
@@ -158,15 +159,27 @@ export default class EditProfile extends Component {
 			console.log('params', params)
 			const result = await this.getAPI('editUserProfile', params)
 			console.log(result)
-			if(result['data']['response']['status'] === 200 && !result['data']['error']) {
+			if (result['data']['response']['status'] === 200 && !result['data']['error']) {
 				Alert.alert(result['data']['response']['result'])
 				this.navigation.goBack()
-			}			
-		}catch(err){
+			}
+		} catch (err) {
 			console.log(err)
 			Alert.alert('Failed Updating profile')
 		}
 
+	}
+
+	onPickImage = () => {
+		// this.navigation.navigate('PickProfileImage')
+		ImagePicker.openPicker({
+			width: 300,
+			height: 400,
+			cropping: true,
+			cropperCircleOverlay: true
+		  }).then(image => {
+			console.log(image);
+		  });
 	}
 
 	render() {
@@ -174,180 +187,182 @@ export default class EditProfile extends Component {
 		const { profile, isLoading, inputError } = this.state
 		const formIsValid = (!inputError.firstname && !inputError.lastname) && !inputError.email
 		const genderData = [
-            { value: 'MALE' },
-            { value: 'FEMALE' }
+			{ value: 'MALE' },
+			{ value: 'FEMALE' }
 		]
 		console.log(profile.birthday, ' ', profile.phoneNumber)
 
 		return (
 			<Container>
-                <Header
-                    titlePage={currentPage}
-                    leftMenu={leftMenu}
-                    rightMenu={rightMenu}
-                    leftFunction={this.navigation.goBack}
-                />
+				<Header
+					titlePage={currentPage}
+					leftMenu={leftMenu}
+					rightMenu={rightMenu}
+					leftFunction={this.navigation.goBack}
+				/>
 				{isLoading ? <Loading /> :
-				<Content>
-					<View style={styles['Profile_Container']}>
-						<Image
-							style={styles['Profile_Image']}
-							source={
-								profile['avatar'] === null
-									? require('../../images/profile.png')
-									: profile['avatar']
+					<Content>
+						<View style={styles['Profile_Container']}>
+							<TouchableOpacity onPress={this.onPickImage}>
+								<Image
+									style={styles['Profile_Image']}
+									source={
+										profile['avatar'] === null
+											? require('../../images/profile.png')
+											: profile['avatar']
+									}
+								/>
+							</TouchableOpacity>
+						</View>
+						<View style={styles['Card_Container']}>
+							<View style={styles['Card']}>
+								<Text style={styles['Card_Label']}>First Name</Text>
+								<TextInput
+									onChangeText={(firstname) => { this.updateFormToState('firstname', firstname) }}
+									value={profile['firstname']}
+									style={styles['Card_Input']}
+									underlineColorAndroid="transparent"
+								/>
+								{inputError.firstname ? <Text style={styles['Error_Text']}>First Name cannot be empty</Text> : (<View></View>)}
+								<Text style={styles['Card_Label']}>Last Name</Text>
+								<TextInput
+									onChangeText={(lastname) => { this.updateFormToState('lastname', lastname) }}
+									value={profile['lastname']}
+									style={styles['Card_Input']}
+									underlineColorAndroid="transparent"
+								/>
+								{inputError.lastname ? <Text style={styles['Error_Text']}>Last Name cannot be empty</Text> : (<View></View>)}
+								<Text style={styles['Card_Label']}>Email</Text>
+								<TextInput
+									keyboardType="email-address"
+									onChangeText={(email) => this.updateFormToState('email', email)}
+									value={profile['email']}
+									style={styles['Card_Input_Last']}
+									underlineColorAndroid="transparent"
+								/>
+								{inputError.email ? <Text style={styles['Error_Text']}>Email cannot be empty</Text> : (<View></View>)}
+							</View>
+
+							<View style={styles['Card']}>
+								<Text style={styles['Card_Label']}>Birthday</Text>
+								<DatePicker
+									style={styles['Card_DatePicker']}
+									date={profile['birthday']}
+									mode="date"
+									// format="DD/MM/YYYY"
+									format="YYYY-MM-DD"
+									showIcon={false}
+									confirmBtnText="Confirm"
+									cancelBtnText="Cancel"
+									customStyles={{
+										dateInput: {
+											alignItems: 'flex-start',
+											borderWidth: 0,
+										},
+										dateText: {
+											fontSize: 14.7,
+											color: '#838384'
+										}
+									}}
+									onDateChange={(birthday) => { this.updateFormToState('birthday', birthday) }}
+								/>
+								<Text style={styles['Card_Label']}>Gender</Text>
+								<Dropdown
+									style={styles['Card_Dropdown']}
+									value={profile['gender']}
+									data={genderData}
+									onChangeText={(gender) => { this.updateFormToState('gender', gender) }}
+									containerStyle={styles['Card_Dropdown_Container']}
+								/>
+							</View>
+
+							<View style={styles['Card']}>
+								<Text style={styles['Card_Label']}>Address</Text>
+								<TextInput
+									onChangeText={(address) => this.updateFormToState('address', address)}
+									value={profile['address']}
+									style={styles['Card_Input']}
+									underlineColorAndroid="transparent"
+								/>
+								<Text style={styles['Card_Label']}>City</Text>
+								<TextInput
+									onChangeText={(city) => this.updateFormToState('city', city)}
+									value={profile['city']}
+									style={styles['Card_Input']}
+									underlineColorAndroid="transparent"
+								/>
+								<Text style={styles['Card_Label']}>Zip code</Text>
+								<TextInput
+									onChangeText={(zipcode) => this.updateFormToState('zipcode', zipcode)}
+									value={profile['zipcode']}
+									style={styles['Card_Input']}
+									underlineColorAndroid="transparent"
+								/>
+								<Text style={styles['Card_Label']}>Country</Text>
+								<TextInput
+									onChangeText={(country) => this.updateFormToState('country', country)}
+									value={profile['country']}
+									style={styles['Card_Input_Last']}
+									underlineColorAndroid="transparent"
+								/>
+							</View>
+							<View style={styles['Card']}>
+								<Text style={styles['Card_Label']}>Phone Number</Text>
+								<TextInput
+									onChangeText={(phoneNumber) => this.updateFormToState('phonenumber', phoneNumber)}
+									value={profile['phoneNumber']}
+									style={styles['Card_Input']}
+									underlineColorAndroid="transparent"
+								/>
+								<Text style={styles['Card_Label']}>Facebook ID</Text>
+								<TextInput
+									onChangeText={(facebookId) => this.updateFormToState('facebookId', facebookId)}
+									value={profile['facebookId']}
+									style={styles['Card_Input_Last']}
+									underlineColorAndroid="transparent"
+								/>
+							</View>
+						</View>
+						<View>
+							{formIsValid === true ?
+								<Button
+									title="Logout"
+									onPress={() => this.onUpdateUserProfile()}
+									success full large rounded
+								>
+									<Text style={{
+										padding: 10,
+										color: "white",
+									}}
+									>
+										Confirm Editing
+								</Text>
+								</Button>
+								: <Button
+									title="Logout"
+									onPress={() => this.onLogout()}
+									success full large rounded disabled
+								>
+									<Text style={{
+										padding: 10,
+										color: "white",
+									}}
+									>
+										Confirm Editing (Form is not valid)
+								</Text>
+								</Button>
 							}
-						/>
-					</View>
-					<View style={styles['Card_Container']}>
-						<View style={styles['Card']}>
-							<Text style={styles['Card_Label']}>First Name</Text>
-							<TextInput
-								onChangeText={(firstname) => { this.updateFormToState('firstname', firstname) }}
-								value={profile['firstname']}
-								style={styles['Card_Input']}
-								underlineColorAndroid="transparent"
-							/>
-							{ inputError.firstname ? <Text style={styles['Error_Text']}>First Name cannot be empty</Text>  : (<View></View>) }
-							<Text style={styles['Card_Label']}>Last Name</Text>
-							<TextInput
-								onChangeText={(lastname) => { this.updateFormToState('lastname', lastname) }}
-								value={profile['lastname']}
-								style={styles['Card_Input']}
-								underlineColorAndroid="transparent"
-							/>
-							{ inputError.lastname ? <Text style={styles['Error_Text']}>Last Name cannot be empty</Text> : (<View></View>) }
-							<Text style={styles['Card_Label']}>Email</Text>
-							<TextInput
-								keyboardType="email-address"
-								onChangeText={(email) => this.updateFormToState('email', email)}
-								value={profile['email']}
-								style={styles['Card_Input_Last']}
-								underlineColorAndroid="transparent"
-							/>
-							{ inputError.email ?<Text style={styles['Error_Text']}>Email cannot be empty</Text>: (<View></View>) }
-						</View>
-
-						<View style={styles['Card']}>
-							<Text style={styles['Card_Label']}>Birthday</Text>
-                            <DatePicker
-                                style={styles['Card_DatePicker']}
-                                date={profile['birthday']}
-                                mode="date"
-								// format="DD/MM/YYYY"
-								format="YYYY-MM-DD"
-                                showIcon={false}
-                                confirmBtnText="Confirm"
-                                cancelBtnText="Cancel"
-                                customStyles={{
-                                    dateInput: {
-                                        alignItems: 'flex-start',
-                                        borderWidth: 0,
-                                    },
-                                    dateText: {
-                                        fontSize: 14.7,
-                                        color: '#838384'
-                                    }
-                                }}
-                                onDateChange={(birthday) => { this.updateFormToState('birthday', birthday) }}
-                            />							
-							<Text style={styles['Card_Label']}>Gender</Text>
-                            <Dropdown
-                                style={styles['Card_Dropdown']}
-                                value={profile['gender']}
-                                data={genderData}
-                                onChangeText={(gender) => { this.updateFormToState('gender', gender) }}
-                                containerStyle={styles['Card_Dropdown_Container']}
-                            />
-						</View>
-
-						<View style={styles['Card']}>
-							<Text style={styles['Card_Label']}>Address</Text>
-							<TextInput
-								onChangeText={(address) => this.updateFormToState('address', address)}
-								value={profile['address']}
-								style={styles['Card_Input']}
-								underlineColorAndroid="transparent"
-							/>
-							<Text style={styles['Card_Label']}>City</Text>
-							<TextInput
-								onChangeText={(city) => this.updateFormToState('city', city)}
-								value={profile['city']}
-								style={styles['Card_Input']}
-								underlineColorAndroid="transparent"
-							/>
-							<Text style={styles['Card_Label']}>Zip code</Text>
-							<TextInput
-								onChangeText={(zipcode) => this.updateFormToState('zipcode', zipcode)}
-								value={profile['zipcode']}
-								style={styles['Card_Input']}
-								underlineColorAndroid="transparent"
-							/>
-							<Text style={styles['Card_Label']}>Country</Text>
-							<TextInput
-								onChangeText={(country) => this.updateFormToState('country', country)}
-								value={profile['country']}
-								style={styles['Card_Input_Last']}
-								underlineColorAndroid="transparent"
-							/>
-						</View>
-						<View style={styles['Card']}>
-						<Text style={styles['Card_Label']}>Phone Number</Text>
-							<TextInput
-								onChangeText={(phoneNumber) => this.updateFormToState('phonenumber', phoneNumber)}
-								value={profile['phoneNumber']}
-								style={styles['Card_Input']}
-								underlineColorAndroid="transparent"
-							/>
-							<Text style={styles['Card_Label']}>Facebook ID</Text>
-							<TextInput
-								onChangeText={(facebookId) => this.updateFormToState('facebookId', facebookId)}
-								value={profile['facebookId']}
-								style={styles['Card_Input_Last']}
-								underlineColorAndroid="transparent"
-							/>
-						</View>
-					</View>
-					<View>
-						{formIsValid === true ?
+							<View style={{
+								padding: 5,
+							}}></View>
 							<Button
 								title="Logout"
-								onPress={() => this.onUpdateUserProfile()}
-								success full large rounded
-							>
-								<Text style={{
-									padding: 10,
-									color: "white",
-								}}
-								>
-									Confirm Editing
-								</Text>
-							</Button>
-							: <Button
-								title="Logout"
 								onPress={() => this.onLogout()}
-								success full large rounded disabled
-							>
-								<Text style={{
-									padding: 10,
-									color: "white",
-								}}
-								>
-									Confirm Editing (Form is not valid)
-								</Text>
+								danger full large rounded
+							><Text>Logout</Text>
 							</Button>
-						}
-						<View style={{
-							padding: 5,
-						}}></View>
-						<Button
-							title="Logout"
-							onPress={() => this.onLogout()}
-							danger full large rounded
-						><Text>Logout</Text>
-						</Button>
-					</View>
-				</Content>
+						</View>
+					</Content>
 				}
 			</Container>
 		)
@@ -410,19 +425,19 @@ const styles = StyleSheet.create({
 		color: '#838384',
 		fontSize: 16
 	},
-	Error_Text : {
-		color: '#FF0000',	
+	Error_Text: {
+		color: '#FF0000',
 		fontSize: 12,
 		marginBottom: 5
 	},
 	Card_Dropdown: {
-        fontSize: 14.7,
-        color: '#838384'
-    },
-    Card_Dropdown_Container: {
-        marginTop: -20
+		fontSize: 14.7,
+		color: '#838384'
+	},
+	Card_Dropdown_Container: {
+		marginTop: -20
 	},
 	Card_DatePicker: {
-        width: '100%'
-    }
+		width: '100%'
+	}
 })

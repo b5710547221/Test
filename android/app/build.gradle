@@ -100,12 +100,13 @@ android {
     defaultConfig {
         applicationId "com.barkodo_customer"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+        vectorDrawables.useSupportLibrary = true
     }
     splits {
         abi {
@@ -137,6 +138,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-image-crop-picker')
     compile project(':react-native-svg')
     compile project(':react-native-gps-state')
     compile project(':react-native-camera')

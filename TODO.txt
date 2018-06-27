@@ -1,4 +1,5 @@
 1. Log in and Register
+- production build react-native-image-crop-picker
 - End Date to days left
 - shop list no gps does not display appropriate
 - alert does not work in real ios device
