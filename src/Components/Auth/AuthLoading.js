@@ -27,7 +27,6 @@ export default class AuthLoading extends Component {
         const optionLogin = {
             headers: {
                 'Content-Type': 'application/json',
-                'crossDomain': true 
             },
             timeout: 10000
         }
