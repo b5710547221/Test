@@ -45,7 +45,6 @@
 		4AD7D62BD5FB40548A3097D7 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5109679187C453AB54D7863 /* Octicons.ttf */; };
 		5E06992ACD1F403FADB1CD56 /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CA559474D5AA4D4CBF27757D /* rubicon-icon-font.ttf */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
-		5F76624B20E237C800806629 /* ImageCropPickerSDK in Resources */ = {isa = PBXBuildFile; fileRef = 5F76624A20E237C800806629 /* ImageCropPickerSDK */; };
 		5F76624D20E2382900806629 /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F76624C20E2382900806629 /* RSKImageCropper.framework */; };
 		5F76624E20E2382900806629 /* RSKImageCropper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5F76624C20E2382900806629 /* RSKImageCropper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5F76625120E2383200806629 /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F76625020E2383200806629 /* QBImagePicker.framework */; };
@@ -437,7 +436,6 @@
 		4CA0227509EF49E1B2AAC5B3 /* libimageCropPicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libimageCropPicker.a; sourceTree = "<group>"; };
 		5A4905F9D210415D8BA1F241 /* libSplashScreen.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSplashScreen.a; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
-		5F76624A20E237C800806629 /* ImageCropPickerSDK */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ImageCropPickerSDK; path = "../node_modules/react-native-image-crop-picker/ios/ImageCropPickerSDK"; sourceTree = "<group>"; };
 		5F76624C20E2382900806629 /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F76625020E2383200806629 /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		649376414F2E4C108ED50C70 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
@@ -769,7 +767,6 @@
 			children = (
 				5F76625020E2383200806629 /* QBImagePicker.framework */,
 				5F76624C20E2382900806629 /* RSKImageCropper.framework */,
-				5F76624A20E237C800806629 /* ImageCropPickerSDK */,
 				13B07FAE1A68108700A75B9A /* Barkodo_Customer */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* Barkodo_CustomerTests */,
@@ -1355,7 +1352,6 @@
 				2BCAA9BF024A4382B992B43C /* MaterialIcons.ttf in Resources */,
 				4AD7D62BD5FB40548A3097D7 /* Octicons.ttf in Resources */,
 				122010129D624C509F270ECA /* Roboto_medium.ttf in Resources */,
-				5F76624B20E237C800806629 /* ImageCropPickerSDK in Resources */,
 				C138259F1B2947BEBE756BF6 /* Roboto.ttf in Resources */,
 				5E06992ACD1F403FADB1CD56 /* rubicon-icon-font.ttf in Resources */,
 				D96FF35732D84D6C923DCCBF /* SimpleLineIcons.ttf in Resources */,

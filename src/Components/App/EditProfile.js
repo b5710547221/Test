@@ -179,27 +179,29 @@ export default class EditProfile extends Component {
 			cropperCircleOverlay: true
 		  }).then(image => {
 			console.log(image)
+			this.setState({
+				profile: {...profile, imageUrl: image.path}
+			})
+			// var data = new FormData();
+			// data.append('my_photo', {
+			//   uri: image.path, // your file path string
+			//   name: 'my_photo.jpg',
+			//   type: image.mime
+			// })
 
-			var data = new FormData();
-			data.append('my_photo', {
-			  uri: image.path, // your file path string
-			  name: 'my_photo.jpg',
-			  type: image.mime
-			})
-
-			fetch('http://www.worldenergystation.com/barkodo/assets/new', {
-				headers: {
-				  'Accept': 'application/json',
-				  'Content-Type': 'multipart/form-data'
-				},
-				method: 'POST',
-				body: data
-			})
-			//.then(res => res.json())
-			.then(resJson => {console.log('Fetch Response', resJson)})
-			.catch(err => {
-				console.log('Fetch Error', err)	
-			})
+			// fetch('http://www.worldenergystation.com/barkodo/assets/new', {
+			// 	headers: {
+			// 	  'Accept': 'application/json',
+			// 	  'Content-Type': 'multipart/form-data'
+			// 	},
+			// 	method: 'POST',
+			// 	body: data
+			// })
+			// //.then(res => res.json())
+			// .then(resJson => {console.log('Fetch Response', resJson)})
+			// .catch(err => {
+			// 	console.log('Fetch Error', err)	
+			// })
 		})
 	}
 
