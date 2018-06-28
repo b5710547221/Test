@@ -180,7 +180,7 @@ export default class EditProfile extends Component {
 		  }).then(image => {
 			console.log(image)
 			this.setState({
-				profile: {...profile, imageUrl: image.path}
+				profile: {...this.state.profile, imageUrl: image.path}
 			})
 			// var data = new FormData();
 			// data.append('my_photo', {

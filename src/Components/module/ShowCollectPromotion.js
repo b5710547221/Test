@@ -95,7 +95,7 @@ export default class ShowPromotion extends Component {
         console.log('circles : ', this.state.circles)
         let circleElements = this.state.circles.map((item, index) =>
             (
-            <View style={styles['Circle_Container']}>
+            <View style={styles['Circle_Container']} key={index}>
                 <View style={[styles['Circle'], item.isCurrent ? {backgroundColor: 'white'} : {}]}>
                     <Text style={styles['Circle_Text']} key={index}>{item.number}</Text>
                 </View>
@@ -124,7 +124,6 @@ export default class ShowPromotion extends Component {
         const { leftMenu, currentPage, rightMenu } = this.state.header
         const { PromotionName, BranchName, Description, ExpiredDate, Timeslimit, Times } = this.props.navigation.state.params.data
         const { circles } = this.state
-        const isLimited = Timeslimit != '0'
         return (
             <Container style={styles['Container']}>
                 <StatusBar />
