@@ -1,5 +1,4 @@
-1. Log in and Register
-- production build react-native-image-crop-picker
+
 - End Date to days left
 - shop list no gps does not display appropriate
 - alert does not work in real ios device
@@ -8,6 +7,5 @@
 - deal with the case that have expired token in AuthLoading.js
 - clean up and organize navigation in AppNew.js
 - change Main.js
-- Change Login to work with e-mail
 - regular expression for signup form
 - Connect with facebook

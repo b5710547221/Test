@@ -90,7 +90,6 @@ export default class ShowPromotion extends Component {
         this.navigation.navigate('AddCode', { data: this.props.navigation.state.params.data })
     }
 
-
     renderCircles = () => {
         console.log('circles : ', this.state.circles)
         let circleElements = this.state.circles.map((item, index) =>
