@@ -6,7 +6,7 @@ import DatePicker from 'react-native-datepicker'
 import { Dropdown } from 'react-native-material-dropdown'
 import axios from 'axios'
 import ImagePicker from 'react-native-image-crop-picker';
-
+import RNFetchBlob from 'rn-fetch-blob'
 import { API, Bakodo_Color } from '../../Config'
 
 import { BackIcon, HiddenIcon } from '../Common/Icon'
@@ -45,7 +45,11 @@ export default class EditProfile extends Component {
 				currentPage: null,
 				leftMenu: null,
 				rightMenu: null
-			}
+			},
+			userId: null,
+			userToken: null,
+
+
 		}
 		console.log('To change profile')
 
@@ -68,20 +72,28 @@ export default class EditProfile extends Component {
 	}
 
 	componentDidMount = async () => {
-		await this.setHeader()
 		const userToken = await AsyncStorage.getItem('userToken')
+		const userId = await AsyncStorage.getItem('userId')
+		await this.setState({
+			userToken, userId
+		})		
+		await this.setHeader()
+		await this.getUserDetails()
+	}
+	
+	getUserDetails = async () => {
 		try {
-			const result = await this.getAPI('getUserDetails', { 'token': userToken })
+			const result = await this.getAPI('getUserDetails', { 'token': this.state.userToken })
 			const userProfile = result['data']['response']['result']
 			console.log('User Profile', userProfile)
 			await this.setState({
-				profile: { ...userProfile, 'imageUrl': null },
+				profile: userProfile,
 				isLoading: false
 			})
 			console.log('Component succesfully mounted!')
 		} catch (err) {
 			console.log(err)
-		}
+		}		
 	}
 
 	updateFormToState = async (key, value) => {
@@ -139,11 +151,10 @@ export default class EditProfile extends Component {
 	}
 
 	onUpdateUserProfile = async () => {
-		const userId = await AsyncStorage.getItem('userId')
 		const { profile } = this.state
 		try {
 			const params = {
-				"user_id": userId,
+				"user_id": this.state.userId,
 				"email": profile.email,
 				"firstname": profile.firstname,
 				"lastname": profile.lastname,
@@ -172,16 +183,29 @@ export default class EditProfile extends Component {
 
 	onPickImage = () => {
 		// this.navigation.navigate('PickProfileImage')
-		ImagePicker.openPicker({
+		const image = ImagePicker.openPicker({
 			width: 300,
 			height: 400,
 			cropping: true,
-			cropperCircleOverlay: true
-		  }).then(image => {
+			cropperCircleOverlay: true,
+			includeBase64: true
+		}).then(image => {
 			console.log(image)
 			this.setState({
-				profile: {...this.state.profile, imageUrl: image.path}
+				profile: { ...this.state.profile, imageUrl: image.path }
 			})
+			RNFetchBlob.fetch('POST', 'http://worldenergystation.com/barkodo/index.php/response/imgupload/'+this.state.userId, {
+				'Content-Type': 'multipart/form-data',
+			}, [
+					{ name: 'image', filename: 'image'+image.mime, type: image.mime, data: image.data },
+				]).then((resp) => {
+					console.log('Upload image resp', resp)
+					this.getUserDetails()
+					// ...
+				}).catch((err) => {
+					// ...
+					console.log('Upload error : ', err)
+				})
 			// var data = new FormData();
 			// data.append('my_photo', {
 			//   uri: image.path, // your file path string
@@ -214,7 +238,8 @@ export default class EditProfile extends Component {
 			{ value: 'FEMALE' }
 		]
 		console.log(profile.birthday, ' ', profile.phoneNumber)
-		console.log('avatar: ', profile.imageUrl)
+		const avatarUrl = 'http://worldenergystation.com/barkodo/assets/img/users/' + profile['imageUrl']
+		console.log('avatar: ', avatarUrl)
 
 		return (
 			<Container>
@@ -233,7 +258,7 @@ export default class EditProfile extends Component {
 									source={
 										profile['imageUrl'] === null
 											? require('../../images/profile.png')
-											: {uri: profile['imageUrl']}
+											: { uri: avatarUrl }
 									}
 								/>
 							</TouchableOpacity>
