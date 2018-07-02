@@ -147,13 +147,13 @@ export default class EditProfile extends Component {
 				"email": profile.email,
 				"firstname": profile.firstname,
 				"lastname": profile.lastname,
-				"phonenumber": profile.phoneNumber,
+				"phonenumber": profile.phoneNumber === null ? "" : profile.phoneNumber,
 				"gender": profile.gender,
-				"facebookId": profile.facebookId,
-				"address": profile.address,
-				"city": profile.city,
-				"zipcode": profile.zipcode,
-				"country": profile.country,
+				"facebookId": profile.facebookId === null ? "" : profile.facebookId,
+				"address": profile.address === null ? "" : profile.address,
+				"city": profile.city === null ? "" : profile.city,
+				"zipcode": profile.zipcode === null ? "" : profile.zipcode,
+				"country": profile.country === null ? "" : profile.country,
 				"birthday": profile.birthday
 			}
 			console.log('params', params)

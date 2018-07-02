@@ -15,7 +15,7 @@ export default class AuthLoading extends Component {
         console.log('Auth Loading')
     }
 
-    componentDidMount() {
+    componentDidMount = async() => {
         await this._checkAuthOnStart()
     }
 

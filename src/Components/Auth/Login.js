@@ -63,20 +63,9 @@ export default class Login extends Component {
     }
 
     getUserId = async(userToken) => {
-        const urlLogin = API['base']
-        const dataLogin = {
-            'name' : 'getUserDetails',
-            'params': {
-                'token': userToken
-            }
-        }
-        const optionLogin = {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            timeout: 10000
-        }
-        result = await axios.post(urlLogin, dataLogin, optionLogin)
+        result = await getAPI('getUserDetails', {
+            'token': userToken
+        })
         console.log('User Id: ', result['data']['response']['result']['userId'])
         return result['data']['response']['result']['userId']
     }
