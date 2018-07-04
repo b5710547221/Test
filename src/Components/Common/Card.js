@@ -63,7 +63,7 @@ export default class Card extends PureComponent {
                                                 style={{ height: 10, width: 8 }}
                                                 source={pinIcon}
                                             />
-                                            <Text style={styles['Card_Icon_Text']}>500 m(hardcoded)</Text>
+                                            <Text style={styles['Card_Icon_Text']}>N/A</Text>
                                         </View>
                                     </View>
                                     <View style={styles['Card_Button_Container']}>
@@ -99,7 +99,7 @@ export default class Card extends PureComponent {
                                                     style={{ height: 10, width: 8 }}
                                                     source={pinIcon}
                                                 />
-                                                <Text style={styles['Card_Icon_Text']}>500 m(hardcoded)</Text>
+                                                <Text style={styles['Card_Icon_Text']}>N/A</Text>
                                             </View>
                                         </View>
                                         <View style={styles['Card_Button_Container']}>
@@ -135,7 +135,7 @@ export default class Card extends PureComponent {
                                                             style={{ height: 10, width: 8 }}
                                                             source={pinIcon}
                                                         />
-                                                        <Text style={styles['Card_Icon_Text']}>500 m(hardcoded)</Text>
+                                                        <Text style={styles['Card_Icon_Text']}>N/A</Text>
                                                     </View>
                                                 </View>
                                             </View>
@@ -148,7 +148,7 @@ export default class Card extends PureComponent {
                                         <TouchableOpacity onPress={onClick}>
                                             <View style={styles['Card_Container_Content']}>
 
-                                                <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>{PromotionName}</Text>
+                                                <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>{BranchName}</Text>
                                                 <Text style={styles['Card_Content_Special']}>{Math.floor(Math.random() * 100) + 1} points</Text>
                                                 <View style={styles['Card_Container_Icon']}>
                                                     <View style={styles['Card_Icon']}>

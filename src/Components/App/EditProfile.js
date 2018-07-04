@@ -80,7 +80,7 @@ export default class EditProfile extends Component {
 		await this.setHeader()
 		await this.getUserDetails()
 	}
-	
+
 	getUserDetails = async () => {
 		try {
 			const result = await this.getAPI('getUserDetails', { 'token': this.state.userToken })
@@ -206,26 +206,6 @@ export default class EditProfile extends Component {
 					// ...
 					console.log('Upload error : ', err)
 				})
-			// var data = new FormData();
-			// data.append('my_photo', {
-			//   uri: image.path, // your file path string
-			//   name: 'my_photo.jpg',
-			//   type: image.mime
-			// })
-
-			// fetch('http://www.worldenergystation.com/barkodo/assets/new', {
-			// 	headers: {
-			// 	  'Accept': 'application/json',
-			// 	  'Content-Type': 'multipart/form-data'
-			// 	},
-			// 	method: 'POST',
-			// 	body: data
-			// })
-			// //.then(res => res.json())
-			// .then(resJson => {console.log('Fetch Response', resJson)})
-			// .catch(err => {
-			// 	console.log('Fetch Error', err)	
-			// })
 		})
 	}
 

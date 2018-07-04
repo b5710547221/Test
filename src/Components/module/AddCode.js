@@ -104,9 +104,9 @@ export default class AddCode extends Component {
         const { leftMenu, currentPage, rightMenu } = this.state.header
         console.log('Navigation', this.navigation.state.params.data)
         const { PromotionName, BranchName, Description, ExpiredDate } = this.navigation.state.params.data
+        const reward = this.navigation.state.params.reward
+        console.log('reward: ', reward)
         const { isPassCode } = this.state
-        console.log('pc 2', isPassCode[2])
-        console.log(leftMenu)
         return (
             <Container style={styles['Container']}>
                 <StatusBar />
@@ -118,7 +118,7 @@ export default class AddCode extends Component {
                 <Content>
                     <View style={styles['Content']}>
                         <Text style={styles['Header']}>{BranchName}</Text>
-                        <Text style={styles['SubHeader']}>{PromotionName}</Text>
+                        <Text style={styles['SubHeader']}>{reward ? reward.desc : PromotionName}</Text>
                         <View style={styles['Carousel']}>
                             <Carousel />
                         </View>
