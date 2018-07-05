@@ -125,14 +125,14 @@ export default class ShowPromotion extends Component {
                 <View style={styles["Circle_Container"]} key={index}>
                     <View
                         style={
-                            item.reward && item.reward.used
+                            item.reward !== null && item.reward.used
                                 ? styles["Circle_Used"]
                                 : item.isStamped
                                     ? styles["Circle_Stamped"]
                                     : styles["Circle"]
                         }
                     >
-                        {item.reward ? (
+                        {item.reward !== null ? (
                             item.reward.used ? (
                                 <Image
                                     style={styles["Reward_Image"]}

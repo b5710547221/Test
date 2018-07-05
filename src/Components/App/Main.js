@@ -163,11 +163,20 @@ export default class Main extends Component {
             await this.setState({
                 header: header,
                 currentPage: goToPage,
-                historyPage: historyPage
-            })              
+                historyPage: historyPage,
+                searchText: '', 
+                searchStatus: false
+            }) 
+
         }
 
         // console.log(this.state.historyPage)
+    }
+
+    onChangeSearchText = (value) => {
+        this.setState({
+            searchText: value
+        })
     }
 
     setHeader = (goToPage) => {
@@ -236,7 +245,7 @@ export default class Main extends Component {
 
 
     render() {
-        const { currentPage, welcomeProList, usedWelcome, gifts, packages, searchStatus } = this.state
+        const { currentPage, welcomeProList, usedWelcome, gifts, packages, searchStatus, searchText } = this.state
         const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header
         console.log('Current Page', currentPage)
 
@@ -247,7 +256,8 @@ export default class Main extends Component {
                 <Header
                     titlePage={currentPage}
                     leftMenu={leftButton}
-                    rightMenu={<Search searchStatus={searchStatus} onToggle={this.onToggleSearchStatus.bind(this)}/>}
+                    rightMenu={<Search searchStatus={searchStatus} onToggle={this.onToggleSearchStatus.bind(this)} 
+                    onChangeSearchText={this.onChangeSearchText} searchText={searchText}/>}
                     leftFunction={leftFunction}
                     rightFunction={rightFunction}
                 />                
