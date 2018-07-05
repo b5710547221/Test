@@ -18,21 +18,27 @@ export default class Header extends Component {
 
         return (
             <View style={styles['Header']}>
-                <TouchableOpacity
-                    style={styles['Left']}
-                    onPress={() => { leftFunction ? leftFunction() : {} }}
-                >
-                    {leftMenu}
-                </TouchableOpacity>
+                <View style={styles['Left_Container']}>
+                    <TouchableOpacity
+                        style={styles['Left']}
+                        onPress={() => { leftFunction ? leftFunction() : {} }}
+                    >
+                        {leftMenu}
+                    </TouchableOpacity>                
+                </View>
+
                 <View style={styles['Center']}>
                     <Text style={styles['Center_Text']}>{titlePage ? titlePage : ''}</Text>
                 </View>
-                <TouchableOpacity
-                    style={styles['Right']}
-                    onPress={() => { rightFunction ? rightFunction() : {} }}
-                >
-                    {rightMenu}
-                </TouchableOpacity>
+                <View style={styles['Right_Container']}>
+                    <TouchableOpacity
+                        style={styles['Right']}
+                        onPress={() => { rightFunction ? rightFunction() : {} }}
+                    >
+                        {rightMenu}
+                    </TouchableOpacity>                
+                </View>
+
             </View>
         )
     }
@@ -61,5 +67,15 @@ const styles = StyleSheet.create({
     },
     Right: {
         paddingRight: 5
+    },
+    Right_Container: {
+        width: 120,
+        flexDirection: 'row',
+        justifyContent: 'flex-end'
+    },
+    Left_Container: {
+        width: 120,
+        flexDirection: 'row',
+        justifyContent: 'flex-start'
     }
 })

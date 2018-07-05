@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 })
 
 export const SearchIcon = (
-    <View
+    <View 
         style={styles['Header_Icon']}
         transparent
     >
