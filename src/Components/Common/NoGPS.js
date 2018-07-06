@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-import GPSState from 'react-native-gps-state'
+// import GPSState from 'react-native-gps-state'
 
 import { Bakodo_Color } from '../../Config'
 
@@ -12,7 +12,7 @@ export default class NoGPS extends Component {
     }
 
     onOpenSetting = () => {
-        GPSState.openSettings()
+        // GPSState.openSettings()
     }
 
     render() {

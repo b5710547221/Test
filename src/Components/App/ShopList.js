@@ -11,7 +11,7 @@ import {
     View
 } from "react-native";
 import { Container, Content, Button } from "native-base";
-import GPSState from "react-native-gps-state";
+// import GPSState from "react-native-gps-state";
 import axios from "axios";
 
 import { getAPI, Loading_Color } from "../../Config";
@@ -32,8 +32,10 @@ export default class ShopList extends Component {
 
         this.state = {
             data: [],
-            isLoading: true,
-            isNoGPS: true,
+            // isLoading: true,
+			// isNoGPS: true,
+			isLoading: false,
+			isNoGPS: false,
 
             simulator: true
         };
@@ -42,13 +44,13 @@ export default class ShopList extends Component {
     }
 
     componentDidMount = async () => {
-        const statusGPS = await GPSState.getStatus();
+        // const statusGPS = await GPSState.getStatus();
 
-        this.checkStatusGPS(statusGPS);
+        // this.checkStatusGPS(statusGPS);
 
-        GPSState.addListener(async status => {
-            await this.checkStatusGPS(status);
-        });
+        // GPSState.addListener(async status => {
+        //     await this.checkStatusGPS(status);
+        // });
     };
 
     checkStatusGPS = async status => {
@@ -86,7 +88,7 @@ export default class ShopList extends Component {
     };
 
     componentWillUnmount() {
-        GPSState.removeListener();
+        // GPSState.removeListener();
     }
 
     onClick = item => {

@@ -17,7 +17,6 @@
     "react-native-camera": "^1.1.4",
     "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^0.19.1",
-    "react-native-gps-state": "0.0.2",
     "react-native-grid-component": "^1.1.0",
     "react-native-image-crop-picker": "^0.20.3",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",

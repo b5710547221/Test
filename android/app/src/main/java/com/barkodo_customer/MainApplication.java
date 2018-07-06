@@ -7,7 +7,6 @@ import com.oblador.vectoricons.VectorIconsPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.horcrux.svg.SvgPackage;
-import br.com.dopaminamob.gpsstate.GPSStatePackage;
 import org.reactnative.camera.RNCameraPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.facebook.react.ReactNativeHost;
@@ -34,7 +33,6 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFetchBlobPackage(),
             new PickerPackage(),
             new SvgPackage(),
-            new GPSStatePackage(),
             new RNCameraPackage(),
             new SplashScreenReactPackage()
       );
