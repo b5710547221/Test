@@ -1,5 +1,5 @@
 - Add Loading in Shop List
-- Prettier image crop pick
+- Prettier image crop pick (Actionsheet native-base)
 - Android permission for rn-fetch-blob
 - fix android react-native gps state
 - End Date to days left

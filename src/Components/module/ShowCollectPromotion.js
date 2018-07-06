@@ -194,6 +194,7 @@ export default class ShowPromotion extends Component {
     };
 
     createCircles = async () => {
+        console.log('In create circles!')
         let circles = [];
         for (var i = 0; i < this.state.maxPoints; i++) {
             const rewards = this.state.rewards.filter(

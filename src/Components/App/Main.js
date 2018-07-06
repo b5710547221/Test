@@ -13,14 +13,15 @@ import {
 import { Container, Content, Button, Icon } from "native-base";
 import axios from "axios";
 
-import CameraView from "./Scan";
-import Wallet from "./MyWallet";
-import ShopList from "./ShopList";
+import CameraView from "./Scan"
+import Wallet from "./MyWallet"
+import ShopList from "./ShopList"
 import { Loading_Color } from "../../Config";
-import { SearchIcon, BackIcon, HiddenIcon } from "../Common/Icon";
-import Header from "../Common/Header";
-import Footer from "../Common/Footer";
-import Search from "./Search";
+import { SearchIcon, BackIcon, HiddenIcon } from "../Common/Icon"
+import Header from "../Common/Header"
+import Footer from "../Common/Footer"
+import Search from "./Search"
+import Filter from "./Filter"
 
 import { getAPI } from "../../Config";
 
@@ -270,7 +271,8 @@ export default class Main extends Component {
                 {currentPage == "Shop List" || currentPage == "My Wallet" ? (
                     <Header
                         titlePage={currentPage}
-                        leftMenu={leftButton}
+                        //leftMenu={leftButton}
+                        leftMenu={<Filter />}
                         rightMenu={
                             <Search
                                 searchStatus={searchStatus}
