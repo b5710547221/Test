@@ -35,7 +35,14 @@ export default class Gift extends Component {
 	render() {
 
 		const { isLoading, data } = this.state
-		const { gifts, onClick } = this.props
+		const { gifts, onClick, searchText, searchStatus  } = this.props
+        const filteredGifts = searchStatus
+            ? gifts.filter(item =>
+                  item.BranchName.toLowerCase().includes(
+                      searchText.toLowerCase()
+                  )
+              )
+            : gifts;
 		console.log(gifts)
 		return (
 			<ScrollView style={styles['Gift']}>
@@ -43,7 +50,7 @@ export default class Gift extends Component {
 					isLoading ? <Loading />
 						:
 						<FlatList
-							data={gifts}
+							data={filteredGifts}
 							renderItem={({ item, index }) => {
 								return <Card type='Gift' data={item} onClick={this.onClick.bind(this, item)}/>
 							}}

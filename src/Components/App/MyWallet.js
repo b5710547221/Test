@@ -36,7 +36,7 @@ export default class MyWallet extends Component {
 	}
 
 	render() {
-		const { gifts, packages } = this.props
+		const { gifts, packages, searchText, searchStatus } = this.props
 		const { showPage } = this.state
 		console.log(showPage)
 
@@ -78,11 +78,11 @@ export default class MyWallet extends Component {
 				</View>
 				{
 					showPage === 'Gifts' ?
-						(<GiftCard gifts={gifts} navigation={this.navigation}/>)
+						(<GiftCard gifts={gifts} navigation={this.navigation} searchText={searchText} searchStatus={searchStatus}/>)
 						: showPage === 'Collects' ?
-							(<CollectCard navigation={this.navigation}/>)
+							(<CollectCard navigation={this.navigation} searchText={searchText} searchStatus={searchStatus}/>)
 							:
-							(<PackageCard packages={packages} navigation={this.navigation}/>)
+							(<PackageCard packages={packages} navigation={this.navigation} searchText={searchText} searchStatus={searchStatus}/>)
 				}
 			</View>
 		)

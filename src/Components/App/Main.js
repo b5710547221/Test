@@ -1,28 +1,37 @@
-import React, { Component } from 'react'
-import { AsyncStorage, Alert, BackHandler, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { Container, Content, Button, Icon } from 'native-base'
-import axios from 'axios'
+import React, { Component } from "react";
+import {
+    AsyncStorage,
+    Alert,
+    BackHandler,
+    Image,
+    Platform,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from "react-native";
+import { Container, Content, Button, Icon } from "native-base";
+import axios from "axios";
 
-import CameraView from './Scan'
-import Wallet from './MyWallet'
-import ShopList from './ShopList'
-import { Loading_Color } from '../../Config'
-import { SearchIcon, BackIcon, HiddenIcon } from '../Common/Icon'
-import Header from '../Common/Header'
-import Footer from '../Common/Footer'
-import Search from './Search'
+import CameraView from "./Scan";
+import Wallet from "./MyWallet";
+import ShopList from "./ShopList";
+import { Loading_Color } from "../../Config";
+import { SearchIcon, BackIcon, HiddenIcon } from "../Common/Icon";
+import Header from "../Common/Header";
+import Footer from "../Common/Footer";
+import Search from "./Search";
 
-import { getAPI} from '../../Config'
+import { getAPI } from "../../Config";
 
 export default class Main extends Component {
-
     static navigationOptions = {
         header: null
-    }
+    };
 
     constructor(props) {
-        super(props)
-        console.log('Page changed!')
+        super(props);
+        console.log("Page changed!");
         this.state = {
             header: {
                 leftButton: HiddenIcon,
@@ -30,122 +39,119 @@ export default class Main extends Component {
                 leftFunction: null,
                 rightFunction: null
             },
-            currentPage: 'Shop List',
-            historyPage: ['Shop List'],
+            currentPage: "Shop List",
+            historyPage: ["Shop List"],
             welcomeProList: [],
             usedWelcome: [],
             gitfs: [],
             packages: [],
             searchStatus: false,
-            searchText: ''
-        }
+            searchText: ""
+        };
 
-        this.navigation = props.navigation
+        this.navigation = props.navigation;
     }
 
     componentDidMount = async () => {
-        if (Platform.OS === 'android') {
-            BackHandler.addEventListener('hardwareBackPress', this.onBackPage)
+        if (Platform.OS === "android") {
+            BackHandler.addEventListener("hardwareBackPress", this.onBackPage);
         }
-        console.log('Component Did mount')
-        await this.setWelcomeList()
-        await this.setGifts()
-        await this.setPackages()
-    }
+        console.log("Component Did mount");
+        await this.setWelcomeList();
+        await this.setGifts();
+        await this.setPackages();
+    };
 
     setWelcomeList = async () => {
-
-        const userId = await AsyncStorage.getItem('userId')
-        console.log('test', userId)
+        const userId = await AsyncStorage.getItem("userId");
+        console.log("test", userId);
         try {
-            result = await getAPI('GetAllWelcomePromotionList', {
-                'user_id': userId,
-                'campaign_type_id': '2'
-            })
-            if (result['data']['response']['status'] === 200) {
+            result = await getAPI("GetAllWelcomePromotionList", {
+                user_id: userId,
+                campaign_type_id: "2"
+            });
+            if (result["data"]["response"]["status"] === 200) {
                 await this.setState({
-                    welcomeProList: result['data']['response']['result']
-                })
-
+                    welcomeProList: result["data"]["response"]["result"]
+                });
             }
         } catch (err) {
-            console.log(err)
-            Alert.alert('Error loading Welcome Promotion!')
+            console.log(err);
+            Alert.alert("Error loading Welcome Promotion!");
         }
 
         try {
-            result = await getAPI('getUserWallet', {
-                'user_id': userId,
-                'campaign_type_id': '2'
-            })
-            if (result['data']['response']['status'] === 200) {
+            result = await getAPI("getUserWallet", {
+                user_id: userId,
+                campaign_type_id: "2"
+            });
+            if (result["data"]["response"]["status"] === 200) {
                 await this.setState({
-                    usedWelcome: result['data']['response']['result']
-                })
-
+                    usedWelcome: result["data"]["response"]["result"]
+                });
             }
         } catch (err) {
-            console.log(err)
-            Alert.alert('Error loading Used Welcome Promotion!')
+            console.log(err);
+            Alert.alert("Error loading Used Welcome Promotion!");
         }
-
-    }
+    };
 
     setGifts = async () => {
-        const userId = await AsyncStorage.getItem('userId')
+        const userId = await AsyncStorage.getItem("userId");
         try {
-            result = await getAPI('getUserWallet', {
-                "user_id": userId,
-                "campaign_type_id": "1"
-            })
-            console.log(result)
-            const gifts = result['data']['response']['result']
-            console.log(gifts)
-            if (result['data']['response']['status'] === 200) {
+            result = await getAPI("getUserWallet", {
+                user_id: userId,
+                campaign_type_id: "1"
+            });
+            console.log(result);
+            const gifts = result["data"]["response"]["result"];
+            console.log(gifts);
+            if (result["data"]["response"]["status"] === 200) {
                 await this.setState({
-                    gifts: result['data']['response']['result']
-                })
-                console.log(this.state.gifts)
+                    gifts: result["data"]["response"]["result"]
+                });
+                console.log(this.state.gifts);
             }
         } catch (err) {
-            console.log(err)
-            Alert.alert('Error loading Gifts')
+            console.log(err);
+            Alert.alert("Error loading Gifts");
         }
-    }
+    };
 
-    setPackages = async() => {
-       
-        const userId = await AsyncStorage.getItem('userId')
-        console.log('packages user Id', userId)
+    setPackages = async () => {
+        const userId = await AsyncStorage.getItem("userId");
+        console.log("packages user Id", userId);
         try {
+            result = await getAPI("getUserWallet", {
+                user_id: userId,
+                campaign_type_id: "3"
+            });
 
-            result = await getAPI('getUserWallet', {
-                "user_id": userId,
-                "campaign_type_id": "3"
-            })
-             
-            const packages = result['data']['response']['result']
-            console.log(packages)
-            if (result['data']['response']['status'] === 200) {
+            const packages = result["data"]["response"]["result"];
+            console.log(packages);
+            if (result["data"]["response"]["status"] === 200) {
                 await this.setState({
-                    packages: result['data']['response']['result']
-                })
-                console.log(this.state.packages)
+                    packages: result["data"]["response"]["result"]
+                });
+                console.log(this.state.packages);
             }
         } catch (err) {
-            console.log(err)
-            Alert.alert('Error loading Packages')
+            console.log(err);
+            Alert.alert("Error loading Packages");
         }
-    }
+    };
 
     componentWillUnmount = () => {
-        if (Platform.OS === 'android') {
-            BackHandler.removeEventListener('hardwareBackPress', this.onBackPage)
+        if (Platform.OS === "android") {
+            BackHandler.removeEventListener(
+                "hardwareBackPress",
+                this.onBackPage
+            );
         }
-    }
+    };
 
-    onChangePage = async (goToPage) => {
-        let { historyPage } = this.state
+    onChangePage = async goToPage => {
+        let { historyPage } = this.state;
         // let filterHistory = true
         // for (let index in historyPage) {
         //     if (goToPage === historyPage[index]) {
@@ -153,145 +159,173 @@ export default class Main extends Component {
         //     }
         // }
         // if (filterHistory) {
-        historyPage.push(goToPage)
+        historyPage.push(goToPage);
         // }
-        let header = this.setHeader(goToPage)
-        if(goToPage == 'Edit Profile') {
-            this.navigation.navigate('EditProfile')
-        }
-        else{
+        let header = this.setHeader(goToPage);
+        if (goToPage == "Edit Profile") {
+            this.navigation.navigate("EditProfile");
+        } else {
             await this.setState({
                 header: header,
                 currentPage: goToPage,
                 historyPage: historyPage,
-                searchText: '', 
+                searchText: "",
                 searchStatus: false
-            }) 
-
+            });
         }
 
         // console.log(this.state.historyPage)
-    }
+    };
 
-    onChangeSearchText = (value) => {
+    onChangeSearchText = value => {
         this.setState({
             searchText: value
-        })
-    }
+        });
+    };
 
-    setHeader = (goToPage) => {
-        let header = {}
-        if (goToPage === 'Shop List' || goToPage === 'My Wallet') {
+    setHeader = goToPage => {
+        let header = {};
+        if (goToPage === "Shop List" || goToPage === "My Wallet") {
             header = {
                 leftButton: HiddenIcon,
                 rightButton: SearchIcon,
                 leftFunction: null,
                 rightFunction: null
-            }
-        } else if (goToPage === 'Scan') {
+            };
+        } else if (goToPage === "Scan") {
             header = {
                 leftButton: HiddenIcon,
                 rightButton: HiddenIcon,
                 leftFunction: null,
                 rightFunction: null
-            }
-        } else if (goToPage === 'Edit Profile') {
+            };
+        } else if (goToPage === "Edit Profile") {
             header = {
                 leftButton: BackIcon,
                 rightButton: HiddenIcon,
                 leftFunction: this.onBackPage,
                 rightFunction: null
-            }
+            };
         }
-        return header
-    }
+        return header;
+    };
 
     onBackPage = async () => {
-        let { historyPage } = this.state
+        let { historyPage } = this.state;
         if (historyPage.length === 1) {
-            BackHandler.exitApp()
+            BackHandler.exitApp();
         } else {
-            historyPage.pop()
-            let lenght = historyPage.length - 1
-            let goToPage = historyPage[lenght]
-            let header = this.setHeader(goToPage)
+            historyPage.pop();
+            let lenght = historyPage.length - 1;
+            let goToPage = historyPage[lenght];
+            let header = this.setHeader(goToPage);
             await this.setState({
                 header: header,
                 currentPage: goToPage,
                 historyPage: historyPage
-            })
+            });
         }
-    }
+    };
 
-    //TODO: implement 
+    //TODO: implement
     onRefresh = async () => {
-        console.log('Refresh all')
-        await this.setWelcomeList()
-        await this.setGifts()
-        await this.setPackages()
-    }
+        console.log("Refresh all");
+        await this.setWelcomeList();
+        await this.setGifts();
+        await this.setPackages();
+    };
 
     onAddPromotion = async () => {
-        console.log('Added to wallet')
-        await this.onRefresh()
-    }
+        console.log("Added to wallet");
+        await this.onRefresh();
+    };
 
     onToggleSearchStatus = () => {
-        console.log('toggle')
+        console.log("toggle");
         this.setState({
             searchStatus: !this.state.searchStatus
-        })
-    }
-
+        });
+    };
 
     render() {
-        const { currentPage, welcomeProList, usedWelcome, gifts, packages, searchStatus, searchText } = this.state
-        const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header
-        console.log('Current Page', currentPage)
+        const {
+            currentPage,
+            welcomeProList,
+            usedWelcome,
+            gifts,
+            packages,
+            searchStatus,
+            searchText
+        } = this.state;
+        const {
+            leftButton,
+            rightButton,
+            leftFunction,
+            rightFunction
+        } = this.state.header;
+        console.log("Current Page", currentPage);
 
         return (
             <Container>
-                {
-                    (currentPage == 'Shop List' || currentPage == 'My Wallet') ? 
-                <Header
-                    titlePage={currentPage}
-                    leftMenu={leftButton}
-                    rightMenu={<Search searchStatus={searchStatus} onToggle={this.onToggleSearchStatus.bind(this)} 
-                    onChangeSearchText={this.onChangeSearchText} searchText={searchText}/>}
-                    leftFunction={leftFunction}
-                    rightFunction={rightFunction}
-                />                
-                :
-                <Header
-                    titlePage={currentPage}
-                    leftMenu={leftButton}
-                    rightMenu={rightButton}
-                    leftFunction={leftFunction}
-                    rightFunction={rightFunction}
-                />
-                }
-                {
-                    currentPage === 'Shop List' ? (<ShopList welcomeProList={welcomeProList} usedWelcome={usedWelcome}
-                        onRefresh={this.onRefresh} navigation={this.navigation}/>)
-                        : currentPage === 'Scan' ? (<CameraView 
-                            onScanSuccess={this.onRefresh} navigation={this.navigation} 
-                            onAddPromotion={this.onAddPromotion}/>)
-                            : currentPage === 'My Wallet' ? (<Wallet gifts={gifts} packages={packages}
-                                navigation={this.navigation}  />)
-                                : <View></View>
-                }
-                {
-                    currentPage !== 'Edit Profile'
-                        ?
-                        (
-                            <Footer
-                                currentPage={currentPage}
-                                onChangePage={this.onChangePage}
+                {currentPage == "Shop List" || currentPage == "My Wallet" ? (
+                    <Header
+                        titlePage={currentPage}
+                        leftMenu={leftButton}
+                        rightMenu={
+                            <Search
+                                searchStatus={searchStatus}
+                                onToggle={this.onToggleSearchStatus.bind(this)}
+                                onChangeSearchText={this.onChangeSearchText}
+                                searchText={searchText}
                             />
-                        )
-                        : (<View></View>)
-                }
+                        }
+                        leftFunction={leftFunction}
+                        rightFunction={rightFunction}
+                    />
+                ) : (
+                    <Header
+                        titlePage={currentPage}
+                        leftMenu={leftButton}
+                        rightMenu={rightButton}
+                        leftFunction={leftFunction}
+                        rightFunction={rightFunction}
+                    />
+                )}
+                {currentPage === "Shop List" ? (
+                    <ShopList
+                        welcomeProList={welcomeProList}
+                        usedWelcome={usedWelcome}
+                        onRefresh={this.onRefresh}
+                        navigation={this.navigation}
+                        searchStatus={searchStatus}
+                        searchText={searchText}
+                    />
+                ) : currentPage === "Scan" ? (
+                    <CameraView
+                        onScanSuccess={this.onRefresh}
+                        navigation={this.navigation}
+                        onAddPromotion={this.onAddPromotion}
+                    />
+                ) : currentPage === "My Wallet" ? (
+                    <Wallet
+                        gifts={gifts}
+                        packages={packages}
+                        navigation={this.navigation}
+                        searchStatus={searchStatus}
+                        searchText={searchText}
+                    />
+                ) : (
+                    <View />
+                )}
+                {currentPage !== "Edit Profile" ? (
+                    <Footer
+                        currentPage={currentPage}
+                        onChangePage={this.onChangePage}
+                    />
+                ) : (
+                    <View />
+                )}
             </Container>
-        )
+        );
     }
 }

@@ -120,7 +120,7 @@ export default class ShowPromotion extends Component {
 
     renderCircles = () => {
         console.log("circles : ", this.state.circles);
-        const circleElements = this.state.circles.map((item, index) => {
+        const circleElements = this.state.circles.length > 0 ? this.state.circles.map((item, index) => {
             return (
                 <View style={styles["Circle_Container"]} key={index}>
                     <View
@@ -160,8 +160,8 @@ export default class ShowPromotion extends Component {
                         )}
                     </View>
                 </View>
-            );
-        });
+            )
+        }) : <View style={{height: 10, width: 20, backgroundColor: 'black'}}></View>
         console.log(circleElements);
         return circleElements;
     };

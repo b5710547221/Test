@@ -39,14 +39,21 @@ export default class Collect extends Component {
 	render() {
 
 		const { isLoading, data } = this.state
-		
+		const { searchStatus, searchText } = this.props
+        const filteredCollect = searchStatus
+            ? data.filter(item =>
+                  item.BranchName.toLowerCase().includes(
+                      searchText.toLowerCase()
+                  )
+              )
+            : data
 		return (
 			<ScrollView style={styles['Collect']}>
 				{
 					isLoading ? <Loading />
 						:
 						<FlatList
-							data={data}
+							data={filteredCollect}
 							renderItem={({ item }) => {
 								return <Card type='Collect' data={item} onClick={this.onClick.bind(this, item)}/>
 							}}

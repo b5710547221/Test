@@ -62,14 +62,21 @@ export default class Package extends Component {
 
 	render() {
 		const { isLoading, data } = this.state
-		const { packages } = this.props
+		const { packages, searchText, searchStatus } = this.props
+        const filteredPackges = searchStatus
+            ? packages.filter(item =>
+                  item.BranchName.toLowerCase().includes(
+                      searchText.toLowerCase()
+                  )
+              )
+            : packages
 		return (
 			<ScrollView style={styles['Package']}>
 				{
 					isLoading ? <Loading />
 						:
 						<FlatList
-							data={packages}
+							data={filteredPackges}
 							renderItem={({ item, index }) => {
 								return <Card type='Package' data={item} onClick={this.onClick.bind(this, item)}/>
 							}}
