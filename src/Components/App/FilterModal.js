@@ -14,13 +14,22 @@ import RadioForm, {
     RadioButtonInput,
     RadioButtonLabel
 } from "react-native-simple-radio-button";
+import CheckBox from "react-native-checkbox";
 
 export default class FilterModal extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            option: -1
-        }
+            option: -1,
+            checkList: {
+                restaurant: true,
+                drinkAndBev: true,
+                bakery: true,
+                spa: true,
+                beauty: true,
+                activity: true
+            }
+        };
     }
 
     renderRadioRow = (list, startIndex) => {
@@ -31,27 +40,31 @@ export default class FilterModal extends Component {
                     flex: 1,
                     flexDirection: "row",
                     justifyContent: "flex-start",
-                    alignItems: "center",
+                    alignItems: "center"
                 }}
             >
-                <RadioButton labelHorizontal={true} key={i+startIndex}>
+                <RadioButton labelHorizontal={true} key={i + startIndex}>
                     {/*  You can set RadioButtonLabel before RadioButtonInput */}
                     <RadioButtonInput
                         obj={obj}
-                        index={i+startIndex}
+                        index={i + startIndex}
                         isSelected={this.state.option === i + startIndex}
-                        onPress={(value)=>{this.setState({
-                            option: value
-                        })}}
+                        onPress={value => {
+                            this.setState({
+                                option: value
+                            });
+                        }}
                         buttonInnerColor={Loading_Color}
                         buttonOuterColor={Loading_Color}
                         buttonWrapStyle={{
                             marginLeft: 5
                         }}
+                        buttonSize={15}
+                        buttonOuterSize={25}
                     />
                     <RadioButtonLabel
                         obj={obj}
-                        index={i+startIndex}
+                        index={i + startIndex}
                         labelHorizontal={true}
                         onPress={() => {}}
                         labelStyle={{
@@ -164,9 +177,82 @@ export default class FilterModal extends Component {
                             <Text style={styles["Card_Content_Header"]}>
                                 Category
                             </Text>
-                            <Text style={styles["Card_Content_Detail"]}>
-                                sdakj sadf sdkafj skadf dsafj
-                            </Text>
+                            <View style={{paddingTop: 5}}>
+                                <CheckBox
+                                    label="Restaurant"
+                                    labelStyle={{color: Loading_Color}}
+                                    checked={this.state.checkList.restaurant}
+                                    checkboxStyle={{borderColor: Loading_Color, borderWidth: 2}}
+                                    onChange={checked =>
+                                        this.setState({
+                                            checkList: {...this.state.checkList, restaurant: !this.state.checkList.restaurant}
+                                        })
+                                    }
+                                />
+                                <CheckBox
+                                    label="Drink and Beverage"
+                                    labelStyle={{color: Loading_Color}}
+                                    checked={this.state.checkList.drinkAndBev}
+                                    checkboxStyle={{borderColor: Loading_Color, borderWidth: 2}}
+                                    onChange={checked =>
+                                        this.setState({
+                                            checkList: {...this.state.checkList, drinkAndBev: !this.state.checkList.drinkAndBev}
+                                        })
+                                    }
+                                />
+                                <CheckBox
+                                    label="Spa"
+                                    labelStyle={{color: Loading_Color}}
+                                    checked={this.state.checkList.spa}
+                                    checkboxStyle={{borderColor: Loading_Color, borderWidth: 2}}
+                                    onChange={checked =>
+                                        this.setState({
+                                            checkList: {...this.state.checkList, spa: !this.state.checkList.spa}
+                                        })
+                                    }
+                                />
+                                <CheckBox
+                                    label="Beauty"
+                                    labelStyle={{color: Loading_Color}}
+                                    checked={this.state.checkList.beauty}
+                                    checkboxStyle={{borderColor: Loading_Color, borderWidth: 2}}
+                                    onChange={checked =>
+                                        this.setState({
+                                            checkList: {...this.state.checkList, beauty: !this.state.checkList.beauty}
+                                        })
+                                    }
+                                />
+                                <CheckBox
+                                    label="Activity"
+                                    labelStyle={{color: Loading_Color}}
+                                    checked={this.state.checkList.activity}
+                                    checkboxStyle={{borderColor: Loading_Color, borderWidth: 2}}
+                                    onChange={checked =>
+                                        this.setState({
+                                            checkList: {...this.state.checkList, activity: !this.state.checkList.activity}
+                                        })
+                                    }
+                                />                            
+                            </View>
+
+                            {/* <CheckBox
+                                style={{ flex: 1, padding: 10 }}
+                                onClick={() => {this.setState({
+                                    checkList: {...this.state.checkList, restaurant: !this.state.checkList.restaurant}
+                                })}}
+                                isChecked={this.state.checkList.restaurant}
+                                label="Restaurant"
+                            /> */}
+                            {/* <Text>Test</Text>  */}
+                            {/* <CheckBox
+                                style={{ flex: 1, padding: 10 }}
+                                onClick={() => {this.setState({
+                                    checkList: {...this.state.checkList, restaurant: !this.state.checkList.drinkAndBev}
+                                })}}
+                                isChecked={this.state.checkList.drinkAndBev}
+                                rightText="Drink and Beverage"
+                            />
+                            <Text>Test</Text>  */}
                         </View>
 
                         <View style={styles["Card_Button_Container"]}>
@@ -236,7 +322,7 @@ const styles = StyleSheet.create({
         fontSize: 15
     },
     Card_Button_Container: {
-        flex: 1,
+        flexDirection: "row",
         justifyContent: "center",
         alignItems: "center"
     },
