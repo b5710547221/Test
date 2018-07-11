@@ -112,10 +112,10 @@ export default class ShopList extends Component {
             welcomeProList,
             usedWelcome,
             searchText,
-            searchStatus
+            searchVisible
         } = this.props;
 
-        const filteredWelcome = searchStatus
+        const filteredWelcome = searchVisible
             ? welcomeProList.filter(item =>
                   item.BranchName.toLowerCase().includes(
                       searchText.toLowerCase()

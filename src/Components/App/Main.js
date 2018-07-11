@@ -8,20 +8,22 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View
+    View,
+    TouchableHighlight
 } from "react-native";
 import { Container, Content, Button, Icon } from "native-base";
 import axios from "axios";
 
-import CameraView from "./Scan"
-import Wallet from "./MyWallet"
-import ShopList from "./ShopList"
+import CameraView from "./Scan";
+import Wallet from "./MyWallet";
+import ShopList from "./ShopList";
 import { Loading_Color } from "../../Config";
-import { SearchIcon, BackIcon, HiddenIcon } from "../Common/Icon"
-import Header from "../Common/Header"
-import Footer from "../Common/Footer"
-import Search from "./Search"
-import Filter from "./Filter"
+import { SearchIcon, BackIcon, HiddenIcon } from "../Common/Icon";
+import Header from "../Common/Header";
+import Footer from "../Common/Footer";
+import Search from "./Search";
+import Filter from "./Filter";
+import FilterModal from "./FilterModal"
 
 import { getAPI } from "../../Config";
 
@@ -46,8 +48,9 @@ export default class Main extends Component {
             usedWelcome: [],
             gitfs: [],
             packages: [],
-            searchStatus: false,
-            searchText: ""
+            searchVisible: false,
+            searchText: "",
+            filterVisible: false
         };
 
         this.navigation = props.navigation;
@@ -171,7 +174,7 @@ export default class Main extends Component {
                 currentPage: goToPage,
                 historyPage: historyPage,
                 searchText: "",
-                searchStatus: false
+                searchVisible: false
             });
         }
 
@@ -244,7 +247,13 @@ export default class Main extends Component {
     onToggleSearchStatus = () => {
         console.log("toggle");
         this.setState({
-            searchStatus: !this.state.searchStatus
+            searchVisible: !this.state.searchVisible
+        });
+    };
+
+    onToggleFilterStatus = () => {
+        this.setState({
+            filterVisible: !this.state.filterVisible
         });
     };
 
@@ -255,8 +264,9 @@ export default class Main extends Component {
             usedWelcome,
             gifts,
             packages,
-            searchStatus,
-            searchText
+            searchVisible,
+            searchText,
+            filterVisible
         } = this.state;
         const {
             leftButton,
@@ -268,14 +278,17 @@ export default class Main extends Component {
 
         return (
             <Container>
+                <FilterModal filterVisible={filterVisible} onPress={this.onToggleFilterStatus}/>
                 {currentPage == "Shop List" || currentPage == "My Wallet" ? (
                     <Header
                         titlePage={currentPage}
                         //leftMenu={leftButton}
-                        leftMenu={<Filter />}
+                        leftMenu={
+                            <Filter onPress={this.onToggleFilterStatus} />
+                        }
                         rightMenu={
                             <Search
-                                searchStatus={searchStatus}
+                                searchVisible={searchVisible}
                                 onToggle={this.onToggleSearchStatus.bind(this)}
                                 onChangeSearchText={this.onChangeSearchText}
                                 searchText={searchText}
@@ -299,7 +312,7 @@ export default class Main extends Component {
                         usedWelcome={usedWelcome}
                         onRefresh={this.onRefresh}
                         navigation={this.navigation}
-                        searchStatus={searchStatus}
+                        searchVisible={searchVisible}
                         searchText={searchText}
                     />
                 ) : currentPage === "Scan" ? (
@@ -313,7 +326,7 @@ export default class Main extends Component {
                         gifts={gifts}
                         packages={packages}
                         navigation={this.navigation}
-                        searchStatus={searchStatus}
+                        searchVisible={searchVisible}
                         searchText={searchText}
                     />
                 ) : (
@@ -331,3 +344,5 @@ export default class Main extends Component {
         );
     }
 }
+
+

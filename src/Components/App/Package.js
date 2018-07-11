@@ -62,8 +62,8 @@ export default class Package extends Component {
 
 	render() {
 		const { isLoading, data } = this.state
-		const { packages, searchText, searchStatus } = this.props
-        const filteredPackges = searchStatus
+		const { packages, searchText, searchVisible } = this.props
+        const filteredPackges = searchVisible
             ? packages.filter(item =>
                   item.BranchName.toLowerCase().includes(
                       searchText.toLowerCase()

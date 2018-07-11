@@ -233,6 +233,7 @@ export default class ShowPromotion extends Component {
                     titlePage={currentPage}
                     rightMenu={rightMenu}
                 />
+
                 <Content>
                     <View style={styles["Content"]}>
                         <Text style={styles["Header"]}>{BranchName}</Text>

@@ -6,7 +6,9 @@ export default class Filter extends Component {
     render() {
         return (
             <View style={styles["Container"]}>
-                <Icon name="sound-mix" size={20} color="#FDFDFD" />
+                <TouchableOpacity onPress={this.props.onPress}>
+                    <Icon name="sound-mix" size={20} color="#FDFDFD" />
+                </TouchableOpacity>
             </View>
         );
     }
@@ -15,8 +17,8 @@ export default class Filter extends Component {
 const styles = StyleSheet.create({
     Container: {
         flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center'
+        flexDirection: "column",
+        justifyContent: "center"
     },
     Search_Container: {
         backgroundColor: "transparent",

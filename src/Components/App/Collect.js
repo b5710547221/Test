@@ -39,8 +39,8 @@ export default class Collect extends Component {
 	render() {
 
 		const { isLoading, data } = this.state
-		const { searchStatus, searchText } = this.props
-        const filteredCollect = searchStatus
+		const { searchVisible, searchText } = this.props
+        const filteredCollect = searchVisible
             ? data.filter(item =>
                   item.BranchName.toLowerCase().includes(
                       searchText.toLowerCase()

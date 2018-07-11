@@ -8,11 +8,11 @@ import { SearchBar } from "react-native-elements";
 
 export default class Search extends Component {
     render() {
-        const { searchText, searchStatus, onToggle, onChangeSearchText} = this.props;
+        const { searchText, searchVisible, onToggle, onChangeSearchText} = this.props;
         return (
             <View style={styles["Container"]}>
                 <TouchableOpacity onPress={onToggle} style={styles["Button"]}>
-                    {searchStatus ? (
+                    {searchVisible ? (
                         <SearchBar
                             value={searchText}
                             containerStyle={styles["Search_Container"]}

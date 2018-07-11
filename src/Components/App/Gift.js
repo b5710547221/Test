@@ -35,8 +35,8 @@ export default class Gift extends Component {
 	render() {
 
 		const { isLoading, data } = this.state
-		const { gifts, onClick, searchText, searchStatus  } = this.props
-        const filteredGifts = searchStatus
+		const { gifts, onClick, searchText, searchVisible  } = this.props
+        const filteredGifts = searchVisible
             ? gifts.filter(item =>
                   item.BranchName.toLowerCase().includes(
                       searchText.toLowerCase()
