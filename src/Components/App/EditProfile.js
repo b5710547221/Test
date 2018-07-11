@@ -78,7 +78,10 @@ export default class EditProfile extends Component {
 			userToken, userId
 		})		
 		await this.setHeader()
-		await this.getUserDetails()
+		// await this.getUserDetails()
+		await this.setState({
+			isLoading: false
+		})
 	}
 
 	getUserDetails = async () => {
