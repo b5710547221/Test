@@ -1,8 +1,10 @@
 - New API 
-    - Edit Profile
     - Scan
     - Register
+        - username can be duplicate
+    - Logout
 - Add Loading in Shop List
+- Shop Image
 - Prettier image crop pick (Actionsheet native-base)
 - Android permission for rn-fetch-blob
 - fix android react-native gps state
