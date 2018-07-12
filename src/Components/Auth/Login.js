@@ -98,7 +98,7 @@ export default class Login extends Component {
                             "Client-Service": "MobileClient",
                             "Auth-Key": "BarkodoAPIs",
                             "Content-Type": "application/json",
-                            ServiceType: "customer"
+                            "ServiceType": "customer"
                         },
                         timeout: 1000
                     }

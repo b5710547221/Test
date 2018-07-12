@@ -42,6 +42,7 @@ export default class FilterModal extends Component {
                     justifyContent: "flex-start",
                     alignItems: "center"
                 }}
+                key={i + startIndex}
             >
                 <RadioButton labelHorizontal={true} key={i + startIndex}>
                     {/*  You can set RadioButtonLabel before RadioButtonInput */}
