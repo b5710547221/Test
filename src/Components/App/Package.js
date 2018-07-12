@@ -5,8 +5,6 @@ import axios from 'axios'
 import Loading from '../Common/Loading'
 import Card from '../Common/Card'
 
-import {  } from  '../../Config'
-
 import mockUpData from '../module/mockup'
 
 export default class Package extends Component {

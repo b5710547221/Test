@@ -1,3 +1,7 @@
+- New API 
+    - Edit Profile
+    - Scan
+    - Register
 - Add Loading in Shop List
 - Prettier image crop pick (Actionsheet native-base)
 - Android permission for rn-fetch-blob
