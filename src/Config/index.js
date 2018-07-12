@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // SET API Server
 export const API = {
-	base: 'http://www.worldenergystation.com/barkodo/index.php/response'
+	base: "http://worldenergystation.com/barkodo/index.php/barkodo_api/api"
 	//base: "http://192.168.1.85:8888/Barkodo/api/V1/"
 	// base: 'http://localhost:8888/Barkodo2/index.php/response'
 };

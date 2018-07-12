@@ -18,7 +18,7 @@ import Loading from "../Common/Loading";
 import WelcomeBox from "../display/Box-WelcomeBox";
 import AlertBox from "../Common/AlertBox";
 
-import { API, getAPI } from "../../Config";
+import { API } from "../../Config";
 
 export default class Login extends Component {
     static navigationOptions = {
@@ -88,7 +88,7 @@ export default class Login extends Component {
         } else {
             try {
                 await this.setState({ isLoading: true });
-                const resultLogin = await axios.post("http://worldenergystation.com/barkodo/index.php/barkodo_api/api/login",
+                const resultLogin = await axios.post(API['base'] + "/login",
                     {
                         email: email,
                         password: password

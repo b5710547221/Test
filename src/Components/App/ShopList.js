@@ -14,7 +14,7 @@ import { Container, Content, Button } from "native-base";
 // import GPSState from "react-native-gps-state";
 import axios from "axios";
 
-import { getAPI, Loading_Color } from "../../Config";
+import { Loading_Color } from "../../Config";
 import { SearchIcon, HiddenIcon } from "../Common/Icon";
 
 import Header from "../Common/Header";

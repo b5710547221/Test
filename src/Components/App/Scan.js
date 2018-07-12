@@ -5,7 +5,7 @@ import QRCodeScanner from 'react-native-qrcode-scanner'
 import { RNCamera } from 'react-native-camera';
 import axios from 'axios'
 
-import { getAPI } from '../../Config'
+import {  } from '../../Config'
 
 
 export default class Scan extends Component {

@@ -7,7 +7,7 @@ import {
     TouchableOpacity
 } from "react-native";
 import Modal from "react-native-modal";
-import { getAPI, Loading_Color } from "../../Config";
+import { Loading_Color } from "../../Config";
 
 import RadioForm, {
     RadioButton,

@@ -5,7 +5,7 @@ import axios from 'axios'
 import Loading from '../Common/Loading'
 import Card from '../Common/Card'
 
-import { getAPI, getAPIPromise } from  '../../Config'
+import {  } from  '../../Config'
 
 import mockUpData from '../module/mockup'
 

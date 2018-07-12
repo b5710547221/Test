@@ -23,9 +23,9 @@ import Header from "../Common/Header";
 import Footer from "../Common/Footer";
 import Search from "./Search";
 import Filter from "./Filter";
-import FilterModal from "./FilterModal"
+import FilterModal from "./FilterModal";
 
-import { getAPI } from "../../Config";
+import { API } from "../../Config";
 
 export default class Main extends Component {
     static navigationOptions = {
@@ -68,15 +68,25 @@ export default class Main extends Component {
 
     setWelcomeList = async () => {
         const userId = await AsyncStorage.getItem("userId");
+        const userToken = await AsyncStorage.getItem("userToken");
         console.log("test", userId);
         try {
-            result = await getAPI("GetAllWelcomePromotionList", {
-                user_id: userId,
-                campaign_type_id: "2"
-            });
-            if (result["data"]["response"]["status"] === 200) {
+            result = await axios.get(
+                API["base"] + "/getAllWelcomePromotionList/2/" + userId,
+                {
+                    headers: {
+                        "Client-Service": "MobileClient",
+                        "Auth-Key": "BarkodoAPIs",
+                        "Content-Type": "application/json",
+                        "Authorization": userToken,
+                        "User-Id": userId
+                    },
+                    timeout: 10000
+                }
+            );
+            if (result["status"] === 200) {
                 await this.setState({
-                    welcomeProList: result["data"]["response"]["result"]
+                    welcomeProList: result["data"]
                 });
             }
         } catch (err) {
@@ -85,13 +95,22 @@ export default class Main extends Component {
         }
 
         try {
-            result = await getAPI("getUserWallet", {
-                user_id: userId,
-                campaign_type_id: "2"
-            });
-            if (result["data"]["response"]["status"] === 200) {
+            result = await axios.get(
+                API["base"] + "/getUserWalletByCamPaignTypeAndUserId/2/" + userId,
+                {
+                    headers: {
+                        "Client-Service": "MobileClient",
+                        "Auth-Key": "BarkodoAPIs",
+                        "Content-Type": "application/json",
+                        "Authorization": userToken,
+                        "User-Id": userId
+                    },
+                    timeout: 10000
+                }
+            );
+            if (result["status"] === 200) {
                 await this.setState({
-                    usedWelcome: result["data"]["response"]["result"]
+                    usedWelcome: result["data"]
                 });
             }
         } catch (err) {
@@ -102,17 +121,27 @@ export default class Main extends Component {
 
     setGifts = async () => {
         const userId = await AsyncStorage.getItem("userId");
+        const userToken = await AsyncStorage.getItem("userToken");
         try {
-            result = await getAPI("getUserWallet", {
-                user_id: userId,
-                campaign_type_id: "1"
-            });
+            result = await axios.get(
+                API["base"] + "/getUserWalletByCamPaignTypeAndUserId/1/" + userId,
+                {
+                    headers: {
+                        "Client-Service": "MobileClient",
+                        "Auth-Key": "BarkodoAPIs",
+                        "Content-Type": "application/json",
+                        "Authorization": userToken,
+                        "User-Id": userId
+                    },
+                    timeout: 10000
+                }
+            );
             console.log(result);
-            const gifts = result["data"]["response"]["result"];
+            const gifts = result["data"];
             console.log(gifts);
-            if (result["data"]["response"]["status"] === 200) {
+            if (result["status"] === 200) {
                 await this.setState({
-                    gifts: result["data"]["response"]["result"]
+                    gifts: result["data"]
                 });
                 console.log(this.state.gifts);
             }
@@ -124,18 +153,27 @@ export default class Main extends Component {
 
     setPackages = async () => {
         const userId = await AsyncStorage.getItem("userId");
+        const userToken = await AsyncStorage.getItem("userToken");
         console.log("packages user Id", userId);
         try {
-            result = await getAPI("getUserWallet", {
-                user_id: userId,
-                campaign_type_id: "3"
-            });
-
-            const packages = result["data"]["response"]["result"];
+            result = await axios.get(
+                API["base"] + "/getUserWalletByCamPaignTypeAndUserId/3/" + userId,
+                {
+                    headers: {
+                        "Client-Service": "MobileClient",
+                        "Auth-Key": "BarkodoAPIs",
+                        "Content-Type": "application/json",
+                        "Authorization": userToken,
+                        "User-Id": userId
+                    },
+                    timeout: 10000
+                }
+            );
+            const packages = result["data"];
             console.log(packages);
-            if (result["data"]["response"]["status"] === 200) {
+            if (result["status"] === 200) {
                 await this.setState({
-                    packages: result["data"]["response"]["result"]
+                    packages: result["data"]
                 });
                 console.log(this.state.packages);
             }
@@ -278,7 +316,10 @@ export default class Main extends Component {
 
         return (
             <Container>
-                <FilterModal filterVisible={filterVisible} onPress={this.onToggleFilterStatus}/>
+                <FilterModal
+                    filterVisible={filterVisible}
+                    onPress={this.onToggleFilterStatus}
+                />
                 {currentPage == "Shop List" || currentPage == "My Wallet" ? (
                     <Header
                         titlePage={currentPage}
@@ -344,5 +385,3 @@ export default class Main extends Component {
         );
     }
 }
-
-

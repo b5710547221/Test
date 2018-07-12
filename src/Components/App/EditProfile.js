@@ -56,20 +56,7 @@ export default class EditProfile extends Component {
 		this.navigation = props.navigation
 	}
 
-	getAPI = async (name, params) => {
-		const url = API['base']
-		const option = {
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			timeout: 10000
-		}
-		const body = {
-			'name': name,
-			'params': params
-		}
-		return await axios.post(url, body, option)
-	}
+
 
 	componentDidMount = async () => {
 		const userToken = await AsyncStorage.getItem('userToken')

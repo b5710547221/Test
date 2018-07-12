@@ -31,7 +31,7 @@ export default class AuthLoading extends Component {
             timeout: 10000
         }
         try {
-            const result = await axios.get("http://worldenergystation.com/barkodo/index.php/barkodo_api/api/getUserDetails/" + userId, 
+            const result = await axios.get(API['base'] + "/getUserDetails/" + userId, 
              optionLogin)  
             console.log("auth loading result", result)
             if(result['status'] == 200) {
