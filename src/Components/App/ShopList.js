@@ -14,7 +14,7 @@ import { Container, Content, Button } from "native-base";
 // import GPSState from "react-native-gps-state";
 import axios from "axios";
 
-import { Loading_Color } from "../../Config";
+import { API, Loading_Color } from "../../Config";
 import { SearchIcon, HiddenIcon } from "../Common/Icon";
 
 import Header from "../Common/Header";
@@ -33,11 +33,13 @@ export default class ShopList extends Component {
         this.state = {
             data: [],
             // isLoading: true,
-			// isNoGPS: true,
-			isLoading: false,
-			isNoGPS: false,
+            // isNoGPS: true,
+            isLoading: false,
+            isNoGPS: false,
 
-            simulator: true
+            simulator: true,
+            userId: null,
+            userToken: null
         };
 
         this.navigation = props.navigation;
@@ -51,6 +53,12 @@ export default class ShopList extends Component {
         // GPSState.addListener(async status => {
         //     await this.checkStatusGPS(status);
         // });
+        const userId = await AsyncStorage.getItem("userId");
+        const userToken = await AsyncStorage.getItem("userToken");
+        this.setState({
+            userId,
+            userToken
+        });
     };
 
     checkStatusGPS = async status => {
@@ -73,16 +81,27 @@ export default class ShopList extends Component {
     onGetPromotion = async params => {
         console.log("params", params);
         try {
-            const result = await getAPI(
-                "confirmWelComePromotionToWallet",
-                params
+            const result = await axios.post(
+                API["base"] + "/confirmWelcomePromotionToWallet",
+                params,
+                {
+                    headers: {
+                        "Client-Service": "MobileClient",
+                        "Auth-Key": "BarkodoAPIs",
+                        "Content-Type": "application/json",
+                        Authorization: this.state.userToken,
+                        "User-Id": this.state.userId
+                    },
+                    timeout: 10000
+                }
             );
             console.log("the resulttt", result);
-            if (result["data"]["response"]["status"] === 200) {
-                Alert.alert(result["data"]["response"]["result"]);
+            if (result["status"] === 201) {
+                Alert.alert(result["data"]["message"]);
             }
         } catch (err) {
             console.log(err);
+            console.log(err["response"]);
         }
         this.props.onRefresh();
     };
@@ -122,6 +141,14 @@ export default class ShopList extends Component {
                   )
               )
             : welcomeProList;
+
+        const filteredUsedWelcome = searchVisible
+            ? usedWelcome.filter(item =>
+                  item.BranchName.toLowerCase().includes(
+                      searchText.toLowerCase()
+                  )
+              )
+            : usedWelcome;
         console.log("filteredWelcome : ", filteredWelcome);
 
         return (
@@ -152,7 +179,7 @@ export default class ShopList extends Component {
                             <Text>Used Welcome Promotions</Text>
                         </View>
                         <FlatList
-                            data={usedWelcome}
+                            data={filteredUsedWelcome}
                             renderItem={({ item, index }) => {
                                 return (
                                     <Card
@@ -185,7 +212,7 @@ const styles = StyleSheet.create({
         margin: 5,
         flex: 1,
         flexDirection: "row",
-		justifyContent: "center",
-		alignSelf: 'center'
+        justifyContent: "center",
+        alignSelf: "center"
     }
 });

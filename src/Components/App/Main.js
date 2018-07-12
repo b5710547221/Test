@@ -50,7 +50,9 @@ export default class Main extends Component {
             packages: [],
             searchVisible: false,
             searchText: "",
-            filterVisible: false
+            filterVisible: false,
+            userId: null,
+            userToken: null,
         };
 
         this.navigation = props.navigation;
@@ -61,29 +63,54 @@ export default class Main extends Component {
             BackHandler.addEventListener("hardwareBackPress", this.onBackPage);
         }
         console.log("Component Did mount");
+        const userId = await AsyncStorage.getItem("userId");
+        const userToken = await AsyncStorage.getItem("userToken");   
+        this.setState({
+            userId, userToken
+        })     
         await this.setWelcomeList();
         await this.setGifts();
         await this.setPackages();
     };
 
+
+    getWelcomePromotion = async(userId, userToken) => {
+        return await axios.get(
+            API["base"] + "/getAllWelcomePromotionList/2/" + userId,
+            {
+                headers: {
+                    "Client-Service": "MobileClient",
+                    "Auth-Key": "BarkodoAPIs",
+                    "Content-Type": "application/json",
+                    "Authorization": userToken,
+                    "User-Id": userId
+                },
+                timeout: 10000
+            }
+        );
+    }
+
+    getUserWallet = async(userId, userToken, camTypeId) => {
+        return await axios.get(
+            API["base"] + "/getUserWalletByCamPaignTypeAndUserId/" + camTypeId + "/" + userId,
+            {
+                headers: {
+                    "Client-Service": "MobileClient",
+                    "Auth-Key": "BarkodoAPIs",
+                    "Content-Type": "application/json",
+                    "Authorization": userToken,
+                    "User-Id": userId
+                },
+                timeout: 10000
+            }
+        );
+    }
+
+
+
     setWelcomeList = async () => {
-        const userId = await AsyncStorage.getItem("userId");
-        const userToken = await AsyncStorage.getItem("userToken");
-        console.log("test", userId);
         try {
-            result = await axios.get(
-                API["base"] + "/getAllWelcomePromotionList/2/" + userId,
-                {
-                    headers: {
-                        "Client-Service": "MobileClient",
-                        "Auth-Key": "BarkodoAPIs",
-                        "Content-Type": "application/json",
-                        "Authorization": userToken,
-                        "User-Id": userId
-                    },
-                    timeout: 10000
-                }
-            );
+            result = await this.getWelcomePromotion(this.state.userId, this.state.userToken)
             if (result["status"] === 200) {
                 await this.setState({
                     welcomeProList: result["data"]
@@ -95,19 +122,7 @@ export default class Main extends Component {
         }
 
         try {
-            result = await axios.get(
-                API["base"] + "/getUserWalletByCamPaignTypeAndUserId/2/" + userId,
-                {
-                    headers: {
-                        "Client-Service": "MobileClient",
-                        "Auth-Key": "BarkodoAPIs",
-                        "Content-Type": "application/json",
-                        "Authorization": userToken,
-                        "User-Id": userId
-                    },
-                    timeout: 10000
-                }
-            );
+            result = await this.getUserWallet(this.state.userId, this.state.userToken, 2)
             if (result["status"] === 200) {
                 await this.setState({
                     usedWelcome: result["data"]
@@ -120,25 +135,11 @@ export default class Main extends Component {
     };
 
     setGifts = async () => {
-        const userId = await AsyncStorage.getItem("userId");
-        const userToken = await AsyncStorage.getItem("userToken");
         try {
-            result = await axios.get(
-                API["base"] + "/getUserWalletByCamPaignTypeAndUserId/1/" + userId,
-                {
-                    headers: {
-                        "Client-Service": "MobileClient",
-                        "Auth-Key": "BarkodoAPIs",
-                        "Content-Type": "application/json",
-                        "Authorization": userToken,
-                        "User-Id": userId
-                    },
-                    timeout: 10000
-                }
-            );
+            result = await this.getUserWallet(this.state.userId, this.state.userToken, 1)
             console.log(result);
             const gifts = result["data"];
-            console.log(gifts);
+            console.log('gifts: ', gifts);
             if (result["status"] === 200) {
                 await this.setState({
                     gifts: result["data"]
@@ -152,23 +153,9 @@ export default class Main extends Component {
     };
 
     setPackages = async () => {
-        const userId = await AsyncStorage.getItem("userId");
-        const userToken = await AsyncStorage.getItem("userToken");
-        console.log("packages user Id", userId);
+        console.log("packages user Id", this.state.userId);
         try {
-            result = await axios.get(
-                API["base"] + "/getUserWalletByCamPaignTypeAndUserId/3/" + userId,
-                {
-                    headers: {
-                        "Client-Service": "MobileClient",
-                        "Auth-Key": "BarkodoAPIs",
-                        "Content-Type": "application/json",
-                        "Authorization": userToken,
-                        "User-Id": userId
-                    },
-                    timeout: 10000
-                }
-            );
+            result = await this.getUserWallet(this.state.userId, this.state.userToken, 3)
             const packages = result["data"];
             console.log(packages);
             if (result["status"] === 200) {

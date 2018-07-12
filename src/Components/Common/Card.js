@@ -12,10 +12,10 @@ export default class Card extends PureComponent {
         console.log('On get pressed')
         AsyncStorage.getItem('userId').then((userId) => {
             const params = {
-                "user_id": userId,
-                "branch_id": this.props.data.BranchId,
-                "promotion_id": this.props.data.PromotionId,
-                "campaign_type_id": "2"
+                "userId": userId,
+                "branchId": this.props.data.BranchId,
+                "promotionId": this.props.data.PromotionId,
+                "campaignTypeId": "2"
             }
             this.props.onGet(params)
         })
@@ -27,9 +27,6 @@ export default class Card extends PureComponent {
         const { ExpiredDate, Timeslimit, Times } = data
 
         console.log(type)
-
-
-
         return (
             <View style={styles['Card']}>
                 {/* <View style={styles['Card_Container_Image']}>
