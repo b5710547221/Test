@@ -99,13 +99,12 @@ export default class Login extends Component {
                             "Auth-Key": "BarkodoAPIs",
                             "Content-Type": "application/json",
                             "ServiceType": "customer"
-                        },
-                        timeout: 1000
+                        }
                     }
                 );
 
                 console.log('resultLogin', resultLogin);
-                if ( resultLogin["data"]["status"] === 200 ) {
+                if ( resultLogin["status"] === 200 ) {
                     console.log("Generate Token succesfully!");
                     const userToken = resultLogin["data"]["token"];
                     const userId = resultLogin["data"]["user_id"]

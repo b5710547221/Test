@@ -154,32 +154,32 @@ export default class EditProfile extends Component {
 
     onLogout = async () => {
         try {
-            const result = await axios.get(
-                API["base"] + "/getUserDetails/" + this.state.userId,
+            const result = await axios.post(
+                API["base"] + "/logout",{
+
+				},
                 {
                     headers: {
-                        "Client-Service": "MobileClient",
-                        "Auth-Key": "BarkodoAPIs",
-                        "Content-Type": "application/json",
+						"Client-Service": "MobileClient",
+						"Auth-Key": "BarkodoAPIs",
+						"Content-Type": "application/json",
+						"ServiceType": "customer",
                         "Authorization": this.state.userToken,
                         "User-Id": this.state.userId
-                    },
-                    timeout: 10000
+                    }
                 }
             );
-            const userProfile = result["data"];
-            console.log("User Profile", userProfile);
-            await this.setState({
-                profile: userProfile,
-                isLoading: false
-            });
-            console.log("Component succesfully mounted!");
+			if(result['status'] == 200) {
+				Alert.alert(result["data"]["message"])        
+				await AsyncStorage.clear();
+       			 this.navigation.navigate("Auth");
+			} else {
+				console.log(result['data'])
+			}
         } catch (err) {
             console.log(err);
             console.log(err["response"]);
         }
-        await AsyncStorage.clear();
-        this.navigation.navigate("Auth");
     };
 
     onUpdateUserProfile = async () => {
