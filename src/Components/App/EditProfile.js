@@ -161,7 +161,7 @@ export default class EditProfile extends Component {
                         "Client-Service": "MobileClient",
                         "Auth-Key": "BarkodoAPIs",
                         "Content-Type": "application/json",
-                        Authorization: this.state.userToken,
+                        "Authorization": this.state.userToken,
                         "User-Id": this.state.userId
                     },
                     timeout: 10000
@@ -209,7 +209,7 @@ export default class EditProfile extends Component {
                         "Client-Service": "MobileClient",
                         "Auth-Key": "BarkodoAPIs",
                         "Content-Type": "application/json",
-                        Authorization: this.state.userToken,
+                        "Authorization": this.state.userToken,
                         "User-Id": this.state.userId
                     },
                     timeout: 10000

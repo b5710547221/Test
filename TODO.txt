@@ -1,7 +1,7 @@
 - New API 
     - Scan
     - Register
-        - username can be duplicate
+        - Birthday default to today
     - Logout
 - Add Loading in Shop List
 - Shop Image
