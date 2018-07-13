@@ -1,5 +1,3 @@
-- New API 
-    - Scan
 - qrCodegetPromotion used No content
 - Can scan gift multiple time (does not change qrcode status)
 - Add Loading in Shop List

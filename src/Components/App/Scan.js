@@ -45,6 +45,7 @@ export default class Scan extends Component {
                     "promotionId": promotion["PromotionId"],
                     "branchId": promotion["BranchId"],
                 };
+                console.log('promotion ', promotion)
                 let url;
                 let data;
                 switch(promotion["CampaignTypeId"]) {
@@ -52,10 +53,10 @@ export default class Scan extends Component {
                         data = {...baseData}
                         break;
                     case "3" : url = API["base"] + "/confirmPackagePromotionToWallet";
-                        // TODO: Add packageType 
+                        data = {...baseData, packageType: promotion["PackageType"] }
                         break;
                     case "4" : url = API["base"] + "/confirmCollectPromotionToWallet";
-                        // TODO: Add collectType
+                        data = {...baseData, collectType: promotion["CollectType"] };
                         break;
                 }
                 const confirmPromotionResult = await axios.post(url, data, {
@@ -90,6 +91,7 @@ export default class Scan extends Component {
             }
         } catch (err) {
             console.log(err)
+            console.log(err["response"])
             Alert.alert(err["response"]["data"]["message"])
             this.setState({
                 enabled: false
