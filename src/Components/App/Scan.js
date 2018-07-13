@@ -5,7 +5,7 @@ import QRCodeScanner from 'react-native-qrcode-scanner'
 import { RNCamera } from 'react-native-camera';
 import axios from 'axios'
 
-import {  } from '../../Config'
+import { API } from '../../Config'
 
 
 export default class Scan extends Component {
@@ -21,36 +21,79 @@ export default class Scan extends Component {
     }
 
     onSuccess = async (e) => {
-        const qr_code = e.data
-        const user_id = await AsyncStorage.getItem('userId')
-        console.log(qr_code, ' ', user_id)
+        const qrCode = e.data
+        const userId = await AsyncStorage.getItem('userId')
+        const userToken = await AsyncStorage.getItem('userToken')
+        console.log(qrCode, ' ', userId)
         try {
-            const result = await getAPI('QrcodeGetPromotionDetails', { user_id, qr_code })
+            const result = await axios.get(API["base"] + "/qrCodeGetPromotionDetails/" + qrCode, {
+                headers: {
+                    "Client-Service": "MobileClient",
+                    "Auth-Key": "BarkodoAPIs",
+                    "Content-Type":"application/json",
+                    "Authorization": userToken,
+                    "User-Id": userId
+                }
+            });  
             this.props.onScanSuccess()
             console.log(result)
-            if (result['data']['response']['status'] == 200 ) {
-                if (!result['data']['error']) {
-                    const addPromotionResult = await getAPI('confirmPromotionToWallet', result['data']['response']['result'])
-                    console.log('addPromotionResult', addPromotionResult)
-                    if (addPromotionResult['data']['response']['status'] == 200 && !addPromotionResult['data']['error']) {
-                        Alert.alert('Add promotion to wallet successfully')
-                        await this.props.onAddPromotion()
-                        await this.setState({
-                            enabled: false
-                        })
-                    } else {
-                        console.log('Add Promotion Result', addPromotionResult)
+            if (result['status'] == 200 ) {
+                const promotion = result["data"];
+                const baseData = {
+                    "userId": userId, 
+                    "campaignTypeId": promotion["CampaignTypeId"],
+                    "promotionId": promotion["PromotionId"],
+                    "branchId": promotion["BranchId"],
+                };
+                let url;
+                let data;
+                switch(promotion["CampaignTypeId"]) {
+                    case "1" : url = API["base"] + "/confirmGiftPromotionToWallet";
+                        data = {...baseData}
+                        break;
+                    case "3" : url = API["base"] + "/confirmPackagePromotionToWallet";
+                        // TODO: Add packageType 
+                        break;
+                    case "4" : url = API["base"] + "/confirmCollectPromotionToWallet";
+                        // TODO: Add collectType
+                        break;
+                }
+                const confirmPromotionResult = await axios.post(url, data, {
+                    headers: {
+                        "Client-Service": "MobileClient",
+                        "Auth-Key": "BarkodoAPIs",
+                        "Content-Type": "application/json",
+                        "ServiceType": "customer",
+                        "Authorization": userToken,
+                        "User-Id": userId
+
                     }
-                } else {
-                    Alert.alert('This QRCode is used or expired')
+                } )
+                if(confirmPromotionResult['status'] == 200) {
+                    await this.props.onAddPromotion()
                     await this.setState({
                         enabled: false
                     })
+                } else {
+                    console.log(confirmPromotionResult)
+                    Alert.alert(confirmPromotionResult['data']['message'])
+                    this.setState({
+                        enabled: false
+                    })                
                 }
+            } else {
+                console.log(result)
+                Alert.alert(result['data']['message']);
+                this.setState({
+                    enabled: false
+                })
             }
         } catch (err) {
             console.log(err)
-            Alert.alert('Error Scanning Code')
+            Alert.alert(err["response"]["data"]["message"])
+            this.setState({
+                enabled: false
+            })
         }
 
 

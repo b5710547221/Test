@@ -105,7 +105,6 @@ export default class Login extends Component {
 
                 console.log('resultLogin', resultLogin);
                 if ( resultLogin["status"] === 200 ) {
-                    console.log("Generate Token succesfully!");
                     const userToken = resultLogin["data"]["token"];
                     const userId = resultLogin["data"]["user_id"]
                     console.log(userToken);
