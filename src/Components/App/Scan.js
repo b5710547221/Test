@@ -48,17 +48,18 @@ export default class Scan extends Component {
                 let data;
                 let confirmText;
                 switch(promotion["CampaignTypeId"]) {
+                    // TODO: correct message
                     case "1" : url = "/confirmGiftPromotionToWallet";
                         data = {...baseData}
-                        confirmText = `You earn ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
+                        confirmText = `You have received ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
                         break;
                     case "3" : url = "/confirmPackagePromotionToWallet";
                         data = {...baseData, packageType: promotion["PackageType"] }
-                        confirmText = `You earn ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
+                        confirmText = `You have received ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
                         break;
                     case "4" : url = "/confirmCollectPromotionToWallet";
                         data = {...baseData, collectType: promotion["CollectType"] }
-                        confirmText = `You earn ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
+                        confirmText = `You have earned ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
                         break;
                 }
                 const confirmPromotionResult = await apiRequest(url, "POST", data, "customer", userToken, userId)
