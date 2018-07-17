@@ -13,14 +13,14 @@ import {
     TouchableHighlight
 } from "react-native";
 import { NavigationActions } from "react-navigation";
-import { Container, Content, Button } from "native-base";
+import { Container, Content, Button, ActionSheet } from "native-base";
 import DatePicker from "react-native-datepicker";
 import { Dropdown } from "react-native-material-dropdown";
 import axios from "axios";
 import ImagePicker from "react-native-image-crop-picker";
 import RNFetchBlob from "rn-fetch-blob";
 
-import { API, Bakodo_Color } from "../../Config";
+import { API, Bakodo_Color, apiRequest } from "../../Config";
 
 import { BackIcon, HiddenIcon } from "../Common/Icon";
 import Header from "../Common/Header";
@@ -154,21 +154,7 @@ export default class EditProfile extends Component {
 
     onLogout = async () => {
         try {
-            const result = await axios.post(
-                API["base"] + "/logout",{
-
-				},
-                {
-                    headers: {
-						"Client-Service": "MobileClient",
-						"Auth-Key": "BarkodoAPIs",
-						"Content-Type": "application/json",
-						"ServiceType": "customer",
-                        "Authorization": this.state.userToken,
-                        "User-Id": this.state.userId
-                    }
-                }
-            );
+            const result = await apiRequest("/logout", "POST", {}, "customer", this.state.userToken, this.state.userId)
 			if(result['status'] == 200) {
 				Alert.alert(result["data"]["message"])        
 				await AsyncStorage.clear();
@@ -225,6 +211,19 @@ export default class EditProfile extends Component {
             Alert.alert("Failed Updating profile");
         }
     };
+
+    onAvatarAction = () => {
+        const buttons = ['Select Profile Picture', 'Cancel']
+        ActionSheet.show({
+            options: buttons,
+            cancelButtonIndex: 1,
+            title: 'Profile Picture'
+        }, buttonIndex => {
+            if(buttonIndex == 0) {
+                this.onPickImage()
+            }
+        })
+    }
 
     onPickImage = () => {
         // this.navigation.navigate('PickProfileImage')
@@ -292,7 +291,7 @@ export default class EditProfile extends Component {
                 ) : (
                     <Content>
                         <View style={styles["Profile_Container"]}>
-                            <TouchableOpacity onPress={this.onPickImage}>
+                            <TouchableOpacity onPress={this.onAvatarAction}>
                                 <Image
                                     style={styles["Profile_Image"]}
                                     source={

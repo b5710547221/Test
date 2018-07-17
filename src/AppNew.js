@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { createSwitchNavigator, createStackNavigator } from 'react-navigation'
+import { Root } from 'native-base'
 
 // Auth
 import AuthLoadingScreen from './Components/Auth/AuthLoading'
@@ -49,7 +50,7 @@ const AppStack = createStackNavigator({
 //     MyWallet: MyWalletScreen,
 // })
 
-export default App = createSwitchNavigator(
+const App = createSwitchNavigator(
     {
         AuthLoading: AuthLoadingScreen,
         Auth: AuthStack,
@@ -71,4 +72,9 @@ export default App = createSwitchNavigator(
           },
     }
 )
+
+export default () => 
+    <Root>
+        <App />
+    </Root>
 
