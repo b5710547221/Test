@@ -1,3 +1,7 @@
+- Used Promotion cannot get redeem code promotion
+- Cannot scan welcome promotion
+- canoot read filter of undefined in Gift
+- redeem code still work after 3 minutes
 - qrCodegetPromotion used No content
 - Can scan gift multiple time (does not change qrcode status)
 - Add Loading in Shop List

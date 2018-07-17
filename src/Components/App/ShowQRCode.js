@@ -32,7 +32,7 @@ export default class AddCode extends Component {
         super(props)
 
         this.state = {
-            remainingSeconds: 20,
+            remainingSeconds: 180,
             header: {
                 leftMenu: null,
                 currentPage: null,
@@ -101,8 +101,9 @@ export default class AddCode extends Component {
     render() {
         const { leftMenu, currentPage, rightMenu } = this.state.header
         const { PromotionName, BranchName, Description, ExpiredDate } = this.props.navigation.state.params.data
+        const code = this.props.navigation.state.params.code
         const { remainingSeconds } = this.state
-        console.log(leftMenu)
+        console.log(code)
         return (
             <Container style={styles['Container']}>
                 <StatusBar />
@@ -121,9 +122,9 @@ export default class AddCode extends Component {
                         </View>
                         <View style={styles['QRCode_Container']}>
                             <View style={styles['QRCode_Content']}>
-                                <QRCode value='123456' size='170'/>    
+                                <QRCode value={""+code} size={170} />    
                             </View>                         
-                            <Text style={styles['QRCode_Text']}>169273</Text>
+                            <Text style={styles['QRCode_Text']}>{code}</Text>
                         </View>
 
                         <Button style={styles['Button']}>

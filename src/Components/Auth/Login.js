@@ -18,7 +18,7 @@ import Loading from "../Common/Loading";
 import WelcomeBox from "../display/Box-WelcomeBox";
 import AlertBox from "../Common/AlertBox";
 
-import { API } from "../../Config";
+import { API, apiRequest } from "../../Config";
 
 export default class Login extends Component {
     static navigationOptions = {
@@ -88,22 +88,11 @@ export default class Login extends Component {
         } else {
             try {
                 await this.setState({ isLoading: true });
-                const resultLogin = await axios.post(API['base'] + "/login",
-                    {
-                        email: email,
-                        password: password
-                    },
-                    {
-                        headers: {
-                            "Client-Service": "MobileClient",
-                            "Auth-Key": "BarkodoAPIs",
-                            "Content-Type": "application/json",
-                            "ServiceType": "customer"
-                        }
-                    }
-                );
 
+                const body = { email, password }
+                const resultLogin = await apiRequest("/login", "POST", body, "customer");
                 console.log('resultLogin', resultLogin);
+                
                 if ( resultLogin["status"] === 200 ) {
                     const userToken = resultLogin["data"]["token"];
                     const userId = resultLogin["data"]["user_id"]

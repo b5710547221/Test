@@ -11,19 +11,19 @@ export const API = {
 export const Bakodo_Color = "#B7A5EF";
 export const Loading_Color = "#6E69CC";
 
-export const apiRequest = async (path, method = "GET", userToken = null, userId = null) => {
+export const apiRequest = async (path, method = "GET", body = {}, serviceType = "customer", userToken = null, userId = null) => {
     headers = {
         "Client-Service": "MobileClient",
         "Auth-Key": "BarkodoAPIs",
         "Content-Type": "application/json",
-        "ServiceType": "customer",
+        "ServiceType": serviceType,
         "Authorization": userToken,
         "User-Id": userId
 	};
 	
     switch (method) {
         case "GET":
-            return await axios.post("http://worldenergystation.com/barkodo/index.php/barkodo_api/api" + path, {
+            return await axios.get("http://worldenergystation.com/barkodo/index.php/barkodo_api/api" + path, {
                     headers
                 }
             );
