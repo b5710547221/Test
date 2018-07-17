@@ -46,24 +46,29 @@ export default class Scan extends Component {
                 console.log('promotion ', promotion)
                 let url;
                 let data;
+                let confirmText;
                 switch(promotion["CampaignTypeId"]) {
                     case "1" : url = "/confirmGiftPromotionToWallet";
                         data = {...baseData}
+                        confirmText = `You earn ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
                         break;
                     case "3" : url = "/confirmPackagePromotionToWallet";
                         data = {...baseData, packageType: promotion["PackageType"] }
+                        confirmText = `You earn ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
                         break;
                     case "4" : url = "/confirmCollectPromotionToWallet";
-                        data = {...baseData, collectType: promotion["CollectType"] };
+                        data = {...baseData, collectType: promotion["CollectType"] }
+                        confirmText = `You earn ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
                         break;
                 }
                 const confirmPromotionResult = await apiRequest(url, "POST", data, "customer", userToken, userId)
+                console.log(confirmPromotionResult)
                 if(confirmPromotionResult['status'] == 201) {
                     await this.props.onAddPromotion()
                     await this.setState({
                         enabled: false,
                         isLoading: false,
-                        confirmText: confirmPromotionResult['data']['message']
+                        confirmText: confirmText
                     })
                 } else {
                     console.log(confirmPromotionResult)
@@ -127,41 +132,6 @@ export default class Scan extends Component {
             </View>
         )
     }
-
-    // render() {
-    //     return (
-    //       <View style={styles.container}>
-    //         <RNCamera
-    //             ref={ref => {
-    //               this.camera = ref;
-    //             }}
-    //             style = {styles.preview}
-    //             type={RNCamera.Constants.Type.back}
-    //             flashMode={RNCamera.Constants.FlashMode.on}
-    //             permissionDialogTitle={'Permission to use camera'}
-    //             permissionDialogMessage={'We need your permission to use your camera phone'}
-    //         />
-    //         <View style={{flex: 0, flexDirection: 'row', justifyContent: 'center',}}>
-    //         <TouchableOpacity
-    //             onPress={this.takePicture.bind(this)}
-    //             style = {styles.capture}
-    //         >
-    //             <Text style={{fontSize: 14}}> SNAP </Text>
-    //         </TouchableOpacity>
-    //         </View>
-    //       </View>
-    //     );
-    // }
-
-    // takePicture = async function() {
-    //     if (this.camera) {
-    //         const options = { quality: 0.5, base64: true };
-    //         const data = await this.camera.takePictureAsync(options)
-    //         console.log(data.uri);
-    //     }
-    // };
-
-
 }
 
 const styles = StyleSheet.create({
