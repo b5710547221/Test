@@ -119,9 +119,21 @@ export default class AddCode extends Component {
 
     render() {
         const { leftMenu, currentPage, rightMenu } = this.state.header
-        const { PromotionName, BranchName, Description, ExpiredDate } = this.navigation.state.params.data
+        const { PromotionName, BranchName, Description, ExpiredDate, ImageUrl, CampaignTypeId } = this.navigation.state.params.data
         const reward = this.navigation.state.params.reward
-        console.log('reward: ', reward)
+        let imgUrl = "http://worldenergystation.com/barkodo/assets/img"
+        if(ImageUrl) {
+            switch(CampaignTypeId) {
+                case '1': imgUrl += "/gift_promotion/" + ImageUrl
+                    break
+                case '2': imgUrl += "/welcome_promotion/" + ImageUrl
+                    break
+                case '3': imgUrl += "/package_promotion/" + ImageUrl
+                    break
+                case '4': imgUrl += "/collect_promotion/" + ImageUrl
+                    break
+            }
+        }
         const { isPassCode } = this.state
         console.log('Add Code', this.navigation.state.params.data)
         return (
@@ -137,7 +149,7 @@ export default class AddCode extends Component {
                         <Text style={styles['Header']}>{BranchName}</Text>
                         <Text style={styles['SubHeader']}>{reward ? reward.desc : PromotionName}</Text>
                         <View style={styles['Carousel']}>
-                            <Carousel />
+                            <Carousel images={[imgUrl]}/>
                         </View>
                         <View style={styles['AddCode_Container']}>
                             <Text style={styles['AddCode_Text']}>Add your code for redeem</Text>

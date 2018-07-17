@@ -1,4 +1,6 @@
 - Used Promotion cannot get redeem code promotion
+- Used QRCode still can be used
+- non exist qrcode return 204
 - Cannot scan welcome promotion
 - canoot read filter of undefined in Gift
 - redeem code still work after 3 minutes

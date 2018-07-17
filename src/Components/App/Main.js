@@ -291,6 +291,7 @@ export default class Main extends Component {
         await this.setWelcomeList();
         await this.setGifts();
         await this.setPackages();
+        await this.setCollects();
     };
 
     onAddPromotion = async () => {
@@ -329,7 +330,7 @@ export default class Main extends Component {
             leftFunction,
             rightFunction
         } = this.state.header;
-        console.log("Current Page", currentPage);
+        console.log("Current Page", this.navigation.state);
 
         return (
             <Container>
@@ -378,6 +379,7 @@ export default class Main extends Component {
                         onScanSuccess={this.onRefresh}
                         navigation={this.navigation}
                         onAddPromotion={this.onAddPromotion}
+                        onChangePage={this.onChangePage}
                     />
                 ) : currentPage === "My Wallet" ? (
                     <Wallet

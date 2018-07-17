@@ -2,10 +2,11 @@ import React, { Component } from 'react'
 import { View, Image, Linking, StyleSheet, Text, TouchableOpacity, AsyncStorage, Alert } from 'react-native'
 
 import QRCodeScanner from 'react-native-qrcode-scanner'
-import { RNCamera } from 'react-native-camera';
 import axios from 'axios'
 
-import { API } from '../../Config'
+import { API, apiRequest } from '../../Config'
+import ScanSuccess from './ScanSuccess'
+import Loading from '../Common/Loading'
 
 
 export default class Scan extends Component {
@@ -14,7 +15,10 @@ export default class Scan extends Component {
         super(props)
 
         this.state = {
-            enabled: true
+            enabled: true,
+            modalVisible: false,
+            confirmText: "",
+            isLoading: false
         }
         this.navigation = this.props.navigation
 
@@ -25,17 +29,11 @@ export default class Scan extends Component {
         const userId = await AsyncStorage.getItem('userId')
         const userToken = await AsyncStorage.getItem('userToken')
         console.log(qrCode, ' ', userId)
+        await this.setState({
+            isLoading: true
+        })
         try {
-            const result = await axios.get(API["base"] + "/qrCodeGetPromotionDetails/" + qrCode, {
-                headers: {
-                    "Client-Service": "MobileClient",
-                    "Auth-Key": "BarkodoAPIs",
-                    "Content-Type":"application/json",
-                    "Authorization": userToken,
-                    "User-Id": userId
-                }
-            });  
-            this.props.onScanSuccess()
+            const result = await apiRequest(`/qrCodeGetPromotionDetails/${qrCode}`, 'GET', {}, "customer", userToken, userId);
             console.log(result)
             if (result['status'] == 200 ) {
                 const promotion = result["data"];
@@ -49,56 +47,50 @@ export default class Scan extends Component {
                 let url;
                 let data;
                 switch(promotion["CampaignTypeId"]) {
-                    case "1" : url = API["base"] + "/confirmGiftPromotionToWallet";
+                    case "1" : url = "/confirmGiftPromotionToWallet";
                         data = {...baseData}
                         break;
-                    case "3" : url = API["base"] + "/confirmPackagePromotionToWallet";
+                    case "3" : url = "/confirmPackagePromotionToWallet";
                         data = {...baseData, packageType: promotion["PackageType"] }
                         break;
-                    case "4" : url = API["base"] + "/confirmCollectPromotionToWallet";
+                    case "4" : url = "/confirmCollectPromotionToWallet";
                         data = {...baseData, collectType: promotion["CollectType"] };
                         break;
                 }
-                const confirmPromotionResult = await axios.post(url, data, {
-                    headers: {
-                        "Client-Service": "MobileClient",
-                        "Auth-Key": "BarkodoAPIs",
-                        "Content-Type": "application/json",
-                        "ServiceType": "customer",
-                        "Authorization": userToken,
-                        "User-Id": userId
-
-                    }
-                } )
-                if(confirmPromotionResult['status'] == 200) {
+                const confirmPromotionResult = await apiRequest(url, "POST", data, "customer", userToken, userId)
+                if(confirmPromotionResult['status'] == 201) {
                     await this.props.onAddPromotion()
                     await this.setState({
-                        enabled: false
+                        enabled: false,
+                        isLoading: false,
+                        confirmText: confirmPromotionResult['data']['message']
                     })
                 } else {
                     console.log(confirmPromotionResult)
-                    Alert.alert(confirmPromotionResult['data']['message'])
+                    Alert.alert()
                     this.setState({
-                        enabled: false
+                        enabled: false,
+                        isLoading: false,
+                        confirmText: confirmPromotionResult['data']['message']
                     })                
                 }
             } else {
                 console.log(result)
-                Alert.alert(result['data']['message']);
                 this.setState({
-                    enabled: false
+                    enabled: false,
+                    isLoading: false,
+                    confirmText: result['data']['message']
                 })
             }
         } catch (err) {
             console.log(err)
             console.log(err["response"])
-            Alert.alert(err["response"]["data"]["message"])
             this.setState({
-                enabled: false
+                enabled: false,
+                isLoading: false,
+                confirmText: err["response"]["data"]["message"]
             })
         }
-
-
     }
 
     onScanAgain = async() => {
@@ -109,24 +101,29 @@ export default class Scan extends Component {
     }
 
     render() {
-        const { enabled } = this.state
+        const { enabled, confirmText, isLoading } = this.state
         return (
             <View style={styles['Scan']}>
-                <QRCodeScanner 
-                    ref={(node) => { this.scanner = node }}
-                    onRead={this.onSuccess.bind(this)}
-                    topContent={
-                        <Text style={styles.centerText}>
-                            Go to <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on your computer and scan the QR code.
-                        </Text>
-                    }
-                    bottomContent={
-                        enabled ? <View></View> :
-                        <TouchableOpacity style={styles.buttonTouchable} onPress={this.onScanAgain.bind(this)}>
-                            <Text style={styles.buttonText}>Scan Again</Text>
-                        </TouchableOpacity>
-                    }
+                <ScanSuccess 
+                    isVisible={!enabled}
+                    navigation={this.navigation}
+                    text={confirmText}
+                    onChangePage={this.props.onChangePage}
+                    onScanAgain={this.onScanAgain}
                 />
+                {
+                    isLoading ? <Loading /> :
+                    <QRCodeScanner 
+                        ref={(node) => { this.scanner = node }}
+                        onRead={this.onSuccess.bind(this)}
+                        topContent={
+                            <Text style={styles.centerText}>
+                                Go to <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on your computer and scan the QR code.
+                            </Text>
+                        }
+                    />                    
+                }
+
             </View>
         )
     }
