@@ -19,31 +19,44 @@ export default class AuthLoading extends Component {
         await this._checkAuthOnStart()
     }
 
-    tokenIsValid = async(userToken) => {
-        const urlLogin = API['base']
-        const dataLogin = {
-            'name' : 'getUserDetails',
-            'params': {
-                'token': userToken
-            }
-        }
+    tokenAndIdAreValid = async(userToken, userId) => {
         const optionLogin = {
             headers: {
-                'Content-Type': 'application/json',
+                "Client-Service": "MobileClient",
+                "Auth-Key": "BarkodoAPIs",
+                "Content-Type": "application/json",
+                "Authorization": userToken,
+                "User-Id": userId
             },
             timeout: 10000
         }
-        const result = await axios.post(urlLogin, dataLogin, optionLogin)
-        return result['data']['response']['error']
+        try {
+            const result = await axios.get(API['base'] + "/getUserDetails/" + userId, 
+             optionLogin)  
+            console.log("auth loading result", result)
+            if(result['status'] == 200) {
+                return true
+            }     
+            return false     
+        } catch (error) {
+            console.log(error)
+            console.log(error["response"]["data"]["message"])
+            console.log(error["response"])
+            return false
+        }
     }
 
     _checkAuthOnStart = async () => {
         const userToken = await AsyncStorage.getItem('userToken')
+        const userId = await AsyncStorage.getItem('userId')
         console.log(userToken)
-        if(userToken) {
+        console.log(userId)
+        if(userToken && userId) {
             console.log('A token was stored!')
             try {
-                this.props.navigation.navigate(this.tokenIsValid(userToken) ? 'App' : 'Auth')
+                // Fix thi
+                const isValid  = await this.tokenAndIdAreValid(userToken, userId)
+                this.props.navigation.navigate( isValid ? 'App' : 'Auth')
             } catch (error) {
                 this.props.navigation.navigate('Auth')
             }        

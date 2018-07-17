@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Alert } from 'react-native'
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Alert, AsyncStorage } from 'react-native'
 import { Container, Content, Button } from 'native-base'
 import Svg, { Circle }from 'react-native-svg';
 import { SafeAreaView } from 'react-navigation'
 
-import { Bakodo_Color, Loading_Color } from '../../Config'
+import { Bakodo_Color, Loading_Color, apiRequest } from '../../Config'
 import Header from '../Common/Header'
 import Footer from '../Common/Footer'
 import StatusBar from '../Common/StatusBar'
@@ -61,7 +61,7 @@ export default class AddCode extends Component {
         }
     }
 
-    setHeader = () => {
+    setHeader = async() => {
         console.log('header is set in AddCode')
         const { goBack } = this.navigation
         const backButton = (
@@ -80,7 +80,7 @@ export default class AddCode extends Component {
                 <Text style={styles['Header_Icon_Text']}>Back</Text>
             </Button>
         )
-        this.setState({
+        await this.setState({
             header: {
                 leftMenu: backButton,
                 currentPage: null,
@@ -89,11 +89,28 @@ export default class AddCode extends Component {
         })
     }
 
-    onRedeem = () => {
+    onRedeem = async() => {
+        const { CampaignTypeId, PromotionId } = this.navigation.state.params.data;
+        const userToken = await AsyncStorage.getItem('userToken');
+        const userId = await AsyncStorage.getItem('userId');
         if(this.state.isPassCode === '1234') {
-            this.navigation.navigate('ShowQRCode', {
-                data : this.navigation.state.params.data
-            })              
+
+            try {
+                const resultGetCode = await apiRequest(`/getRedeemQRCodePromotions/${CampaignTypeId}/${PromotionId}`, 'GET', {}, 
+                 "customer", userToken, userId);                
+                if(resultGetCode['status'] === 201) {
+                    console.log(resultGetCode)
+                    this.navigation.navigate('ShowQRCode', {
+                        data : this.navigation.state.params.data,
+                        code : resultGetCode['data']['redeemCode']
+                    })  
+                } else {
+                    console.log(resultGetCode);
+                    Alert.alert(resultGetCode['data']['message'])
+                }                
+            } catch(err) {
+                console.log('error: ', err['response']);
+            }
         } else {
             Alert.alert('Wrong Pin!')
         }
@@ -102,11 +119,23 @@ export default class AddCode extends Component {
 
     render() {
         const { leftMenu, currentPage, rightMenu } = this.state.header
-        console.log('Navigation', this.navigation.state.params.data)
-        const { PromotionName, BranchName, Description, ExpiredDate } = this.navigation.state.params.data
+        const { PromotionName, BranchName, Description, ExpiredDate, ImageUrl, CampaignTypeId } = this.navigation.state.params.data
         const reward = this.navigation.state.params.reward
-        console.log('reward: ', reward)
+        let imgUrl = "http://worldenergystation.com/barkodo/assets/img"
+        if(ImageUrl) {
+            switch(CampaignTypeId) {
+                case '1': imgUrl += "/gift_promotion/" + ImageUrl
+                    break
+                case '2': imgUrl += "/welcome_promotion/" + ImageUrl
+                    break
+                case '3': imgUrl += "/package_promotion/" + ImageUrl
+                    break
+                case '4': imgUrl += "/collect_promotion/" + ImageUrl
+                    break
+            }
+        }
         const { isPassCode } = this.state
+        console.log('Add Code', this.navigation.state.params.data)
         return (
             <Container style={styles['Container']}>
                 <StatusBar />
@@ -120,7 +149,7 @@ export default class AddCode extends Component {
                         <Text style={styles['Header']}>{BranchName}</Text>
                         <Text style={styles['SubHeader']}>{reward ? reward.desc : PromotionName}</Text>
                         <View style={styles['Carousel']}>
-                            <Carousel />
+                            <Carousel images={[imgUrl]}/>
                         </View>
                         <View style={styles['AddCode_Container']}>
                             <Text style={styles['AddCode_Text']}>Add your code for redeem</Text>

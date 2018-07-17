@@ -2,10 +2,11 @@ import React, { Component } from 'react'
 import { View, Image, Linking, StyleSheet, Text, TouchableOpacity, AsyncStorage, Alert } from 'react-native'
 
 import QRCodeScanner from 'react-native-qrcode-scanner'
-import { RNCamera } from 'react-native-camera';
 import axios from 'axios'
 
-import { getAPI } from '../../Config'
+import { API, apiRequest } from '../../Config'
+import ScanSuccess from './ScanSuccess'
+import Loading from '../Common/Loading'
 
 
 export default class Scan extends Component {
@@ -14,46 +15,88 @@ export default class Scan extends Component {
         super(props)
 
         this.state = {
-            enabled: true
+            enabled: true,
+            modalVisible: false,
+            confirmText: "",
+            isLoading: false
         }
         this.navigation = this.props.navigation
 
     }
 
     onSuccess = async (e) => {
-        const qr_code = e.data
-        const user_id = await AsyncStorage.getItem('userId')
-        console.log(qr_code, ' ', user_id)
+        const qrCode = e.data
+        const userId = await AsyncStorage.getItem('userId')
+        const userToken = await AsyncStorage.getItem('userToken')
+        console.log(qrCode, ' ', userId)
+        await this.setState({
+            isLoading: true
+        })
         try {
-            const result = await getAPI('QrcodeGetPromotionDetails', { user_id, qr_code })
-            this.props.onScanSuccess()
+            const result = await apiRequest(`/qrCodeGetPromotionDetails/${qrCode}`, 'GET', {}, "customer", userToken, userId);
             console.log(result)
-            if (result['data']['response']['status'] == 200 ) {
-                if (!result['data']['error']) {
-                    const addPromotionResult = await getAPI('confirmPromotionToWallet', result['data']['response']['result'])
-                    console.log('addPromotionResult', addPromotionResult)
-                    if (addPromotionResult['data']['response']['status'] == 200 && !addPromotionResult['data']['error']) {
-                        Alert.alert('Add promotion to wallet successfully')
-                        await this.props.onAddPromotion()
-                        await this.setState({
-                            enabled: false
-                        })
-                    } else {
-                        console.log('Add Promotion Result', addPromotionResult)
-                    }
-                } else {
-                    Alert.alert('This QRCode is used or expired')
-                    await this.setState({
-                        enabled: false
-                    })
+            if (result['status'] == 200 ) {
+                const promotion = result["data"];
+                const baseData = {
+                    "userId": userId, 
+                    "campaignTypeId": promotion["CampaignTypeId"],
+                    "promotionId": promotion["PromotionId"],
+                    "branchId": promotion["BranchId"],
+                };
+                console.log('promotion ', promotion)
+                let url;
+                let data;
+                let confirmText;
+                switch(promotion["CampaignTypeId"]) {
+                    // TODO: correct message
+                    case "1" : url = "/confirmGiftPromotionToWallet";
+                        data = {...baseData}
+                        confirmText = `You have received ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
+                        break;
+                    case "3" : url = "/confirmPackagePromotionToWallet";
+                        data = {...baseData, packageType: promotion["PackageType"] }
+                        confirmText = `You have received ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
+                        break;
+                    case "4" : url = "/confirmCollectPromotionToWallet";
+                        data = {...baseData, collectType: promotion["CollectType"] }
+                        confirmText = `You have earned ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
+                        break;
                 }
+                const confirmPromotionResult = await apiRequest(url, "POST", data, "customer", userToken, userId)
+                console.log(confirmPromotionResult)
+                if(confirmPromotionResult['status'] == 201) {
+                    await this.props.onAddPromotion()
+                    await this.setState({
+                        enabled: false,
+                        isLoading: false,
+                        confirmText: confirmText
+                    })
+                } else {
+                    console.log(confirmPromotionResult)
+                    Alert.alert()
+                    this.setState({
+                        enabled: false,
+                        isLoading: false,
+                        confirmText: confirmPromotionResult['data']['message']
+                    })                
+                }
+            } else {
+                console.log(result)
+                this.setState({
+                    enabled: false,
+                    isLoading: false,
+                    confirmText: result['data']['message']
+                })
             }
         } catch (err) {
             console.log(err)
-            Alert.alert('Error Scanning Code')
+            console.log(err["response"])
+            this.setState({
+                enabled: false,
+                isLoading: false,
+                confirmText: err["response"]["data"]["message"]
+            })
         }
-
-
     }
 
     onScanAgain = async() => {
@@ -64,62 +107,32 @@ export default class Scan extends Component {
     }
 
     render() {
-        const { enabled } = this.state
+        const { enabled, confirmText, isLoading } = this.state
         return (
             <View style={styles['Scan']}>
-                <QRCodeScanner 
-                    ref={(node) => { this.scanner = node }}
-                    onRead={this.onSuccess.bind(this)}
-                    topContent={
-                        <Text style={styles.centerText}>
-                            Go to <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on your computer and scan the QR code.
-                        </Text>
-                    }
-                    bottomContent={
-                        enabled ? <View></View> :
-                        <TouchableOpacity style={styles.buttonTouchable} onPress={this.onScanAgain.bind(this)}>
-                            <Text style={styles.buttonText}>Scan Again</Text>
-                        </TouchableOpacity>
-                    }
+                <ScanSuccess 
+                    isVisible={!enabled}
+                    navigation={this.navigation}
+                    text={confirmText}
+                    onChangePage={this.props.onChangePage}
+                    onScanAgain={this.onScanAgain}
                 />
+                {
+                    isLoading ? <Loading /> :
+                    <QRCodeScanner 
+                        ref={(node) => { this.scanner = node }}
+                        onRead={this.onSuccess.bind(this)}
+                        topContent={
+                            <Text style={styles.centerText}>
+                                Go to <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on your computer and scan the QR code.
+                            </Text>
+                        }
+                    />                    
+                }
+
             </View>
         )
     }
-
-    // render() {
-    //     return (
-    //       <View style={styles.container}>
-    //         <RNCamera
-    //             ref={ref => {
-    //               this.camera = ref;
-    //             }}
-    //             style = {styles.preview}
-    //             type={RNCamera.Constants.Type.back}
-    //             flashMode={RNCamera.Constants.FlashMode.on}
-    //             permissionDialogTitle={'Permission to use camera'}
-    //             permissionDialogMessage={'We need your permission to use your camera phone'}
-    //         />
-    //         <View style={{flex: 0, flexDirection: 'row', justifyContent: 'center',}}>
-    //         <TouchableOpacity
-    //             onPress={this.takePicture.bind(this)}
-    //             style = {styles.capture}
-    //         >
-    //             <Text style={{fontSize: 14}}> SNAP </Text>
-    //         </TouchableOpacity>
-    //         </View>
-    //       </View>
-    //     );
-    // }
-
-    // takePicture = async function() {
-    //     if (this.camera) {
-    //         const options = { quality: 0.5, base64: true };
-    //         const data = await this.camera.takePictureAsync(options)
-    //         console.log(data.uri);
-    //     }
-    // };
-
-
 }
 
 const styles = StyleSheet.create({

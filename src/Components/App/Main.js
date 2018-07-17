@@ -17,15 +17,15 @@ import axios from "axios";
 import CameraView from "./Scan";
 import Wallet from "./MyWallet";
 import ShopList from "./ShopList";
-import { Loading_Color } from "../../Config";
+import { Loading_Color, apiRequest } from "../../Config";
 import { SearchIcon, BackIcon, HiddenIcon } from "../Common/Icon";
 import Header from "../Common/Header";
 import Footer from "../Common/Footer";
 import Search from "./Search";
 import Filter from "./Filter";
-import FilterModal from "./FilterModal"
+import FilterModal from "./FilterModal";
 
-import { getAPI } from "../../Config";
+import { API } from "../../Config";
 
 export default class Main extends Component {
     static navigationOptions = {
@@ -48,9 +48,12 @@ export default class Main extends Component {
             usedWelcome: [],
             gitfs: [],
             packages: [],
+            collects: [],
             searchVisible: false,
             searchText: "",
-            filterVisible: false
+            filterVisible: false,
+            userId: null,
+            userToken: null,
         };
 
         this.navigation = props.navigation;
@@ -61,22 +64,65 @@ export default class Main extends Component {
             BackHandler.addEventListener("hardwareBackPress", this.onBackPage);
         }
         console.log("Component Did mount");
+        const userId = await AsyncStorage.getItem("userId");
+        console.log('userId : ', userId);
+        const userToken = await AsyncStorage.getItem("userToken");   
+        this.setState({
+            userId, userToken
+        })     
         await this.setWelcomeList();
         await this.setGifts();
         await this.setPackages();
+        await this.setCollects();
     };
 
+
+    getWelcomePromotion = async(userId, userToken) => {
+        return await axios.get(
+            API["base"] + "/getAllWelcomePromotionList/2/" + userId,
+            {
+                headers: {
+                    "Client-Service": "MobileClient",
+                    "Auth-Key": "BarkodoAPIs",
+                    "Content-Type": "application/json",
+                    "Authorization": userToken,
+                    "User-Id": userId
+                },
+                timeout: 10000
+            }
+        );
+
+    }
+
+    getUserWallet = async(userId, userToken, camTypeId) => {
+        // return await axios.get(
+        //     API["base"] + "/getUserWalletByCamPaignTypeAndUserId/" + camTypeId + "/" + userId,
+        //     {
+        //         headers: {
+        //             "Client-Service": "MobileClient",
+        //             "Auth-Key": "BarkodoAPIs",
+        //             "Content-Type": "application/json",
+        //             "Authorization": userToken,
+        //             "User-Id": userId
+        //         },
+        //         timeout: 10000
+        //     }
+        // );
+        console.log('userId : ', userId)
+        console.log('userToken : ', userToken);
+
+        return await apiRequest(`/getUserWalletByCamPaignTypeAndUserId/${camTypeId}/${userId}`,
+         'GET', {}, 'customer', userToken, userId);
+    }
+
+
+
     setWelcomeList = async () => {
-        const userId = await AsyncStorage.getItem("userId");
-        console.log("test", userId);
         try {
-            result = await getAPI("GetAllWelcomePromotionList", {
-                user_id: userId,
-                campaign_type_id: "2"
-            });
-            if (result["data"]["response"]["status"] === 200) {
+            result = await this.getWelcomePromotion(this.state.userId, this.state.userToken)
+            if (result["status"] === 200) {
                 await this.setState({
-                    welcomeProList: result["data"]["response"]["result"]
+                    welcomeProList: result["data"]
                 });
             }
         } catch (err) {
@@ -85,34 +131,30 @@ export default class Main extends Component {
         }
 
         try {
-            result = await getAPI("getUserWallet", {
-                user_id: userId,
-                campaign_type_id: "2"
-            });
-            if (result["data"]["response"]["status"] === 200) {
+            console.log('userId : ', this.state.userId);
+            console.log('userToken : ', this.state.userToken);
+            result = await this.getUserWallet(this.state.userId, this.state.userToken, 2)
+            if (result["status"] === 200) {
                 await this.setState({
-                    usedWelcome: result["data"]["response"]["result"]
+                    usedWelcome: result["data"]
                 });
             }
         } catch (err) {
             console.log(err);
+            console.log(err['response'])
             Alert.alert("Error loading Used Welcome Promotion!");
         }
     };
 
     setGifts = async () => {
-        const userId = await AsyncStorage.getItem("userId");
         try {
-            result = await getAPI("getUserWallet", {
-                user_id: userId,
-                campaign_type_id: "1"
-            });
+            result = await this.getUserWallet(this.state.userId, this.state.userToken, 1)
             console.log(result);
-            const gifts = result["data"]["response"]["result"];
-            console.log(gifts);
-            if (result["data"]["response"]["status"] === 200) {
+            const gifts = result["data"];
+            console.log('gifts: ', gifts);
+            if (result["status"] === 200) {
                 await this.setState({
-                    gifts: result["data"]["response"]["result"]
+                    gifts: result["data"]
                 });
                 console.log(this.state.gifts);
             }
@@ -123,19 +165,14 @@ export default class Main extends Component {
     };
 
     setPackages = async () => {
-        const userId = await AsyncStorage.getItem("userId");
-        console.log("packages user Id", userId);
+        console.log("packages user Id", this.state.userId);
         try {
-            result = await getAPI("getUserWallet", {
-                user_id: userId,
-                campaign_type_id: "3"
-            });
-
-            const packages = result["data"]["response"]["result"];
+            result = await this.getUserWallet(this.state.userId, this.state.userToken, 3)
+            const packages = result["data"];
             console.log(packages);
-            if (result["data"]["response"]["status"] === 200) {
+            if (result["status"] === 200) {
                 await this.setState({
-                    packages: result["data"]["response"]["result"]
+                    packages: result["data"]
                 });
                 console.log(this.state.packages);
             }
@@ -144,6 +181,23 @@ export default class Main extends Component {
             Alert.alert("Error loading Packages");
         }
     };
+
+    setCollects = async () => {
+        try {
+            result = await this.getUserWallet(this.state.userId, this.state.userToken, 4)
+            const collects = result["data"];
+            console.log(collects);
+            if (result["status"] === 200) {
+                await this.setState({
+                    collects: result["data"]
+                });
+                console.log(this.state.collects);
+            }
+        } catch (err) {
+            console.log(err);
+            Alert.alert("Error loading Packages");
+        }
+    };    
 
     componentWillUnmount = () => {
         if (Platform.OS === "android") {
@@ -237,6 +291,7 @@ export default class Main extends Component {
         await this.setWelcomeList();
         await this.setGifts();
         await this.setPackages();
+        await this.setCollects();
     };
 
     onAddPromotion = async () => {
@@ -264,6 +319,7 @@ export default class Main extends Component {
             usedWelcome,
             gifts,
             packages,
+            collects,
             searchVisible,
             searchText,
             filterVisible
@@ -274,11 +330,14 @@ export default class Main extends Component {
             leftFunction,
             rightFunction
         } = this.state.header;
-        console.log("Current Page", currentPage);
+        console.log("Current Page", this.navigation.state);
 
         return (
             <Container>
-                <FilterModal filterVisible={filterVisible} onPress={this.onToggleFilterStatus}/>
+                <FilterModal
+                    filterVisible={filterVisible}
+                    onPress={this.onToggleFilterStatus}
+                />
                 {currentPage == "Shop List" || currentPage == "My Wallet" ? (
                     <Header
                         titlePage={currentPage}
@@ -320,11 +379,13 @@ export default class Main extends Component {
                         onScanSuccess={this.onRefresh}
                         navigation={this.navigation}
                         onAddPromotion={this.onAddPromotion}
+                        onChangePage={this.onChangePage}
                     />
                 ) : currentPage === "My Wallet" ? (
                     <Wallet
                         gifts={gifts}
                         packages={packages}
+                        collects={collects}
                         navigation={this.navigation}
                         searchVisible={searchVisible}
                         searchText={searchText}
@@ -344,5 +405,3 @@ export default class Main extends Component {
         );
     }
 }
-
-

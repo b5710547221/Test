@@ -9,7 +9,7 @@ import LoginScreen from './Components/Auth/Login'
 //App
 import MainScreen from './Components/App/Main'
 import ScanScreen from './Components/App/Scan'
-// import MyWalletScreen from './Components/App/MyWallet'
+import MyWalletScreen from './Components/App/MyWallet'
 import EditProfileScreen from './Components/App/EditProfile' 
 import ShowGiftPromotionScreen from './Components/module/ShowGiftPromotion'
 import ShowPackagePromotionScreen from './Components/module/ShowPackagePromotion'

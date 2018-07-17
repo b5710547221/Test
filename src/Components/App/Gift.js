@@ -39,10 +39,10 @@ export default class Gift extends Component {
         const filteredGifts = searchVisible
             ? gifts.filter(item =>
                   item.BranchName.toLowerCase().includes(
-                      searchText.toLowerCase()
-                  )
+                      searchText.toLowerCase() 
+                  ) && item.Used == "0"
               )
-            : gifts;
+            : gifts.filter(item => item.Used == "0");
 		console.log(gifts)
 		return (
 			<ScrollView style={styles['Gift']}>

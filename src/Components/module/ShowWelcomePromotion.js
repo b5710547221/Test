@@ -78,10 +78,10 @@ export default class ShowPromotion extends Component {
         console.log('On get pressed')
         AsyncStorage.getItem('userId').then((userId) => {
             const params = {
-                "user_id": userId,
-                "branch_id": this.navigation.state.params.data.BranchId,
-                "promotion_id": this.navigation.state.params.data.PromotionId,
-                "campaign_type_id": "2"
+                "userId": userId,
+                "branchId": this.navigation.state.params.data.BranchId,
+                "promotionId": this.navigation.state.params.data.PromotionId,
+                "campaignTypeId": "2"
             }
             this.navigation.state.params.onGet(params)
             this.navigation.goBack()

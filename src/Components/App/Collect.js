@@ -39,14 +39,16 @@ export default class Collect extends Component {
 	render() {
 
 		const { isLoading, data } = this.state
-		const { searchVisible, searchText } = this.props
+		const { searchVisible, searchText, collects } = this.props
+		console.log('Collects')
+		console.log(collects)
         const filteredCollect = searchVisible
-            ? data.filter(item =>
+            ? collects.filter(item =>
                   item.BranchName.toLowerCase().includes(
                       searchText.toLowerCase()
                   )
               )
-            : data
+            : collects
 		return (
 			<ScrollView style={styles['Collect']}>
 				{
