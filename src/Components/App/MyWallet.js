@@ -78,11 +78,14 @@ export default class MyWallet extends Component {
 				</View>
 				{
 					showPage === 'Gifts' ?
-						(<GiftCard gifts={gifts} navigation={this.navigation} searchText={searchText} searchVisible={searchVisible}/>)
+						(<GiftCard navigation={this.navigation} onChangePage={this.props.onChangePage}
+							searchText={searchText} searchVisible={searchVisible}/>)
 						: showPage === 'Collects' ?
-							(<CollectCard collects={collects} navigation={this.navigation} searchText={searchText} searchVisible={searchVisible}/>)
+							(<CollectCard navigation={this.navigation} onChangePage={this.props.onChangePage}
+								searchText={searchText} searchVisible={searchVisible}/>)
 							:
-							(<PackageCard packages={packages} navigation={this.navigation} searchText={searchText} searchVisible={searchVisible}/>)
+							(<PackageCard navigation={this.navigation} onChangePage={this.props.onChangePage}
+								 searchText={searchText} searchVisible={searchVisible}/>)
 				}
 			</View>
 		)

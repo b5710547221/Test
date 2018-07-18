@@ -1,28 +1,24 @@
 refactor
     - set promotion each page
     - component should be in module
+    - seperate api function
 confirm Message
 promotion image in shop confirm
 - qrcodegetpromotion return PromotionMamew
 - Used Promotion cannot get redeem code promotion
-- Used QRCode still can be used
-- non exist qrcode return 204
-- Cannot scan welcome promotion
-- canoot read filter of undefined in Gift
+
+- qrcode does not change status
 - redeem code still work after 3 minutes
+- getUserWallet
+
 - qrCodegetPromotion used No content
-- Can scan gift multiple time (does not change qrcode status)
+
 - Add Loading in Shop List
 - Register Birthday default to today
 - Log out sometimes network error
-- Shop Image
-- Prettier image crop pick (Actionsheet native-base)
-- Android permission for rn-fetch-blob
 - fix android react-native gps state
 - End Date to days left
 - shop list no gps does not display appropriate
-- sign up user name exist error return false
 - clean up and organize navigation in AppNew.js
-- change Main.js
 - regular expression for signup form
 - Connect with facebook

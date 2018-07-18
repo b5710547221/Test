@@ -3,7 +3,7 @@ import { AsyncStorage } from 'react-native'
 import axios from 'axios'
 
 import Loading from '../Common/Loading'
-import { API } from '../../Config'
+import { API, apiRequest } from '../../Config'
 export default class AuthLoading extends Component {
 
     static navigationOptions = {

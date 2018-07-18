@@ -14,7 +14,7 @@ import { Container, Content, Button } from "native-base";
 // import GPSState from "react-native-gps-state";
 import axios from "axios";
 
-import { API, Loading_Color } from "../../Config";
+import { API, Loading_Color, apiRequest } from "../../Config";
 import { SearchIcon, HiddenIcon } from "../Common/Icon";
 
 import Header from "../Common/Header";
@@ -32,10 +32,10 @@ export default class ShopList extends Component {
 
         this.state = {
             data: [],
-            // isLoading: true,
+            isLoading: true,
             // isNoGPS: true,
-            isLoading: false,
             isNoGPS: false,
+            welcomeProList: null,
 
             simulator: true,
             userId: null,
@@ -59,6 +59,64 @@ export default class ShopList extends Component {
             userId,
             userToken
         });
+        await this.setWelcomeList();
+    };
+
+    getUserWallet = async(userId, userToken, camTypeId) => {
+        console.log('userId : ', userId)
+        console.log('userToken : ', userToken);
+
+        return await apiRequest(`/getUserWalletByCamPaignTypeAndUserId/${camTypeId}/${userId}`,
+         'GET', {}, 'customer', userToken, userId);
+    }
+
+    getWelcomePromotion = async(userId, userToken) => {
+        return await axios.get(
+            API["base"] + "/getAllWelcomePromotionList/2/" + userId,
+            {
+                headers: {
+                    "Client-Service": "MobileClient",
+                    "Auth-Key": "BarkodoAPIs",
+                    "Content-Type": "application/json",
+                    "Authorization": userToken,
+                    "User-Id": userId
+                },
+                timeout: 10000
+            }
+        );
+
+    }
+
+    setWelcomeList = async () => {
+        try {
+            result = await this.getWelcomePromotion(this.state.userId, this.state.userToken)
+            if (result["status"] === 200) {
+                await this.setState({
+                    welcomeProList: result["data"]
+                });
+            }
+        } catch (err) {
+            console.log(err);
+            Alert.alert("Error loading Welcome Promotion!");
+        }
+
+        try {
+            console.log('userId : ', this.state.userId);
+            console.log('userToken : ', this.state.userToken);
+            result = await this.getUserWallet(this.state.userId, this.state.userToken, 2)
+            if (result["status"] === 200) {
+                await this.setState({
+                    usedWelcome: result["data"]
+                });
+            }
+        } catch (err) {
+            console.log(err);
+            console.log(err['response'])
+            Alert.alert("Error loading Used Welcome Promotion!");
+        }
+        this.setState({
+            isLoading: false
+        });
     };
 
     checkStatusGPS = async status => {
@@ -81,21 +139,8 @@ export default class ShopList extends Component {
     onGetPromotion = async params => {
         console.log("params", params);
         try {
-            const result = await axios.post(
-                API["base"] + "/confirmWelcomePromotionToWallet",
-                params,
-                {
-                    headers: {
-                        "Client-Service": "MobileClient",
-                        "Auth-Key": "BarkodoAPIs",
-                        "Content-Type": "application/json",
-                        Authorization: this.state.userToken,
-                        "User-Id": this.state.userId
-                    },
-                    timeout: 10000
-                }
-            );
-            console.log("the resulttt", result);
+            const result = await apiRequest("/confirmWelcomePromotionToWallet", "POST", params, "customer",
+             this.state.userToken, this.state.userId);
             if (result["status"] === 201) {
                 Alert.alert(result["data"]["message"]);
             }
@@ -103,7 +148,7 @@ export default class ShopList extends Component {
             console.log(err);
             console.log(err["response"]);
         }
-        this.props.onRefresh();
+        this.setWelcomeList()
     };
 
     componentWillUnmount() {
@@ -126,13 +171,8 @@ export default class ShopList extends Component {
     };
 
     render() {
-        const { data, isLoading, isNoGPS } = this.state;
-        const {
-            welcomeProList,
-            usedWelcome,
-            searchText,
-            searchVisible
-        } = this.props;
+        const { data, isLoading, isNoGPS, welcomeProList, usedWelcome } = this.state;
+        const { searchText, searchVisible } = this.props;
 
         const filteredWelcome = searchVisible
             ? welcomeProList.filter(item =>
@@ -150,10 +190,11 @@ export default class ShopList extends Component {
               )
             : usedWelcome;
         console.log("filteredWelcome : ", filteredWelcome);
+        console.log("isLoading: ", isLoading)
 
         return (
             <ScrollView>
-                {isLoading ? (
+                { isLoading ? (
                     <Loading />
                 ) : isNoGPS ? (
                     <NoGPS />

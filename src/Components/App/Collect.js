@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { ScrollView, FlatList, StyleSheet } from 'react-native'
+import { ScrollView, FlatList, StyleSheet, Alert, AsyncStorage } from 'react-native'
 import axios from 'axios'
 
+import { apiRequest } from '../../Config'
 import Loading from '../Common/Loading'
 import Card from '../Common/Card'
 
@@ -13,19 +14,19 @@ export default class Collect extends Component {
 		super(props)
 
 		this.state = {
-			data: [],
-			isLoading: true
+			isLoading: true,
+			collects: null,
+			userToken: null,
+			userId: null
 		}
 		this.navigation = props.navigation
 	}
 
-	componentDidMount = () => {
-		setTimeout(async () => {
-			await this.setState({
-				data: mockUpData,
-				isLoading: false
-			})
-		}, 0)
+	componentDidMount = async() => {
+		const userToken = await AsyncStorage.getItem('userToken')
+		const userId = await AsyncStorage.getItem('userId')
+		await this.setState({ userId, userToken})
+		await this.setCollects()
 	}
 
 	onClick = (item) => {
@@ -36,19 +37,51 @@ export default class Collect extends Component {
 		})
 	}
 
+	getUserWallet = async(userId, userToken, camTypeId) => {
+        console.log('userId : ', userId)
+        console.log('userToken : ', userToken);
+
+        return await apiRequest(`/getUserWalletByCamPaignTypeAndUserId/${camTypeId}/${userId}`,
+         'GET', {}, 'customer', userToken, userId);
+	}
+
+    setCollects = async () => {
+        try {
+            result = await this.getUserWallet(this.state.userId, this.state.userToken, 4)
+            const collects = result["data"];
+            console.log(collects);
+            if (result["status"] === 200) {
+                await this.setState({
+                    collects: result["data"]
+                });
+                console.log(this.state.collects);
+            }
+        } catch (err) {
+            console.log(err);
+            Alert.alert("Error loading Packages");
+		}
+		await this.setState({
+			isLoading: false
+		})
+	};    
+	
 	render() {
 
-		const { isLoading, data } = this.state
-		const { searchVisible, searchText, collects } = this.props
+		const { isLoading, collects } = this.state
+		const { searchVisible, searchText } = this.props
 		console.log('Collects')
 		console.log(collects)
-        const filteredCollect = searchVisible
-            ? collects.filter(item =>
-                  item.BranchName.toLowerCase().includes(
-                      searchText.toLowerCase()
-                  )
-              )
-            : collects
+		let filteredCollect
+		if(!isLoading) {
+			filteredCollect = searchVisible
+				? collects.filter(item =>
+					item.BranchName.toLowerCase().includes(
+						searchText.toLowerCase()
+					)
+				)
+				: collects			
+		}
+
 		return (
 			<ScrollView style={styles['Collect']}>
 				{

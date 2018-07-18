@@ -3,6 +3,7 @@ import { StyleSheet, Text, TextInput, View, Image } from 'react-native'
 import { Container, Content, Button } from 'native-base'
 import Svg, { Circle, Rect } from 'react-native-svg'
 import QRCode from 'react-native-qrcode-svg'
+import { NavigationActions, StackActions } from 'react-navigation'
 
 import { Bakodo_Color, Loading_Color } from '../../Config'
 import Header from '../Common/Header'
@@ -51,7 +52,12 @@ export default class AddCode extends Component {
             }, () => {
                 if (this.state.remainingSeconds === 0) {
                     clearInterval(this.intervalId)
-                    this.navigation.goBack()
+                    this.navigation.dispatch(StackActions.reset({
+                        index: 0,
+                        actions: [ NavigationActions.navigate({ routeName: 'Main', params:  {
+                            currentPage: "My Wallet"
+                        }})] 
+                    }));
                 }
             })
         }, 1000)
@@ -98,6 +104,15 @@ export default class AddCode extends Component {
         })
     }
 
+    onTimeOut = () => {
+        this.navigation.dispatch(StackActions.reset({
+            index: 0,
+            actions: [ NavigationActions.navigate({ routeName: 'Main', params:  {
+                currentPage: "My Wallet"
+            }})] 
+        }));
+    }
+
     render() {
         const { leftMenu, currentPage, rightMenu } = this.state.header
         const { PromotionName, BranchName, Description, ExpiredDate } = this.props.navigation.state.params.data
@@ -127,14 +142,12 @@ export default class AddCode extends Component {
                             <Text style={styles['QRCode_Text']}>{code}</Text>
                         </View>
 
-                        <Button style={styles['Button']}>
+                        <Button style={styles['Button']} onPress={this.onTimeOut}>
                             <Text style={styles['Button_Text']}>Go to my Wallet</Text>
                         </Button>
                     </View>
                 </Content>
             </Container>
-
-
         )
     }
 }

@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
-import { ScrollView, FlatList, StyleSheet } from 'react-native'
+import { ScrollView, FlatList, StyleSheet, Alert, AsyncStorage } from 'react-native'
 import axios from 'axios'
+
+import { apiRequest } from '../../Config'
 
 import Loading from '../Common/Loading'
 import Card from '../Common/Card'
@@ -14,41 +16,51 @@ export default class Package extends Component {
 
 		this.state = {
 			data: [],
-			isLoading: true
+			isLoading: true,
+			packages: null,
+			userToken: null,
+			userId: null
 		}
 		this.navigation = props.navigation
 	}
 
-	componentDidMount = () => {
-		setTimeout(async () => {
-			await this.setState({
-				isLoading: false
-			})
-		}, 1000)
-		// const { packages } = this.props
 
-		// let promiseAPIRequests = packages.map( packagePromotion => { 
-		// 	return getAPIPromise('getPromotionDetails', {
-		// 		"campaign_type_id" : "3",
-		// 		"branch_id" : packagePromotion.BranchId,
-		// 		"promotion_id" : packagePromotion.PromotionId
-		// 	}).then(res => res['data']['response']['result'])
-		// 	.catch(err =>{ console.log('Error get package promotion') })
-		// });
-		
-		// Promise.all(promiseAPIRequests).then(resultsPackages => {
-		//    // do something after the loop finishes
-		//    console.log('Load lists of package successfully')
-		//    console.log(resultsPackages)
-		//    this.setState({
-		// 	   data: resultsPackages
-		//    })
-		// }).catch(err =>{
-		//    // do something when any of the promises in array are rejected
-		//    console.log('Error loading list of Package Promotion')			
-		// 	}
-		// )
+
+	componentDidMount = async() => {
+		const userToken = await AsyncStorage.getItem('userToken')
+		const userId = await AsyncStorage.getItem('userId')
+		await this.setState({ userId, userToken})
+		await this.setPackages()
 	}
+
+	getUserWallet = async(userId, userToken, camTypeId) => {
+        console.log('userId : ', userId)
+        console.log('userToken : ', userToken);
+
+        return await apiRequest(`/getUserWalletByCamPaignTypeAndUserId/${camTypeId}/${userId}`,
+         'GET', {}, 'customer', userToken, userId);
+	}
+
+    setPackages = async () => {
+        console.log("packages user Id", this.state.userId);
+        try {
+            result = await this.getUserWallet(this.state.userId, this.state.userToken, 3)
+            const packages = result["data"];
+            console.log(packages);
+            if (result["status"] === 200) {
+                await this.setState({
+                    packages: result["data"]
+                });
+                console.log(this.state.packages);
+            }
+        } catch (err) {
+            console.log(err);
+            Alert.alert("Error loading Packages");
+		}
+		await this.setState({
+			isLoading: false
+		})
+    };
 
 	onClick = (item) => {
 		console.log('On Click in Package')
@@ -59,15 +71,19 @@ export default class Package extends Component {
 	}
 
 	render() {
-		const { isLoading, data } = this.state
-		const { packages, searchText, searchVisible } = this.props
-        const filteredPackges = searchVisible
-            ? packages.filter(item =>
-                  item.BranchName.toLowerCase().includes(
-                      searchText.toLowerCase()
-                  )
-              )
-            : packages
+		const { isLoading, data, packages } = this.state
+		const { searchText, searchVisible } = this.props
+		let filteredPackges
+		if(!isLoading) {
+			filteredPackges = searchVisible
+				? packages.filter(item =>
+					item.BranchName.toLowerCase().includes(
+						searchText.toLowerCase()
+					)
+				)
+				: packages			
+		}
+
 		return (
 			<ScrollView style={styles['Package']}>
 				{

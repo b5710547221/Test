@@ -42,6 +42,7 @@ export default class Scan extends Component {
                     "campaignTypeId": promotion["CampaignTypeId"],
                     "promotionId": promotion["PromotionId"],
                     "branchId": promotion["BranchId"],
+                    "qrCode": e.data
                 };
                 console.log('promotion ', promotion)
                 let url;
@@ -65,7 +66,6 @@ export default class Scan extends Component {
                 const confirmPromotionResult = await apiRequest(url, "POST", data, "customer", userToken, userId)
                 console.log(confirmPromotionResult)
                 if(confirmPromotionResult['status'] == 201) {
-                    await this.props.onAddPromotion()
                     await this.setState({
                         enabled: false,
                         isLoading: false,
@@ -73,7 +73,7 @@ export default class Scan extends Component {
                     })
                 } else {
                     console.log(confirmPromotionResult)
-                    Alert.alert()
+                    Alert.alert(confirmPromotionResult["data"]["message"])
                     this.setState({
                         enabled: false,
                         isLoading: false,
@@ -118,15 +118,10 @@ export default class Scan extends Component {
                     onScanAgain={this.onScanAgain}
                 />
                 {
-                    isLoading ? <Loading /> :
+                    // isLoading ? <Loading /> :
                     <QRCodeScanner 
                         ref={(node) => { this.scanner = node }}
                         onRead={this.onSuccess.bind(this)}
-                        topContent={
-                            <Text style={styles.centerText}>
-                                Go to <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on your computer and scan the QR code.
-                            </Text>
-                        }
                     />                    
                 }
 
