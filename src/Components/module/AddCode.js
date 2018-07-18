@@ -110,6 +110,7 @@ export default class AddCode extends Component {
                 }                
             } catch(err) {
                 console.log('error: ', err['response']);
+                Alert.alert(err["response"]["data"]["message"])
             }
         } else {
             Alert.alert('Wrong Pin!')
@@ -119,18 +120,18 @@ export default class AddCode extends Component {
 
     render() {
         const { leftMenu, currentPage, rightMenu } = this.state.header
-        const { PromotionName, BranchName, Description, ExpiredDate, ImageUrl, CampaignTypeId } = this.navigation.state.params.data
+        const { PromotionName, BranchName, Description, ExpiredDate, PromotionImage, CampaignTypeId } = this.navigation.state.params.data
         const reward = this.navigation.state.params.reward
         let imgUrl = "http://worldenergystation.com/barkodo/assets/img"
-        if(ImageUrl) {
+        if(PromotionImage) {
             switch(CampaignTypeId) {
-                case '1': imgUrl += "/gift_promotion/" + ImageUrl
+                case '1': imgUrl += "/gift_promotion/" + PromotionImage
                     break
-                case '2': imgUrl += "/welcome_promotion/" + ImageUrl
+                case '2': imgUrl += "/welcome_promotion/" + PromotionImage
                     break
-                case '3': imgUrl += "/package_promotion/" + ImageUrl
+                case '3': imgUrl += "/package_promotion/" + PromotionImage
                     break
-                case '4': imgUrl += "/collect_promotion/" + ImageUrl
+                case '4': imgUrl += "/collect_promotion/" + PromotionImage
                     break
             }
         }

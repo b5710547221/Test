@@ -103,7 +103,7 @@ export default class Login extends Component {
                     this.navigation.navigate("App");
                 } 
             } catch (error) {
-                console.log(error)
+                console.log(error["response"])
                 await this.setState({
                     isLoading: false
                 });                

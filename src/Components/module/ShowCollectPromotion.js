@@ -219,6 +219,7 @@ export default class ShowPromotion extends Component {
         const {
             PromotionName,
             BranchName,
+            BranchImage,
             Description,
             ExpiredDate,
             Timeslimit,
@@ -239,7 +240,7 @@ export default class ShowPromotion extends Component {
                         <Text style={styles["Header"]}>{BranchName}</Text>
                         <Text style={styles["SubHeader"]} />
                         <View style={styles["Carousel"]}>
-                            <Carousel />
+                            <Carousel images={[`http://worldenergystation.com/barkodo/assets/img/shop/${BranchImage}`]} />
                         </View>
 
                         <View style={styles["FlexDirection_Row_Last"]}>

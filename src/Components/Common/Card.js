@@ -23,7 +23,7 @@ export default class Card extends PureComponent {
 
     render() {
         const { type, data, onClick } = this.props
-        const { BranchId, PromotionId, ImageUrl, PromotionName, BranchName, Description, EndDate } = data
+        const { BranchId, PromotionId, ImageUrl, PromotionName, BranchName, Description, EndDate, BranchImage } = data
         const { ExpiredDate, Timeslimit, Times } = data
 
         console.log(type)
@@ -34,7 +34,9 @@ export default class Card extends PureComponent {
                 </View> */}
                 <TouchableOpacity onPress={onClick}>
                     < View style={styles['Card_Container_Image']}>
-                        <Image style={styles['Card_Image']} source={Image_1} />
+                        <Image style={styles['Card_Image']} source={{
+                            uri: `http://worldenergystation.com/barkodo/assets/img/shop/${BranchImage}`
+                        }} />
                     </View>
                 </TouchableOpacity>
                 {

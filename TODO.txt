@@ -1,4 +1,8 @@
-- confirm Message
+refactor
+    - set promotion each page
+    - component should be in module
+confirm Message
+promotion image in shop confirm
 - qrcodegetpromotion return PromotionMamew
 - Used Promotion cannot get redeem code promotion
 - Used QRCode still can be used

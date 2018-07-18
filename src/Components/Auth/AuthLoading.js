@@ -20,19 +20,8 @@ export default class AuthLoading extends Component {
     }
 
     tokenAndIdAreValid = async(userToken, userId) => {
-        const optionLogin = {
-            headers: {
-                "Client-Service": "MobileClient",
-                "Auth-Key": "BarkodoAPIs",
-                "Content-Type": "application/json",
-                "Authorization": userToken,
-                "User-Id": userId
-            },
-            timeout: 10000
-        }
         try {
-            const result = await axios.get(API['base'] + "/getUserDetails/" + userId, 
-             optionLogin)  
+            const result = await apiRequest(`/getUserDetails/${userId}`, "GET", {}, "shop", userToken, userId)
             console.log("auth loading result", result)
             if(result['status'] == 200) {
                 return true

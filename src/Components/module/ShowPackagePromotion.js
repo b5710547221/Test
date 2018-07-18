@@ -85,7 +85,7 @@ export default class ShowPromotion extends Component {
     render() {
 
         const { leftMenu, currentPage, rightMenu } = this.state.header
-        const { PromotionName, BranchName, Description, ExpiredDate, Timeslimit, Times } = this.props.navigation.state.params.data
+        const { PromotionName, BranchName, BranchImage, Description, ExpiredDate, Timeslimit, Times } = this.props.navigation.state.params.data
         const isLimited = Timeslimit != '0'
         console.log(leftMenu)
         console.log(BranchName)
@@ -102,7 +102,7 @@ export default class ShowPromotion extends Component {
                         <Text style={styles['Header']}>{BranchName}</Text>
                         <Text style={styles['SubHeader']}></Text>
                         <View style={styles['Carousel']}>
-                            <Carousel />
+                            <Carousel images={[`http://worldenergystation.com/barkodo/assets/img/shop/${BranchImage}`]} />
                         </View>
 
                         <View style={styles['FlexDirection_Row_Last']}>

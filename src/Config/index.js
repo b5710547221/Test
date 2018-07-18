@@ -16,24 +16,24 @@ export const apiRequest = async (path, method = "GET", body = {}, serviceType = 
         "Client-Service": "MobileClient",
         "Auth-Key": "BarkodoAPIs",
         "Content-Type": "application/json",
-        "ServiceType": serviceType,
+        "Service-Type": serviceType,
         "Authorization": userToken,
         "User-Id": userId
 	};
 	
     switch (method) {
         case "GET":
-            return await axios.get("http://worldenergystation.com/barkodo/index.php/barkodo_api/api" + path, {
+            return await axios.get(API["base"] + path, {
                     headers
                 }
             );
         case "POST":
-            return await axios.post("http://worldenergystation.com/barkodo/index.php/barkodo_api/api" + path, body, {
+            return await axios.post(API["base"] + path, body, {
                     headers
                 }
             );
 		case "PUT":
-			return await axios.put("http://worldenergystation.com/barkodo/index.php/barkodo_api/api" + path, body, {
+			return await axios.put(API["base"]+ path, body, {
 				headers
 				}
 			);
