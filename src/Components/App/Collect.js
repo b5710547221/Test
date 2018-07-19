@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, FlatList, StyleSheet, Alert, AsyncStorage } from 'react-native'
+import { ScrollView, FlatList, StyleSheet, Alert, AsyncStorage, RefreshControl } from 'react-native'
 import axios from 'axios'
 
 import { apiRequest } from '../../Config'
@@ -17,7 +17,8 @@ export default class Collect extends Component {
 			isLoading: true,
 			collects: null,
 			userToken: null,
-			userId: null
+			userId: null,
+			refreshing: false
 		}
 		this.navigation = props.navigation
 	}
@@ -65,9 +66,21 @@ export default class Collect extends Component {
 		})
 	};    
 	
+	onRefresh = async() => {
+		console.log('refresh!')
+		await this.setState({
+			refreshing: true
+		});      
+		await this.setCollects();
+		await this.setState({
+			refreshing: false
+		})
+
+	}
+
 	render() {
 
-		const { isLoading, collects } = this.state
+		const { isLoading, collects, refreshing } = this.state
 		const { searchVisible, searchText } = this.props
 		console.log('Collects')
 		console.log(collects)
@@ -83,7 +96,14 @@ export default class Collect extends Component {
 		}
 
 		return (
-			<ScrollView style={styles['Collect']}>
+			<ScrollView style={styles['Collect']}
+				refreshControl={
+					<RefreshControl
+				 	refreshing={this.state.refreshing}
+					onRefresh={this.onRefresh}
+					/> 
+				}
+			>
 				{
 					isLoading ? <Loading />
 						:
@@ -92,6 +112,8 @@ export default class Collect extends Component {
 							renderItem={({ item }) => {
 								return <Card type='Collect' data={item} onClick={this.onClick.bind(this, item)}/>
 							}}
+							refreshing={refreshing}
+							onRefresh={this.onRefresh}
 						/>
 				}
 			</ScrollView>

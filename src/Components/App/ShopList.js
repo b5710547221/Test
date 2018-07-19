@@ -8,7 +8,8 @@ import {
     Image,
     StyleSheet,
     ScrollView,
-    View
+    View,
+    RefreshControl
 } from "react-native";
 import { Container, Content, Button } from "native-base";
 // import GPSState from "react-native-gps-state";
@@ -36,7 +37,7 @@ export default class ShopList extends Component {
             // isNoGPS: true,
             isNoGPS: false,
             welcomeProList: null,
-
+            refreshing: false,
             simulator: true,
             userId: null,
             userToken: null
@@ -170,8 +171,20 @@ export default class ShopList extends Component {
         });
     };
 
+    onRefresh = async() => {
+		console.log('refresh!')
+		await this.setState({
+			refreshing: true
+		});      
+		await this.setWelcomeList();
+		await this.setState({
+			refreshing: false
+		})
+
+	}
+
     render() {
-        const { data, isLoading, isNoGPS, welcomeProList, usedWelcome } = this.state;
+        const { data, isLoading, isNoGPS, welcomeProList, usedWelcome, refreshing } = this.state;
         const { searchText, searchVisible } = this.props;
 
         const filteredWelcome = searchVisible
@@ -193,7 +206,14 @@ export default class ShopList extends Component {
         console.log("isLoading: ", isLoading)
 
         return (
-            <ScrollView>
+            <ScrollView
+                 refreshControl={
+                    <RefreshControl
+                     refreshing={this.state.refreshing}
+                    onRefresh={this.onRefresh}
+                    />
+                }
+            >
                 { isLoading ? (
                     <Loading />
                 ) : isNoGPS ? (

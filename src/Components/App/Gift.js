@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, FlatList, StyleSheet, Alert, AsyncStorage } from 'react-native'
+import { ScrollView, FlatList, StyleSheet, Alert, AsyncStorage, RefreshControl } from 'react-native'
 import axios from 'axios'
 
 import { apiRequest } from '../../Config'
@@ -17,7 +17,8 @@ export default class Gift extends Component {
 			isLoading: true,
 			gifts: null,
 			userToken: null,
-			userId: null
+			userId: null,
+			refreshing: false
 		}
 		this.navigation = props.navigation
 	}
@@ -66,11 +67,23 @@ export default class Gift extends Component {
 		await this.setState({
 			isLoading: false
 		})
-    };
+	};
+	
 
+	onRefresh = async() => {
+		console.log('refresh!')
+		await this.setState({
+			refreshing: true
+		});      
+		await this.setGifts();
+		await this.setState({
+			refreshing: false
+		})
+
+	}
 	render() {
 
-		const { isLoading, gifts } = this.state
+		const { isLoading, gifts, refreshing } = this.state
 		const { searchText, searchVisible  } = this.props
 		let filteredGifts
 		if(!isLoading) {
@@ -85,7 +98,14 @@ export default class Gift extends Component {
 
 		console.log(gifts)
 		return (
-			<ScrollView style={styles['Gift']}>
+			<ScrollView style={styles['Gift']}
+				refreshControl={
+					<RefreshControl
+					refreshing={this.state.refreshing}
+					onRefresh={this.onRefresh}
+					/> 
+				}
+			>
 				{
 					isLoading ? <Loading />
 						:

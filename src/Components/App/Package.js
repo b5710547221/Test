@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ScrollView, FlatList, StyleSheet, Alert, AsyncStorage } from 'react-native'
+import { ScrollView, FlatList, StyleSheet, Alert, AsyncStorage, View, RefreshControl } from 'react-native'
 import axios from 'axios'
 
 import { apiRequest } from '../../Config'
@@ -17,6 +17,7 @@ export default class Package extends Component {
 		this.state = {
 			data: [],
 			isLoading: true,
+			refreshing: false,
 			packages: null,
 			userToken: null,
 			userId: null
@@ -70,8 +71,20 @@ export default class Package extends Component {
 		})
 	}
 
+	onRefresh = async() => {
+		console.log('refresh!')
+		await this.setState({
+			refreshing: true
+		});      
+		await this.setPackages();
+		await this.setState({
+			refreshing: false
+		})
+
+	}
+
 	render() {
-		const { isLoading, data, packages } = this.state
+		const { isLoading, data, packages, refreshing } = this.state
 		const { searchText, searchVisible } = this.props
 		let filteredPackges
 		if(!isLoading) {
@@ -85,7 +98,14 @@ export default class Package extends Component {
 		}
 
 		return (
-			<ScrollView style={styles['Package']}>
+			<ScrollView style={styles['Package']}
+				refreshControl={
+					<RefreshControl
+					refreshing={this.state.refreshing}
+					onRefresh={this.onRefresh}
+					/> 
+				}
+			>
 				{
 					isLoading ? <Loading />
 						:

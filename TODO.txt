@@ -1,19 +1,11 @@
 refactor
-    - set promotion each page
     - component should be in module
     - seperate api function
-confirm Message
-promotion image in shop confirm
 - qrcodegetpromotion return PromotionMamew
 - Used Promotion cannot get redeem code promotion
 
-- qrcode does not change status
 - redeem code still work after 3 minutes
-- getUserWallet
 
-- qrCodegetPromotion used No content
-
-- Add Loading in Shop List
 - Register Birthday default to today
 - Log out sometimes network error
 - fix android react-native gps state
