@@ -6,12 +6,14 @@ import {
     View,
     Text,
     Image,
-    TouchableOpacity
+    TouchableOpacity,
+    Linking
 } from "react-native";
 import { Container, Content, Button } from "native-base";
 import Icon from "react-native-vector-icons/Ionicons";
 import Grid from "react-native-grid-component";
 import Svg, { Circle } from "react-native-svg";
+import call from 'react-native-phone-call'
 
 import StatusBar from "../Common/StatusBar";
 import Header from "../Common/Header";
@@ -213,6 +215,60 @@ export default class ShowPromotion extends Component {
         console.log("state ", this.state);
     };
 
+    onCallNum = (number) =>  {
+        if(number == null || number.trim() == "") {
+            return Alert.alert('This shop does not provide phone number')
+        }
+        const args = {
+            number: number, // String value with the number to call
+            prompt: true // Optional boolean property. Determines if the user should be prompt prior to the call 
+          }
+           
+          call(args).catch(console.error)
+    }
+
+    onLinkIG = (username) => {
+        if(username == null || username.trim() == "") {
+            return Alert.alert('This shop does not provide instagram account')
+        }
+        const IG_URL = `https://instagram.com/${username}`
+        Linking.canOpenURL(IG_URL).then(supported => {
+            if (!supported) {
+              console.log('Can\'t handle url: ' + IG_URL);
+            } else {
+              return Linking.openURL(IG_URL);
+            }
+          }).catch(err => console.error('An error occurred', err));
+    }
+
+    onLinkFB = (facebookId) => {
+        if(facebookId == null || facebookId.trim() == "") {
+            return Alert.alert('This shop does not provide facebook page')
+        }
+        const FANPAGE_URL_FOR_APP = `fb://profile/${facebookId}`;
+        const FANPAGE_URL_FOR_BROWSER = `https://fb.com/${facebookId}`;
+      
+        Linking.canOpenURL(FANPAGE_URL_FOR_APP)
+          .then(appSupported => {
+            if (appSupported) {
+              console.log(`Can handle native url: ${FANPAGE_URL_FOR_APP}`);
+              return Linking.openURL(FANPAGE_URL_FOR_APP);
+            } else {
+              console.log(`Can't handle native url ${FANPAGE_URL_FOR_APP} defaulting to web URL ${FANPAGE_URL_FOR_BROWSER}`);
+              return Linking.canOpenURL(FANPAGE_URL_FOR_BROWSER).then(
+                webSupported => {
+                  if (webSupported) {
+                    console.log(`Can handle web url: ${FANPAGE_URL_FOR_BROWSER}`);
+                    return Linking.openURL(FANPAGE_URL_FOR_BROWSER);
+                  }
+                  return null;
+                }
+              );
+            }
+          })
+          .catch(err => console.error("An error occurred", err));        
+    }
+
     render() {
         console.log("ShowCollectionPromotion is rendered!");
         const { leftMenu, currentPage, rightMenu } = this.state.header;
@@ -304,50 +360,26 @@ export default class ShowPromotion extends Component {
                             </Text>
                         </View>
 
-                        <View style={styles["FlexDirection_Row_Last"]}>
+                        <View style={styles['FlexDirection_Row_Last']}>
                             <TouchableOpacity
-                                onPress={() => {
-                                    Alert.alert("Instagram");
-                                }}
-                                style={styles["Contract_Container"]}
-                            >
-                                <View style={styles["Contract"]}>
-                                    <Icon
-                                        style={styles["Contract_Icon"]}
-                                        name="logo-instagram"
-                                        size={30}
-                                        color="#FFFFFF"
-                                    />
+                                onPress={this.onLinkIG.bind(this, 'liverpoolfc')}
+                                style={styles['Contract_Container']}>
+                                <View style={styles['Contract']}>
+                                    <Icon style={styles['Contract_Icon']} name='logo-instagram' size={30} color='#FFFFFF' />
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                onPress={() => {
-                                    Alert.alert("Phone");
-                                }}
-                                style={styles["Contract_Container"]}
-                            >
-                                <View style={styles["Contract"]}>
-                                    <Icon
-                                        style={styles["Contract_Icon"]}
-                                        name="ios-call"
-                                        size={30}
-                                        color="#FFFFFF"
-                                    />
+                                onPress={this.onCallNum.bind(this, '123456789')}
+                                style={styles['Contract_Container']}>
+                                <View style={styles['Contract']}>
+                                    <Icon style={styles['Contract_Icon']} name='ios-call' size={30} color='#FFFFFF' />
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                onPress={() => {
-                                    Alert.alert("Facebook");
-                                }}
-                                style={styles["Contract_Container"]}
-                            >
-                                <View style={styles["Contract"]}>
-                                    <Icon
-                                        style={styles["Contract_Icon"]}
-                                        name="logo-facebook"
-                                        size={30}
-                                        color="#FFFFFF"
-                                    />
+                                onPress={this.onLinkFB.bind(this, '746280992139796')}
+                                style={styles['Contract_Container']}>
+                                <View style={styles['Contract']}>
+                                    <Icon style={styles['Contract_Icon']} name='logo-facebook' size={30} color='#FFFFFF' />
                                 </View>
                             </TouchableOpacity>
                         </View>

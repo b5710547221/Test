@@ -19,6 +19,7 @@ import ShowCollectPromotionScreen from './Components/module/ShowCollectPromotion
 import AddCodeScreen from './Components/module/AddCode'
 import ShowQRCodeScreen from './Components/App/ShowQRCode'
 import PickProfileImageScreen from './Components/App/PickProfileImage'
+import WebViewScreen from './Components/App/WebView'
 import Main from './Components/Main'
 
 // const LoginScreen = ''
@@ -42,7 +43,8 @@ const AppStack = createStackNavigator({
     ShowCollectPromotion: ShowCollectPromotionScreen,
     AddCode: AddCodeScreen,
     ShowQRCode: ShowQRCodeScreen,
-    PickProfileImage: PickProfileImageScreen
+    PickProfileImage: PickProfileImageScreen,
+    WebView: WebViewScreen
 })
 // const MemberStack = StackNavigator({
 //     ShopList: ShopListScreen,
