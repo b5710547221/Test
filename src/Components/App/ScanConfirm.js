@@ -15,7 +15,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 export default class FilterModal extends Component {
 
     render = () => {
-        console.log('Sucess modal is rendered!', this.props.isVisible)
+        console.log('ScanConfirm is rendered', this.props.isVisible)
         return (
             <Modal
                 // animationType="slide"
@@ -32,16 +32,17 @@ export default class FilterModal extends Component {
                     <View style={styles["Card_Container_Content"]}>
                         <View style={styles["Card_Section"]}>
                             <Text style={styles["Card_Content_Detail"]}>
-                               {this.props.text}
+                               {this.props.text} 
                             </Text>
-
-  
+                            <Text style={styles["Card_Content_Detail"]}>
+                               {this.props.promptText}
+                            </Text>
                         </View>
-                        <Button style={styles['Button']} onPress={this.props.onScanAgain}>
-                            <Text style={styles['Button_Text']}>Scan More</Text>
+                        <Button style={styles['Button']} onPress={this.props.onConfirm}>
+                            <Text style={styles['Button_Text']}>Okay</Text>
                         </Button>                        
-                        <Button style={styles['Button_Cancel']} onPress={this.props.onChangePage.bind(this, 'My Wallet')}>
-                            <Text style={styles['Button_Text_Cancel']}>Go to my wallet</Text>
+                        <Button style={styles['Button_Cancel']} onPress={this.props.onCancel}>
+                            <Text style={styles['Button_Text_Cancel']}>Cancel</Text>
                         </Button>
 
                     </View>

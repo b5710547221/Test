@@ -25,6 +25,7 @@ export default class Card extends PureComponent {
         const { type, data, onClick } = this.props
         const { BranchId, PromotionId, ImageUrl, PromotionName, BranchName, Description, EndDate, BranchImage } = data
         const { ExpiredDate, Timeslimit, Times } = data
+        const { Points } = data
 
         console.log(type)
         return (
@@ -148,7 +149,7 @@ export default class Card extends PureComponent {
                                             <View style={styles['Card_Container_Content']}>
 
                                                 <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>{BranchName}</Text>
-                                                <Text style={styles['Card_Content_Special']}>{Math.floor(Math.random() * 100) + 1} points</Text>
+                                                <Text style={styles['Card_Content_Special']}>{Points} points</Text>
                                                 <View style={styles['Card_Container_Icon']}>
                                                     <View style={styles['Card_Icon']}>
                                                         <Image

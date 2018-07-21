@@ -5,7 +5,8 @@ import QRCodeScanner from 'react-native-qrcode-scanner'
 import axios from 'axios'
 
 import { API, apiRequest } from '../../Config'
-import ScanSuccess from './ScanSuccess'
+import ModalSuccess from './ScanSuccess'
+import ModalConfirm from './ScanConfirm'
 import Loading from '../Common/Loading'
 
 
@@ -16,15 +17,58 @@ export default class Scan extends Component {
 
         this.state = {
             enabled: true,
-            modalVisible: false,
+            confirmModalVisible: false,
+            successModalVisible: false,
             confirmText: "",
-            isLoading: false
+            promptText: "",
+            sucessText: "",
+            isLoading: false,
+            promotion: null,
+            code: null
         }
         this.navigation = this.props.navigation
 
     }
 
-    onSuccess = async (e) => {
+    showConfirmModal = async(confirmText, promptText) => {
+        await this.setState({
+            enabled: false,
+            confirmModalVisible: true,  
+            successModalVisible: false,
+            confirmText: confirmText,
+            promptText: promptText,
+            sucessText: "",
+            isLoading: false
+        })
+    }
+
+    showSuccesModal = async(sucessText) => {
+        await this.setState({
+            enabled: false,
+            confirmModalVisible: false,  
+            successModalVisible: true,
+            confirmText: "",
+            promptText: "",
+            sucessText: sucessText,
+            isLoading: false
+        })
+    }
+
+    onScanAgain = async() => {
+        await this.setState({
+            enabled: true,
+            successModalVisible: false,
+            confirmModalVisible: false,
+            confirmText: "",
+            promptText: "",
+            sucessText: "",
+            promotion: null,
+            code: null
+        })
+        this.scanner.reactivate()
+    }
+
+    onScan = async (e) => {
         const qrCode = e.data
         const userId = await AsyncStorage.getItem('userId')
         const userToken = await AsyncStorage.getItem('userToken')
@@ -36,92 +80,129 @@ export default class Scan extends Component {
             const result = await apiRequest(`/qrCodeGetPromotionDetails/${qrCode}`, 'GET', {}, "customer", userToken, userId);
             console.log(result)
             if (result['status'] == 200 ) {
-                const promotion = result["data"];
-                const baseData = {
-                    "userId": userId, 
-                    "campaignTypeId": promotion["CampaignTypeId"],
-                    "promotionId": promotion["PromotionId"],
-                    "branchId": promotion["BranchId"],
-                    "qrCode": e.data
-                };
-                console.log('promotion ', promotion)
-                let url;
-                let data;
-                let confirmText;
-                switch(promotion["CampaignTypeId"]) {
-                    // TODO: correct message
-                    case "1" : url = "/confirmGiftPromotionToWallet";
-                        data = {...baseData}
-                        confirmText = `You have received ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
-                        break;
-                    case "3" : url = "/confirmPackagePromotionToWallet";
-                        data = {...baseData, packageType: promotion["PackageType"] }
-                        confirmText = `You have received ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
-                        break;
-                    case "4" : url = "/confirmCollectPromotionToWallet";
-                        data = {...baseData, collectType: promotion["CollectType"] }
-                        confirmText = `You have earned ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
-                        break;
-                }
-                const confirmPromotionResult = await apiRequest(url, "POST", data, "customer", userToken, userId)
-                console.log(confirmPromotionResult)
-                if(confirmPromotionResult['status'] == 201) {
-                    await this.setState({
-                        enabled: false,
-                        isLoading: false,
-                        confirmText: confirmText
-                    })
+                const promotion =  result["data"]                    
+                await this.setState({
+                    promotion: promotion,
+                    code: e.data
+                })
+                if(promotion['CampaignTypeId'] == 4) {
+                    const existResult = await apiRequest(`/checkCollectPromotionFirstTime/${promotion['CampaignTypeId']}
+                    /${promotion['PromotionId']}`, 
+                    'GET', {}, "customer", userToken, userId)
+                    if (existResult['status'] == 200) {
+                        let confirmText, promptText
+                       if(!existResult['data']['exists']) {
+                            confirmText = `You never have ${promotion['BranchName']} collect card`
+                            promptText = 'Open new Card?'
+                        } else {
+                            confirmText = `You will earn 1 point from ${promotion['BranchName']}`
+                            promptText = "Get the point now?"
+                        }
+                        await this.showConfirmModal(confirmText, promptText)
+                    } else {
+                        await this.showSuccesModal(existResult['data']['message'])
+                    }
+
                 } else {
-                    console.log(confirmPromotionResult)
-                    Alert.alert(confirmPromotionResult["data"]["message"])
-                    this.setState({
-                        enabled: false,
-                        isLoading: false,
-                        confirmText: confirmPromotionResult['data']['message']
-                    })                
+                    const confirmText = `You will get ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
+                    const promptText = "Get the promotion now?"
+                    await this.showConfirmModal(confirmText, promptText)
                 }
             } else {
                 console.log(result)
-                this.setState({
-                    enabled: false,
-                    isLoading: false,
-                    confirmText: result['data']['message']
-                })
+                await this.showSuccesModal(result['data']['message'])
             }
         } catch (err) {
             console.log(err)
             console.log(err["response"])
-            this.setState({
-                enabled: false,
-                isLoading: false,
-                confirmText: err["response"]["data"]["message"]
-            })
+            await this.showSuccesModal(err["response"]["data"]["message"])
         }
     }
 
-    onScanAgain = async() => {
+    onConfirm = async() => {
         await this.setState({
-            enabled: true
+            isLoading: true
         })
-        this.scanner.reactivate()
+        const userId = await AsyncStorage.getItem('userId')
+        const userToken = await AsyncStorage.getItem('userToken')
+        const { promotion, code} = this.state
+        const baseData = {
+            "userId": userId, 
+            "campaignTypeId": promotion["CampaignTypeId"],
+            "promotionId": promotion["PromotionId"],
+            "branchId": promotion["BranchId"],
+            "qrCode": code
+        };
+        console.log('promotion ', promotion)
+        let url;
+        let data;
+        let sucessText;
+        switch(promotion["CampaignTypeId"]) {
+            // TODO: correct message
+            case "1" : url = "/confirmGiftPromotionToWallet";
+                data = {...baseData}
+                sucessText = `You have earned ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
+                break;
+            case "3" : url = "/confirmPackagePromotionToWallet";
+                data = {...baseData, packageType: promotion["PackageType"] }
+                sucessText = `You have earned ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
+                break;
+            case "4" : url = "/confirmCollectPromotionToWallet";
+                data = {...baseData, collectType: promotion["CollectType"] }
+                sucessText = `You have received 1 point from from ${promotion["BranchName"]} collect card`
+                break;
+        }
+        try{
+            const confirmPromotionResult = await apiRequest(url, "POST", data, "customer", userToken, userId)
+            console.log(confirmPromotionResult)
+            if (confirmPromotionResult['status'] == 201) {
+                console.log(this.state.successModalVisible)
+                await this.showSuccesModal(sucessText)
+                console.log(this.state.successModalVisible)
+            } else {
+                console.log(confirmPromotionResult)
+                Alert.alert(confirmPromotionResult["data"]["message"])
+                await this.showSuccesModal(confirmPromotionResult['data']['message'])                
+            }               
+        } catch(err) {
+            console.log(err)
+            console.log(err['response'])
+            await this.showSuccesModal(err['response']['data']['message'])
+        }
+         
+
     }
 
     render() {
-        const { enabled, confirmText, isLoading } = this.state
+        const { enabled, sucessText, promptText, confirmText, isLoading, successModalVisible, confirmModalVisible } = this.state
+        console.log('confirm', confirmModalVisible)
+        console.log('success', successModalVisible)
         return (
             <View style={styles['Scan']}>
-                <ScanSuccess 
-                    isVisible={!enabled}
+                {successModalVisible ? 
+                <ModalSuccess 
+                    isVisible={successModalVisible}
                     navigation={this.navigation}
-                    text={confirmText}
+                    text={sucessText}
                     onChangePage={this.props.onChangePage}
                     onScanAgain={this.onScanAgain}
-                />
+                /> :
+                confirmModalVisible  ?          
+                <ModalConfirm
+                    isVisible={confirmModalVisible}
+                    text={confirmText}
+                    promptText={promptText}
+                    onConfirm={this.onConfirm}
+                    onCancel={this.onScanAgain}
+                /> :
+                <View></View>
+                }
+
                 {
                     // isLoading ? <Loading /> :
                     <QRCodeScanner 
                         ref={(node) => { this.scanner = node }}
-                        onRead={this.onSuccess.bind(this)}
+                        onRead={this.onScan.bind(this)}
                     />                    
                 }
 
