@@ -19,8 +19,9 @@ import { Dropdown } from "react-native-material-dropdown";
 import axios from "axios";
 import ImagePicker from "react-native-image-crop-picker";
 import RNFetchBlob from "rn-fetch-blob";
+import Icon from "react-native-vector-icons/Feather"
 
-import { API, Bakodo_Color, apiRequest } from "../../Config";
+import { API, Bakodo_Color, apiRequest, Loading_Color } from "../../Config";
 
 import { BackIcon, HiddenIcon } from "../Common/Icon";
 import Header from "../Common/Header";
@@ -327,6 +328,14 @@ export default class EditProfile extends Component {
         });
     };
 
+    onChangePassword = () => {
+        this.navigation.navigate('ResetPassword');
+    }
+
+    onChangeSecurityCode = () => {
+        this.navigation.navigate('ResetSecurityCode');
+    }
+
     render() {
         const { leftMenu, currentPage, rightMenu } = this.state.header;
         const { profile, isLoading, inputError, editable } = this.state;
@@ -587,7 +596,26 @@ export default class EditProfile extends Component {
                                     editable={editable}
                                 />
                             </View>
+                            {
+                                editable ? <View></View> :
+                                <View style={styles["Card"]}>
+                                    <TouchableOpacity onPress={this.onChangePassword}>
+                                        <View style={styles["Card_Continue"]}>
+                                            <Text style={styles["Card_Label"]}>Change Password</Text>                                
+                                            <Icon name="chevron-right" size={30} color={Bakodo_Color}/>                                
+                                        </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={this.onChangeSecurityCode}>
+                                        <View style={styles["Card_Continue"]}>
+                                            <Text style={styles["Card_Label"]}>Change Security Code</Text>                                
+                                            <Icon name="chevron-right" size={30} color={Bakodo_Color}/>                                
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>                                
+                            }
+
                         </View>
+
                         <View>
                             <View
                                 style={{
@@ -696,5 +724,11 @@ const styles = StyleSheet.create({
     },
     Card_DatePicker: {
         width: "100%"
+    },
+    Card_Continue: {
+        flexDirection: 'row',
+        height: 50,
+        justifyContent: 'space-between',
+        alignItems: 'center'
     }
 });

@@ -3,24 +3,26 @@ import { createSwitchNavigator, createStackNavigator } from 'react-navigation'
 import { Root } from 'native-base'
 
 // Auth
-import AuthLoadingScreen from './Components/Auth/AuthLoading'
-import LoginScreen from './Components/Auth/Login'
- import SignUpScreen from './Components/Auth/SignUp'
+import AuthLoading from './Components/Auth/AuthLoading'
+import Login from './Components/Auth/Login'
+ import SignUp from './Components/Auth/SignUp'
 
 //App
-import MainScreen from './Components/App/Main'
-import ScanScreen from './Components/App/Scan'
-import MyWalletScreen from './Components/App/MyWallet'
-import EditProfileScreen from './Components/App/EditProfile' 
-import ShowGiftPromotionScreen from './Components/module/ShowGiftPromotion'
-import ShowPackagePromotionScreen from './Components/module/ShowPackagePromotion'
-import ShowWelcomePromotionScreen from './Components/module/ShowWelcomePromotion'
-import ShowCollectPromotionScreen from './Components/module/ShowCollectPromotion'
-import AddCodeScreen from './Components/module/AddCode'
-import ShowQRCodeScreen from './Components/App/ShowQRCode'
-import PickProfileImageScreen from './Components/App/PickProfileImage'
-import WebViewScreen from './Components/App/WebView'
-import Main from './Components/Main'
+import Main from './Components/App/Main'
+import Scan from './Components/App/Scan'
+import MyWallet from './Components/App/MyWallet'
+import EditProfile from './Components/App/EditProfile' 
+import ShowGiftPromotion from './Components/module/ShowGiftPromotion'
+import ShowPackagePromotion from './Components/module/ShowPackagePromotion'
+import ShowWelcomePromotion from './Components/module/ShowWelcomePromotion'
+import ShowCollectPromotion from './Components/module/ShowCollectPromotion'
+import AddCode from './Components/module/AddCode'
+import ShowQRCode from './Components/App/ShowQRCode'
+// import PickProfileImageScreen from './Components/App/PickProfileImage'
+// import WebViewScreen from './Components/App/WebView'
+import ResetPassword from './Components/App/ResetPassword'
+import ResetSecurityCode from './Components/App/ResetSecurityCode'
+// import Main from './Components/Main'
 
 // const LoginScreen = ''
 // const ShopListScreen = ''
@@ -29,22 +31,16 @@ import Main from './Components/Main'
 // const EditProfileScreen = ''
 
 const AuthStack = createStackNavigator({
-    Login: LoginScreen,
-    SignUp: SignUpScreen
+    Login, SignUp
 })
 const AppStack = createStackNavigator({
-    Main: MainScreen,
-    Scan: ScanScreen,
+    Main, Scan, EditProfile, ShowWelcomePromotion, ShowWelcomePromotion,
+    ShowGiftPromotion, ShowGiftPromotion, ShowPackagePromotion, ShowPackagePromotion,
+    ShowCollectPromotion, ShowCollectPromotion, AddCode, ShowQRCode, ShowQRCode, 
+    ResetPassword, ResetSecurityCode
+    // PickProfileImage: PickProfileImageScreen,
+    // WebView: WebViewScreen
     // MyWallet: MyWalletScreen,
-    EditProfile: EditProfileScreen,
-    ShowWelcomePromotion: ShowWelcomePromotionScreen,
-    ShowGiftPromotion: ShowGiftPromotionScreen,
-    ShowPackagePromotion: ShowPackagePromotionScreen,
-    ShowCollectPromotion: ShowCollectPromotionScreen,
-    AddCode: AddCodeScreen,
-    ShowQRCode: ShowQRCodeScreen,
-    PickProfileImage: PickProfileImageScreen,
-    WebView: WebViewScreen
 })
 // const MemberStack = StackNavigator({
 //     ShopList: ShopListScreen,
@@ -54,7 +50,7 @@ const AppStack = createStackNavigator({
 
 const App = createSwitchNavigator(
     {
-        AuthLoading: AuthLoadingScreen,
+        AuthLoading: AuthLoading,
         Auth: AuthStack,
         App: AppStack
         // EditProfile: { screen: EditProfile },

@@ -150,7 +150,6 @@ export default class SignUp extends Component {
 
     submitForm = async data => {
         try {
-
             const body = {
                     username: data["username"],
                     password: data["password"],
@@ -262,6 +261,7 @@ export default class SignUp extends Component {
                             />
                             <Text style={styles["Card_Label"]}>Security Code</Text>
                             <TextInput
+                                keyboardType='numeric'
                                 secureTextEntry={true}
                                 onChangeText={securityCode => {
                                     this.updateFormToState(
@@ -278,6 +278,7 @@ export default class SignUp extends Component {
                                 Confirm Security Code
                             </Text>
                             <TextInput
+                                keyboardType='numeric'
                                 secureTextEntry={true}
                                 onChangeText={confirmSecurityCode => {
                                     this.updateFormToState(

@@ -69,12 +69,12 @@ const styles = StyleSheet.create({
         paddingRight: 5
     },
     Right_Container: {
-        width: 120,
+        width: 100,
         flexDirection: 'row',
         justifyContent: 'flex-end'
     },
     Left_Container: {
-        width: 120,
+        width: 100,
         flexDirection: 'row',
         justifyContent: 'flex-start'
     }

@@ -162,7 +162,7 @@ export default class AddCode extends Component {
                                 <TextInput
                                     value={isPassCode}
                                     onChangeText={(text) => { this.enterPassCode(text) }}
-                                    maxLength={6}
+                                    maxLength={4}
                                     keyboardType='numeric'
                                     style={styles['AddCode_Input']}
                                 />
