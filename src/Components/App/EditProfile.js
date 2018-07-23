@@ -150,7 +150,7 @@ export default class EditProfile extends Component {
                 onPress={this.onEdit}
                 transparent
             >
-            <Text style={{color: '#FDFDFD'}}>Edit</Text>   
+                <Icon name="edit" size={20} color="#FDFDFD"/>  
             </Button>      
         )
         this.setState({
@@ -173,7 +173,7 @@ export default class EditProfile extends Component {
                 transparent
                 disabled={false}
             >
-                <Text style={{color: '#FDFDFD'}}>Save</Text>
+                <Icon name="check" size={20} color="#FDFDFD"/>
             </Button>
         );
         this.setState({
@@ -205,7 +205,7 @@ export default class EditProfile extends Component {
                 onPress={this.onEdit}
                 transparent
             >
-            <Text style={{color: '#FDFDFD'}}>Edit</Text>   
+                <Icon name="edit" size={20} color="#FDFDFD"/> 
             </Button>      
         )
         this.setState({
