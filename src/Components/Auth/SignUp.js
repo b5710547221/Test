@@ -15,7 +15,7 @@ import DatePicker from "react-native-datepicker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import axios from "axios";
 
-import { API, Bakodo_Color } from "../../Config";
+import { API, Bakodo_Color, apiRequest } from "../../Config";
 import { BackIcon, HiddenIcon } from "../Common/Icon";
 
 import Header from "../Common/Header";
@@ -39,6 +39,8 @@ export default class SignUp extends Component {
                 email: 'newsatit@gmail.com',
                 password: '12341234',
                 confirmpassword: '12341234',
+                securityCode: "",
+                confirmSecurityCode: "",
                 firstname: 'D',
                 lastname: 'S',
                 gender: 'MALE',
@@ -49,6 +51,8 @@ export default class SignUp extends Component {
             //     email: "",
             //     password: "",
             //     confirmpassword: "",
+            //     securityCode: "",
+            //     confirmSecurityCode: "",
             //     firstname: "",
             //     lastname: "",
             //     gender: "",
@@ -76,7 +80,9 @@ export default class SignUp extends Component {
             firstname,
             lastname,
             gender,
-            phone
+            phone,
+            securityCode,
+            confirmSecurityCode
         } = this.state.formRegister;
 
         const EMAIL_REGEX = RegExp(
@@ -106,6 +112,16 @@ export default class SignUp extends Component {
         } else if (password !== confirmpassword) {
             return Alert.alert("กรุณาใส่รหัสผ่านและยืนยันรหัสผ่านให้เหมือนกัน");
         }
+
+        // Validation Security Code
+        if(securityCode === "") {
+            return Alert.alert("กรุณาใส่ PIN");
+        } else if(securityCode.length != 4) {
+            return Alert.alert("กรุณาใส่ PIN 4 ตัว")
+        } else if (securityCode !== confirmSecurityCode) {
+            return Alert.alert("กรุณาใส่ PIN และ ยืนยัน PIN ให้เหมือนกัน");
+        }
+
         // Validation Firstname
         if (firstname === "") {
             return Alert.alert("กรุณาใส่ชื่อจริง");
@@ -132,34 +148,10 @@ export default class SignUp extends Component {
         this.submitForm(this.state.formRegister);
     };
 
-    getUserId = async userToken => {
-        const urlLogin = API["base"];
-        const dataLogin = {
-            name: "getUserDetails",
-            params: {
-                token: userToken
-            }
-        };
-        const optionLogin = {
-            headers: {
-                "Content-Type": "application/json"
-            },
-            timeout: 10000
-        };
-        result = await axios.post(urlLogin, dataLogin, optionLogin);
-        console.log(
-            "User Id: ",
-            result["data"]["response"]["result"]["userId"]
-        );
-        return result["data"]["response"]["result"]["userId"];
-    };
-
     submitForm = async data => {
         try {
 
-            const resultRegister = await axios.post(
-                API["base"] + "/registerNewAccount",
-                {
+            const body = {
                     username: data["username"],
                     password: data["password"],
                     firstname: data["firstname"],
@@ -167,18 +159,12 @@ export default class SignUp extends Component {
                     email: data["email"],
                     confirmPassword: data["confirmpassword"],
                     gender: data["gender"],
-                    phoneNumber: data["phone"]
-                },
-                {
-                    headers: {
-                        "Client-Service": "MobileClient",
-                        "Auth-Key": "BarkodoAPIs",
-                        "Content-Type": "application/json"                        
-                    }
-                }
-            );
+                    phoneNumber: data["phone"],
+                    securityCode: data["securityCode"]
+            };
+            const resultRegister = await apiRequest("/registerNewAccount", "POST", body);
             console.log(resultRegister);
-            if (resultRegister["data"]["status"] === 200) {
+            if (resultRegister["status"] === 200) {
                 Alert.alert("New account created!");
                 this.navigation.goBack();
             } else {
@@ -274,6 +260,36 @@ export default class SignUp extends Component {
                                 style={styles["Card_Input"]}
                                 underlineColorAndroid="transparent"
                             />
+                            <Text style={styles["Card_Label"]}>Security Code</Text>
+                            <TextInput
+                                secureTextEntry={true}
+                                onChangeText={securityCode => {
+                                    this.updateFormToState(
+                                        "securityCode",
+                                        securityCode
+                                    );
+                                }}
+                                placeholder="Enter your Security Code"
+                                value={formRegister["securityCode"]}
+                                style={styles["Card_Input"]}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles["Card_Label"]}>
+                                Confirm Security Code
+                            </Text>
+                            <TextInput
+                                secureTextEntry={true}
+                                onChangeText={confirmSecurityCode => {
+                                    this.updateFormToState(
+                                        "confirmSecurityCode",
+                                        confirmSecurityCode
+                                    );
+                                }}
+                                placeholder="Confirm your Security Code"
+                                value={formRegister["confirmSecurityCode"]}
+                                style={styles["Card_Input"]}
+                                underlineColorAndroid="transparent"
+                            />
                             <Text style={styles["Card_Label"]}>First Name</Text>
                             <TextInput
                                 onChangeText={firstname => {
@@ -328,7 +344,7 @@ export default class SignUp extends Component {
                                 }}
                                 placeholder="08x-xxx-xxxx"
                                 value={formRegister["phone"]}
-                                style={styles["Card_Input"]}
+                                style={styles["Card_Input_Last"]}
                                 underlineColorAndroid="transparent"
                             />
                         </View>

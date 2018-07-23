@@ -56,7 +56,8 @@ export default class EditProfile extends Component {
                 rightMenu: null
             },
             userId: null,
-            userToken: null
+            userToken: null,
+            editable: false
         };
         this.navigation = props.navigation;
     }
@@ -112,6 +113,7 @@ export default class EditProfile extends Component {
     };
 
     checkFormValid = async key => {
+        console.log('check!')
         const text = this.state.profile[key];
         if (text.trim() === "") {
             await this.setState({
@@ -129,9 +131,7 @@ export default class EditProfile extends Component {
         const backButton = (
             <Button
                 style={styles["Header_Icon"]}
-                onPress={() => {
-                    goBack();
-                }}
+                onPress={() => goBack()}
                 transparent
             >
                 <Image
@@ -143,14 +143,43 @@ export default class EditProfile extends Component {
                 />
             </Button>
         );
+        const editButton = (
+            <Button
+                style={styles["Header_Icon"]}
+                onPress={this.onEdit}
+                transparent
+            >
+            <Text style={{color: '#FDFDFD'}}>Edit</Text>   
+            </Button>      
+        )
         this.setState({
             header: {
                 leftMenu: backButton,
                 currentPage: "Edit Profile",
-                rightMenu: hiddenButton
+                rightMenu: editButton
             }
         });
     };
+
+    onEdit = () => {
+        const { inputError } = this.state;
+        const formIsValid = !inputError.firstname && !inputError.lastname && !inputError.email;
+        console.log(!inputError.firstname, !inputError.lastname, !inputError.email)
+        const confirmButton = (
+            <Button
+                style={styles["Header_Icon"]}
+                onPress={this.onUpdateUserProfile}
+                transparent
+                disabled={false}
+            >
+                <Text style={{color: '#FDFDFD'}}>Save</Text>
+            </Button>
+        );
+        this.setState({
+            header: {...this.state.header, rightMenu: confirmButton},
+            editable: true
+        })
+    }
 
     onLogout = async () => {
         try {
@@ -168,8 +197,38 @@ export default class EditProfile extends Component {
         }
     };
 
+    onEditFinish = () => {
+        const editButton = (
+            <Button
+                style={styles["Header_Icon"]}
+                onPress={this.onEdit}
+                transparent
+            >
+            <Text style={{color: '#FDFDFD'}}>Edit</Text>   
+            </Button>      
+        )
+        this.setState({
+            editable: false,
+            header: {...this.state.header, rightMenu: editButton}
+        })
+    }
+
     onUpdateUserProfile = async () => {
         const { profile } = this.state;
+        const { inputError } = this.state;
+        if(inputError.FirstName) {
+            Alert.alert('First Name cannot be empty');
+            return;
+        }
+        if(inputError.LastName) {
+            Alert.alert('Last Name cannot be empty');
+            return;
+        }
+        if(inputError.email) {
+            Alert.alert('Email cannot be empty');
+            return;
+        }
+        
         try {
             const params = {
                 email: profile.email,
@@ -204,11 +263,13 @@ export default class EditProfile extends Component {
             console.log(result);
             if (result["status"] === 200) {
                 Alert.alert(result["data"]["message"]);
-                this.navigation.goBack();
+                // this.navigation.goBack();
+                this.onEditFinish();
             }
         } catch (err) {
             console.log(err);
             Alert.alert("Failed Updating profile");
+            this.onEditFinish();
         }
     };
 
@@ -268,14 +329,12 @@ export default class EditProfile extends Component {
 
     render() {
         const { leftMenu, currentPage, rightMenu } = this.state.header;
-        const { profile, isLoading, inputError } = this.state;
+        const { profile, isLoading, inputError, editable } = this.state;
         const formIsValid =
             !inputError.firstname && !inputError.lastname && !inputError.email;
         const genderData = [{ value: "MALE" }, { value: "FEMALE" }];
         console.log(profile.birthday, " ", profile.phoneNumber);
-        const avatarUrl =
-            "http://worldenergystation.com/barkodo/assets/img/users/" +
-            profile["ImageUrl"];
+        const avatarUrl ="http://worldenergystation.com/barkodo/assets/img/users/" + profile["ImageUrl"];
         console.log("avatar: ", avatarUrl);
 
         return (
@@ -284,14 +343,24 @@ export default class EditProfile extends Component {
                     titlePage={currentPage}
                     leftMenu={leftMenu}
                     rightMenu={rightMenu}
-                    leftFunction={this.navigation.goBack}
+                    // leftFunction={this.navigation.goBack}
                 />
                 {isLoading ? (
                     <Loading />
                 ) : (
                     <Content>
                         <View style={styles["Profile_Container"]}>
-                            <TouchableOpacity onPress={this.onAvatarAction}>
+                            { editable ? 
+                                <TouchableOpacity onPress={this.onAvatarAction}>
+                                    <Image
+                                        style={styles["Profile_Image"]}
+                                        source={
+                                            profile["ImageUrl"] === null
+                                                ? require("../../images/profile.png")
+                                                : { uri: avatarUrl }
+                                        }
+                                    />
+                                </TouchableOpacity> :
                                 <Image
                                     style={styles["Profile_Image"]}
                                     source={
@@ -299,8 +368,9 @@ export default class EditProfile extends Component {
                                             ? require("../../images/profile.png")
                                             : { uri: avatarUrl }
                                     }
-                                />
-                            </TouchableOpacity>
+                                />                                                
+                        }
+
                         </View>
                         <View style={styles["Card_Container"]}>
                             <View style={styles["Card"]}>
@@ -317,6 +387,7 @@ export default class EditProfile extends Component {
                                     value={profile["FirstName"]}
                                     style={styles["Card_Input"]}
                                     underlineColorAndroid="transparent"
+                                    editable={editable}
                                 />
                                 {inputError.firstname ? (
                                     <Text style={styles["Error_Text"]}>
@@ -338,6 +409,7 @@ export default class EditProfile extends Component {
                                     value={profile["LastName"]}
                                     style={styles["Card_Input"]}
                                     underlineColorAndroid="transparent"
+                                    editable={editable}
                                 />
                                 {inputError.lastname ? (
                                     <Text style={styles["Error_Text"]}>
@@ -355,6 +427,7 @@ export default class EditProfile extends Component {
                                     value={profile["Email"]}
                                     style={styles["Card_Input_Last"]}
                                     underlineColorAndroid="transparent"
+                                    editable={editable}
                                 />
                                 {inputError.email ? (
                                     <Text style={styles["Error_Text"]}>
@@ -373,6 +446,7 @@ export default class EditProfile extends Component {
                                     style={styles["Card_DatePicker"]}
                                     date={profile["BirthDay"]}
                                     mode="date"
+                                    disabled={!editable}
                                     // format="DD/MM/YYYY"
                                     format="YYYY-MM-DD"
                                     showIcon={false}
@@ -386,6 +460,9 @@ export default class EditProfile extends Component {
                                         dateText: {
                                             fontSize: 14.7,
                                             color: "#838384"
+                                        },
+                                        disabled: {
+                                            backgroundColor: '#FDFDFD'
                                         }
                                     }}
                                     onDateChange={BirthDay => {
@@ -396,20 +473,29 @@ export default class EditProfile extends Component {
                                     }}
                                 />
                                 <Text style={styles["Card_Label"]}>Gender</Text>
-                                <Dropdown
-                                    style={styles["Card_Dropdown"]}
+                                { editable ? 
+                                    <Dropdown
+                                        style={styles["Card_Dropdown"]}
+                                        value={profile["Gender"]}
+                                        data={genderData}
+                                        onChangeText={Gender => {
+                                            this.updateFormToState(
+                                                "Gender",
+                                                Gender
+                                            );
+                                        }}
+                                        containerStyle={
+                                            styles["Card_Dropdown_Container"]
+                                        }
+                                    /> :
+                                    <TextInput
                                     value={profile["Gender"]}
-                                    data={genderData}
-                                    onChangeText={Gender => {
-                                        this.updateFormToState(
-                                            "Gender",
-                                            Gender
-                                        );
-                                    }}
-                                    containerStyle={
-                                        styles["Card_Dropdown_Container"]
-                                    }
-                                />
+                                    style={styles["Card_Input"]}
+                                    underlineColorAndroid="transparent"
+                                    editable={editable}
+                                    />                               
+                                }
+
                             </View>
 
                             <View style={styles["Card"]}>
@@ -426,6 +512,7 @@ export default class EditProfile extends Component {
                                     value={profile["Address"]}
                                     style={styles["Card_Input"]}
                                     underlineColorAndroid="transparent"
+                                    editable={editable}
                                 />
                                 <Text style={styles["Card_Label"]}>City</Text>
                                 <TextInput
@@ -435,6 +522,7 @@ export default class EditProfile extends Component {
                                     value={profile["City"]}
                                     style={styles["Card_Input"]}
                                     underlineColorAndroid="transparent"
+                                    editable={editable}
                                 />
                                 <Text style={styles["Card_Label"]}>
                                     Zip code
@@ -449,6 +537,7 @@ export default class EditProfile extends Component {
                                     value={profile["Zipcode"]}
                                     style={styles["Card_Input"]}
                                     underlineColorAndroid="transparent"
+                                    editable={editable}
                                 />
                                 <Text style={styles["Card_Label"]}>
                                     Country
@@ -463,6 +552,7 @@ export default class EditProfile extends Component {
                                     value={profile["Country"]}
                                     style={styles["Card_Input_Last"]}
                                     underlineColorAndroid="transparent"
+                                    editable={editable}
                                 />
                             </View>
                             <View style={styles["Card"]}>
@@ -479,6 +569,7 @@ export default class EditProfile extends Component {
                                     value={profile["PhoneNumber"]}
                                     style={styles["Card_Input"]}
                                     underlineColorAndroid="transparent"
+                                    editable={editable}
                                 />
                                 <Text style={styles["Card_Label"]}>
                                     Facebook ID
@@ -493,63 +584,40 @@ export default class EditProfile extends Component {
                                     value={profile["FacebookId"]}
                                     style={styles["Card_Input_Last"]}
                                     underlineColorAndroid="transparent"
+                                    editable={editable}
                                 />
                             </View>
                         </View>
                         <View>
-                            {formIsValid === true ? (
-                                <Button
-                                    title="Logout"
-                                    onPress={() => this.onUpdateUserProfile()}
-                                    success
-                                    full
-                                    large
-                                    rounded
-                                >
-                                    <Text
-                                        style={{
-                                            padding: 10,
-                                            color: "white"
-                                        }}
-                                    >
-                                        Confirm Editing
-                                    </Text>
-                                </Button>
-                            ) : (
-                                <Button
-                                    title="Logout"
-                                    onPress={() => this.onLogout()}
-                                    success
-                                    full
-                                    large
-                                    rounded
-                                    disabled
-                                >
-                                    <Text
-                                        style={{
-                                            padding: 10,
-                                            color: "white"
-                                        }}
-                                    >
-                                        Confirm Editing (Form is not valid)
-                                    </Text>
-                                </Button>
-                            )}
                             <View
                                 style={{
                                     padding: 5
                                 }}
                             />
-                            <Button
-                                title="Logout"
-                                onPress={() => this.onLogout()}
-                                danger
-                                full
-                                large
-                                rounded
-                            >
-                                <Text>Logout</Text>
-                            </Button>
+                            {
+                                editable ? 
+                                <Button
+                                    title="Cancel"
+                                    onPress={() => this.onEditFinish()}
+                                    danger
+                                    full
+                                    large
+                                    rounded
+                                >
+                                    <Text>Cancel</Text>
+                                </Button> :
+                                <Button
+                                    title="Logout"
+                                    onPress={() => this.onLogout()}
+                                    danger
+                                    full
+                                    large
+                                    rounded
+                                >
+                                    <Text>Logout</Text>
+                                </Button>                            
+                            }
+
                         </View>
                     </Content>
                 )}
