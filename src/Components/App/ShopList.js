@@ -89,6 +89,13 @@ export default class ShopList extends Component {
     }
 
     setWelcomeList = async () => {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                console.log('success: ', position);
+            },
+            (error) => console.log('error: ', error),
+            { enableHighAccuracy: true, timeout: 1000},
+        );
         try {
             result = await this.getWelcomePromotion(this.state.userId, this.state.userToken)
             if (result["status"] === 200) {
