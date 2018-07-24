@@ -67,10 +67,9 @@ export default class Main extends Component {
         this.setState({
             userId, userToken
         })     
+        this.navigation.navigate('MapView');
+
     };
-
-
-
 
     getUserWallet = async(userId, userToken, camTypeId) => {
         console.log('userId : ', userId)
@@ -180,18 +179,8 @@ export default class Main extends Component {
     };
 
     render() {
-        const {
-            currentPage,
-            searchVisible,
-            searchText,
-            filterVisible
-        } = this.state;
-        const {
-            leftButton,
-            rightButton,
-            leftFunction,
-            rightFunction
-        } = this.state.header;
+        const { currentPage, searchVisible, searchText, filterVisible } = this.state;
+        const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header;
         console.log("Current Page", this.navigation.state);
 
         return (

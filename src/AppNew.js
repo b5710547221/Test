@@ -18,11 +18,12 @@ import ShowWelcomePromotion from './Components/module/ShowWelcomePromotion'
 import ShowCollectPromotion from './Components/module/ShowCollectPromotion'
 import AddCode from './Components/module/AddCode'
 import ShowQRCode from './Components/App/ShowQRCode'
-// import PickProfileImageScreen from './Components/App/PickProfileImage'
-// import WebViewScreen from './Components/App/WebView'
+
 import ResetPassword from './Components/App/ResetPassword'
 import ResetSecurityCode from './Components/App/ResetSecurityCode'
 // import Main from './Components/Main'
+
+import MapView from './Components/App/MapView'
 
 // const LoginScreen = ''
 // const ShopListScreen = ''
@@ -37,10 +38,7 @@ const AppStack = createStackNavigator({
     Main, Scan, EditProfile, ShowWelcomePromotion, ShowWelcomePromotion,
     ShowGiftPromotion, ShowGiftPromotion, ShowPackagePromotion, ShowPackagePromotion,
     ShowCollectPromotion, ShowCollectPromotion, AddCode, ShowQRCode, ShowQRCode, 
-    ResetPassword, ResetSecurityCode
-    // PickProfileImage: PickProfileImageScreen,
-    // WebView: WebViewScreen
-    // MyWallet: MyWalletScreen,
+    ResetPassword, ResetSecurityCode, MapView
 })
 // const MemberStack = StackNavigator({
 //     ShopList: ShopListScreen,
