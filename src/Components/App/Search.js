@@ -12,7 +12,7 @@ export default class Search extends Component {
         return (
             <View style={styles["Container"]}>
                 <TouchableOpacity onPress={onToggle} style={styles["Button"]}>
-                    {searchVisible ? (
+                    {/* {searchVisible ? (
                         <SearchBar
                             value={searchText}
                             containerStyle={styles["Search_Container"]}
@@ -25,7 +25,8 @@ export default class Search extends Component {
                         />
                     ) : (
                         SearchIcon
-                    )}
+                    )} */}
+                    { SearchIcon }
                 </TouchableOpacity>
             </View>
         );

@@ -191,10 +191,11 @@ export default class ShopList extends Component {
 	}
 
     render() {
-        const { data, isLoading, isNoGPS, welcomeProList, usedWelcome, refreshing } = this.state;
+        const { isLoading, isNoGPS, welcomeProList, usedWelcome, refreshing } = this.state;
         const { searchText, searchVisible } = this.props;
+        console.log('Shoplist searchTexg: ', searchText);
 
-        const filteredWelcome = searchVisible
+        const filteredWelcome = welcomeProList && searchText.toLowerCase()
             ? welcomeProList.filter(item =>
                   item.BranchName.toLowerCase().includes(
                       searchText.toLowerCase()
@@ -202,7 +203,7 @@ export default class ShopList extends Component {
               )
             : welcomeProList;
 
-        const filteredUsedWelcome = searchVisible
+        const filteredUsedWelcome = welcomeProList && searchText.toLowerCase()
             ? usedWelcome.filter(item =>
                   item.BranchName.toLowerCase().includes(
                       searchText.toLowerCase()

@@ -8,6 +8,7 @@ import Header from '../Common/Header'
 import Loading from '../Common/Loading'
 
 import ImageBackIcon from '../../images/left.png'
+import Icon from "react-native-vector-icons/Feather"
 
 const hiddenButton = (
     <Button
@@ -30,10 +31,10 @@ export default class MapViewer extends Component {
         this.state = {
             header: {
                 leftMenu: null,
-                currentPage: null,
+                currentPage: "Select Location",
                 rightMenu: null
             },
-            currentPosition: null,
+            currentPosition: this.props.navigation.state.params.currentPosition,
             markerPosition: null,
             isLoading: true
         }
@@ -59,12 +60,25 @@ export default class MapViewer extends Component {
         );
     }
 
+    onFinish = () => {
+        this.navigation.goBack();
+    }
+
+    componentWillMount = () => {
+        this.navigation.state.params.onToggle();
+    }
+
+    componentWillUnmount = () => {
+        this.navigation.state.params.onToggle();
+    }
+
+
     setHeader = async() => {
         const { goBack } = this.navigation
         const backButton = (
             <Button
                 style={styles['Header_Icon']}
-                onPress={() => { goBack() }}
+                onPress={() => { this.onFinish() }}
                 transparent
             >
                 <Image
@@ -77,20 +91,36 @@ export default class MapViewer extends Component {
                 <Text style={styles['Header_Icon_Text']}>Back</Text>
             </Button>
         )
+        const confirmButton = (
+            <Button
+                style={styles["Header_Icon"]}
+                onPress={this.onConfirm}
+                transparent
+                disabled={false}
+            >
+                <Icon name="check" size={20} color="#FDFDFD"/>
+            </Button>
+        );
         await this.setState({
             header: {
                 leftMenu: backButton,
-                currentPage: null,
-                rightMenu: hiddenButton
+                currentPage: this.state.header.currentPage,
+                rightMenu: confirmButton
             }
         })
     }
 
     onPress = (e) => {
         console.log('Pressddd ', e.nativeEvent)
+        // this.navigation.state.params.onMarkerChange(e.nativeEvent.coordinate)
         this.setState({
             markerPosition: e.nativeEvent.coordinate
         })
+    }
+
+    onConfirm = () => {
+        this.navigation.state.params.onMarkerChange(this.state.markerPosition)
+        this.navigation.goBack()
     }
 
     render() {
@@ -98,6 +128,7 @@ export default class MapViewer extends Component {
         const { currentPosition, isLoading, markerPosition } = this.state
         console.log(markerPosition == null)
         console.log('MapViewer!')
+        console.log(currentPage)
         return (
             <Container style={styles['Container']}>
                 <Header

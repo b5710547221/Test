@@ -86,7 +86,7 @@ export default class Collect extends Component {
 		console.log(collects)
 		let filteredCollect
 		if(!isLoading) {
-			filteredCollect = searchVisible
+			filteredCollect = collects && searchText.toLowerCase()
 				? collects.filter(item =>
 					item.BranchName.toLowerCase().includes(
 						searchText.toLowerCase()

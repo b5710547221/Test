@@ -88,7 +88,7 @@ export default class Package extends Component {
 		const { searchText, searchVisible } = this.props
 		let filteredPackges
 		if(!isLoading) {
-			filteredPackges = searchVisible
+			filteredPackges = packages && searchText.toLowerCase()
 				? packages.filter(item =>
 					item.BranchName.toLowerCase().includes(
 						searchText.toLowerCase()

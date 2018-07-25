@@ -24,6 +24,7 @@ import Footer from "../Common/Footer";
 import Search from "./Search";
 import Filter from "./Filter";
 import FilterModal from "./FilterModal";
+import SearchModal from "./SearchModal";
 
 import { API } from "../../Config";
 
@@ -51,6 +52,7 @@ export default class Main extends Component {
             filterVisible: false,
             userId: null,
             userToken: null,
+            markerPosition: null
         };
 
         this.navigation = props.navigation;
@@ -67,7 +69,7 @@ export default class Main extends Component {
         this.setState({
             userId, userToken
         })     
-        this.navigation.navigate('MapView');
+        // this.navigation.navigate('MapView');
 
     };
 
@@ -108,7 +110,8 @@ export default class Main extends Component {
                 currentPage: goToPage,
                 historyPage: historyPage,
                 searchText: "",
-                searchVisible: false
+                searchVisible: false,
+                markerPosition: null
             });
         }
 
@@ -116,6 +119,7 @@ export default class Main extends Component {
     };
 
     onChangeSearchText = value => {
+        console.log('Text Changed!')
         this.setState({
             searchText: value
         });
@@ -178,16 +182,39 @@ export default class Main extends Component {
         });
     };
 
+    onMarkerChange = async(markerPosition) => {
+        console.log('Marker Changed!')
+        console.log('Marker : ', markerPosition)
+        await this.setState({ markerPosition })
+    }
+    
+    onMapPress = () => {
+        this.navigation.navigate("MapView", {
+            onToggle: this.onToggleSearchStatus,
+            onMarkerChange: this.onMarkerChange,
+            markerPosition: this.state.markePosition
+        });
+    }
     render() {
-        const { currentPage, searchVisible, searchText, filterVisible } = this.state;
+        const { currentPage, searchVisible, searchText, filterVisible, markerPosition, onMarkerChange } = this.state;
         const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header;
         console.log("Current Page", this.navigation.state);
+        console.log('Main Text : ', searchText)
 
         return (
             <Container>
                 <FilterModal
                     filterVisible={filterVisible}
                     onPress={this.onToggleFilterStatus}
+                />
+                <SearchModal
+                    isVisible={searchVisible}
+                    searchText={searchText}
+                    onMarkerChange={(onMarkerChange)}
+                    markerPosition={markerPosition}
+                    onToggle={this.onToggleSearchStatus}
+                    onChangeSearchText={this.onChangeSearchText}
+                    onMapPress={this.onMapPress}
                 />
                 {currentPage == "Shop List" || currentPage == "My Wallet" ? (
                     <Header

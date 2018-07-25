@@ -1,4 +1,5 @@
-
+- react-native-maps android cannot be installed
+- cannot read filter of null
 confirm ASDFdfs add branchName
 
 refactor

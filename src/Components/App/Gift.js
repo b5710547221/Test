@@ -87,7 +87,7 @@ export default class Gift extends Component {
 		const { searchText, searchVisible  } = this.props
 		let filteredGifts
 		if(!isLoading) {
-			filteredGifts = searchVisible
+			filteredGifts = gifts && searchText.toLowerCase()
 				? gifts.filter(item =>
 					item.BranchName.toLowerCase().includes(
 						searchText.toLowerCase() 

@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         borderColor: "#CCCCCC",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#FDFDFD",
         elevation: 2
     },
     Card_Section: {
@@ -330,6 +330,7 @@ const styles = StyleSheet.create({
     Card_Button: {
         borderWidth: 1,
         borderColor: "#6E69CC",
+        backgroundColor: Loading_Color,
         borderRadius: 13,
         justifyContent: "center",
         alignItems: "center",
@@ -340,7 +341,7 @@ const styles = StyleSheet.create({
         alignSelf: "flex-end"
     },
     Card_Button_Text: {
-        color: "#6E69CC",
+        color: "#FDFDFD",
         fontSize: 12
     }
 });
