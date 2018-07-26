@@ -1,3 +1,6 @@
+Bug
+- login email doesnot exist return html
+
 - react-native-maps android cannot be installed
 - cannot read filter of null
 confirm ASDFdfs add branchName
