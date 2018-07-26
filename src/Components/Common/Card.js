@@ -23,7 +23,7 @@ export default class Card extends PureComponent {
 
     render() {
         const { type, data, onClick } = this.props
-        const { BranchId, PromotionId, ImageUrl, PromotionName, BranchName, Description, EndDate, BranchImage } = data
+        const { BranchId, PromotionId, ImageUrl, PromotionName, BranchName, Description, EndDate, BranchImage, Distance } = data
         const { ExpiredDate, Timeslimit, Times } = data
         const { Points } = data
 
@@ -63,7 +63,7 @@ export default class Card extends PureComponent {
                                                 style={{ height: 10, width: 8 }}
                                                 source={pinIcon}
                                             />
-                                            <Text style={styles['Card_Icon_Text']}>N/A</Text>
+                                            <Text style={styles['Card_Icon_Text']}>{ Distance ? `${Distance} km` : "N/A" }</Text>
                                         </View>
                                     </View>
                                     <View style={styles['Card_Button_Container']}>
@@ -92,14 +92,14 @@ export default class Card extends PureComponent {
                                                     style={{ height: 10, width: 10 }}
                                                     source={clockIcon}
                                                 />
-                                                <Text style={styles['Card_Icon_Text']}>{EndDate}</Text>
+                                                <Text style={styles['Card_Icon_Text']}>{ExpiredDate}</Text>
                                             </View>
                                             <View style={styles['Card_Icon']}>
                                                 <Image
                                                     style={{ height: 10, width: 8 }}
                                                     source={pinIcon}
                                                 />
-                                                <Text style={styles['Card_Icon_Text']}>N/A</Text>
+                                                <Text style={styles['Card_Icon_Text']}>{ Distance ? `${Distance} km` : "N/A" }</Text>
                                             </View>
                                         </View>
                                         <View style={styles['Card_Button_Container']}>

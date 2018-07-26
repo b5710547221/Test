@@ -40,7 +40,9 @@ export default class ShopList extends Component {
             refreshing: false,
             simulator: true,
             userId: null,
-            userToken: null
+            userToken: null,
+            latitude: null,
+            longitude: null
         };
 
         this.navigation = props.navigation;
@@ -56,48 +58,42 @@ export default class ShopList extends Component {
         // });
         const userId = await AsyncStorage.getItem("userId");
         const userToken = await AsyncStorage.getItem("userToken");
-        this.setState({
-            userId,
-            userToken
-        });
-        await this.setWelcomeList();
+        this.setState({ userId, userToken });
+        this.setCoords();
     };
 
     getUserWallet = async(userId, userToken, camTypeId) => {
         console.log('userId : ', userId)
         console.log('userToken : ', userToken);
 
-        return await apiRequest(`/getUserWalletByCamPaignTypeAndUserId/${camTypeId}/${userId}`,
+        return await apiRequest(`/getUserWalletByCamPaignTypeId/${camTypeId}`,
          'GET', {}, 'customer', userToken, userId);
     }
 
-    getWelcomePromotion = async(userId, userToken) => {
-        return await axios.get(
-            API["base"] + "/getAllWelcomePromotionList/2/" + userId,
-            {
-                headers: {
-                    "Client-Service": "MobileClient",
-                    "Auth-Key": "BarkodoAPIs",
-                    "Content-Type": "application/json",
-                    "Authorization": userToken,
-                    "User-Id": userId
-                },
-                timeout: 10000
-            }
-        );
-
+    getWelcomePromotion = async(userId, userToken, latitude, longitude) => {
+        return await apiRequest(`/getAllWelcomePromotionList/2/${latitude}/${longitude}`, "GET", {}, "customer", userToken, userId);
     }
 
-    setWelcomeList = async () => {
+    setCoords = async() => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 console.log('success: ', position);
+                this.setState({
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                }, this.setWelcomeList)
             },
             (error) => console.log('error: ', error),
             { enableHighAccuracy: true, timeout: 1000},
-        );
+        );        
+    }
+
+    setWelcomeList = async () => {
         try {
-            result = await this.getWelcomePromotion(this.state.userId, this.state.userToken)
+            console.log('latitude : ', this.state.latitude)
+            console.log('longitude : ', this.state.longitude)
+            result = await this.getWelcomePromotion(this.state.userId, this.state.userToken, this.state.latitude, this.state.longitude)
+            console.log(result);
             if (result["status"] === 200) {
                 await this.setState({
                     welcomeProList: result["data"]
@@ -109,8 +105,6 @@ export default class ShopList extends Component {
         }
 
         try {
-            console.log('userId : ', this.state.userId);
-            console.log('userToken : ', this.state.userToken);
             result = await this.getUserWallet(this.state.userId, this.state.userToken, 2)
             if (result["status"] === 200) {
                 await this.setState({
@@ -118,11 +112,10 @@ export default class ShopList extends Component {
                 });
             }
         } catch (err) {
-            console.log(err);
             console.log(err['response'])
             Alert.alert("Error loading Used Welcome Promotion!");
         }
-        this.setState({
+        await this.setState({
             isLoading: false
         });
     };
@@ -147,16 +140,18 @@ export default class ShopList extends Component {
     onGetPromotion = async params => {
         console.log("params", params);
         try {
-            const result = await apiRequest("/confirmWelcomePromotionToWallet", "POST", params, "customer",
-             this.state.userToken, this.state.userId);
+            const result = await apiRequest("/confirmWelcomePromotionToWallet/2", "POST", params, "customer", this.state.userToken, this.state.userId);
+            console.log(result)
             if (result["status"] === 201) {
+                Alert.alert(result["data"]["message"]);
+            } else {
                 Alert.alert(result["data"]["message"]);
             }
         } catch (err) {
             console.log(err);
             console.log(err["response"]);
         }
-        this.setWelcomeList()
+        this.setCoords()
     };
 
     componentWillUnmount() {
@@ -183,7 +178,7 @@ export default class ShopList extends Component {
 		await this.setState({
 			refreshing: true
 		});      
-		await this.setWelcomeList();
+		await this.setCoords();
 		await this.setState({
 			refreshing: false
 		})
@@ -203,7 +198,7 @@ export default class ShopList extends Component {
               )
             : welcomeProList;
 
-        const filteredUsedWelcome = welcomeProList && searchText.toLowerCase()
+        const filteredUsedWelcome = usedWelcome && searchText.toLowerCase()
             ? usedWelcome.filter(item =>
                   item.BranchName.toLowerCase().includes(
                       searchText.toLowerCase()
@@ -216,10 +211,7 @@ export default class ShopList extends Component {
         return (
             <ScrollView
                  refreshControl={
-                    <RefreshControl
-                     refreshing={this.state.refreshing}
-                    onRefresh={this.onRefresh}
-                    />
+                    <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
                 }
             >
                 { isLoading ? (

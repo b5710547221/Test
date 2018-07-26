@@ -1,27 +1,13 @@
 import React, { Component } from "react";
-import {
-    Alert,
-    BackHandler,
-    StyleSheet,
-    View,
-    Image,
-    Text,
-    TouchableOpacity,
-    TextInput,
-    AsyncStorage,
-    Modal,
-    TouchableHighlight
-} from "react-native";
-import { NavigationActions } from "react-navigation";
+import { Alert, StyleSheet, View, Image, Text, TouchableOpacity, TextInput, AsyncStorage } from "react-native";
 import { Container, Content, Button, ActionSheet } from "native-base";
 import DatePicker from "react-native-datepicker";
 import { Dropdown } from "react-native-material-dropdown";
-import axios from "axios";
 import ImagePicker from "react-native-image-crop-picker";
 import RNFetchBlob from "rn-fetch-blob";
 import Icon from "react-native-vector-icons/Feather"
 
-import { API, Bakodo_Color, apiRequest, Loading_Color } from "../../Config";
+import { Bakodo_Color, apiRequest, Loading_Color } from "../../Config";
 
 import { BackIcon, HiddenIcon } from "../Common/Icon";
 import Header from "../Common/Header";
@@ -66,10 +52,7 @@ export default class EditProfile extends Component {
     componentDidMount = async () => {
         const userToken = await AsyncStorage.getItem("userToken");
         const userId = await AsyncStorage.getItem("userId");
-        await this.setState({
-            userToken,
-            userId
-        });
+        await this.setState({ userToken, userId });
         await this.setHeader();
         await this.getUserDetails();
         await this.setState({
@@ -204,8 +187,7 @@ export default class EditProfile extends Component {
     }
 
     onUpdateUserProfile = async () => {
-        const { profile } = this.state;
-        const { inputError } = this.state;
+        const { profile, inputError } = this.state;
         if(inputError.FirstName) {
             Alert.alert('First Name cannot be empty');
             return;
@@ -214,51 +196,33 @@ export default class EditProfile extends Component {
             Alert.alert('Last Name cannot be empty');
             return;
         }
-        if(inputError.email) {
-            Alert.alert('Email cannot be empty');
-            return;
-        }
         
         try {
             const params = {
-                email: profile.email,
                 firstname: profile.FirstName,
                 lastname: profile.LastName,
                 phoneNumber:
                     profile.PhoneNumber === null ? "" : profile.PhoneNumber,
                 gender: profile.Gender,
-                facebookId:
+                facebook:
                     profile.Facebook === null ? "" : profile.Facebook,
                 address: profile.Address === null ? "" : profile.Address,
                 city: profile.City === null ? "" : profile.City,
-                zipcode: profile.ZipCode === null ? "" : profile.ZipCode,
+                zipCode: profile.ZipCode === null ? "" : profile.ZipCode,
                 country: profile.Country === null ? "" : profile.Country,
                 birthday: profile.Birthday
             };
             console.log("params", params);
-            const result = await axios.put(
-                API["base"] + "/editUserProfile/" + this.state.userId,
-                params,
-                {
-                    headers: {
-                        "Client-Service": "MobileClient",
-                        "Auth-Key": "BarkodoAPIs",
-                        "Content-Type": "application/json",
-                        "Authorization": this.state.userToken,
-                        "User-Id": this.state.userId
-                    },
-                    timeout: 10000
-                }
-            );
+            const result = await apiRequest("/editUserProfile", "PUT", params, "customer", 
+            this.state.userToken, this.state.userId);
             console.log(result);
             if (result["status"] === 200) {
                 Alert.alert(result["data"]["message"]);
-                // this.navigation.goBack();
                 this.onEditFinish();
             }
         } catch (err) {
-            console.log(err);
-            Alert.alert("Failed Updating profile");
+            console.log(err["response"]);
+            Alert.alert(err["response"]["data"]["message"]);
             this.onEditFinish();
         }
     };
@@ -277,7 +241,6 @@ export default class EditProfile extends Component {
     }
 
     onPickImage = () => {
-        // this.navigation.navigate('PickProfileImage')
         const image = ImagePicker.openPicker({
             width: 300,
             height: 400,
@@ -286,33 +249,25 @@ export default class EditProfile extends Component {
             includeBase64: true
         }).then(image => {
             console.log(image);
+            console.log(image.path);
             this.setState({
                 profile: { ...this.state.profile, ImageUrl: image.path }
             });
-            RNFetchBlob.fetch(
-                "POST",
-                "http://worldenergystation.com/barkodo/index.php/response/imgupload/" +
-                    this.state.userId,
-                {
+            RNFetchBlob.fetch("POST",
+                `http://worldenergystation.com/barkodo/index.php/response/imgupload/${this.state.userId}`,{
                     "Content-Type": "multipart/form-data"
                 },
-                [
-                    {
-                        name: "image",
-                        filename: "image" + image.mime,
-                        type: image.mime,
-                        data: image.data
-                    }
-                ]
-            )
+                [ { name: "image", filename: "image" + image.mime, type: image.mime, data: image.data } ] )
                 .then(resp => {
                     console.log("Upload image resp", resp);
                     this.getUserDetails();
+                    //const json = resp.json();
+                    //console.log('json: ', json);
                     // ...
                 })
-                .catch(err => {
+                .catch((error) => {
                     // ...
-                    console.log("Upload error : ", err);
+                    console.log("Upload error : ", error)
                 });
         });
     };
@@ -331,8 +286,7 @@ export default class EditProfile extends Component {
         const formIsValid =
             !inputError.firstname && !inputError.lastname && !inputError.email;
         const genderData = [{ value: "MALE" }, { value: "FEMALE" }];
-        console.log(profile.birthday, " ", profile.phoneNumber);
-        const avatarUrl ="http://worldenergystation.com/barkodo/assets/img/users/" + profile["ImageUrl"];
+        const avatarUrl =`http://worldenergystation.com/barkodo/assets/img/users/${profile["ImageUrl"]}`;
         console.log("avatar: ", avatarUrl);
 
         return (
@@ -425,7 +379,7 @@ export default class EditProfile extends Component {
                                     value={profile["Email"]}
                                     style={styles["Card_Input_Last"]}
                                     underlineColorAndroid="transparent"
-                                    editable={editable}
+                                    editable={false}
                                 />
                                 {inputError.email ? (
                                     <Text style={styles["Error_Text"]}>
