@@ -21,7 +21,7 @@ export default class AuthLoading extends Component {
 
     tokenAndIdAreValid = async(userToken, userId) => {
         try {
-            const result = await apiRequest(`/getUserDetails/${userId}`, "GET", {}, "shop", userToken, userId)
+            const result = await apiRequest(`/getUserDetails`, "GET", {}, "customer", userToken, userId)
             console.log("auth loading result", result)
             if(result['status'] == 200) {
                 return true

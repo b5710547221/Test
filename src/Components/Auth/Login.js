@@ -68,17 +68,6 @@ export default class Login extends Component {
         });
     };
 
-    getUserId = async userToken => {
-        result = await getAPI("getUserDetails", {
-            token: userToken
-        });
-        console.log(
-            "User Id: ",
-            result["data"]["response"]["result"]["userId"]
-        );
-        return result["data"]["response"]["result"]["userId"];
-    };
-
     onLogin = async () => {
         const { isInternet, email, password } = this.state;
         if (email === "" || password === "") {
@@ -94,8 +83,8 @@ export default class Login extends Component {
                 console.log('resultLogin', resultLogin);
                 
                 if ( resultLogin["status"] === 200 ) {
-                    const userToken = resultLogin["data"]["token"];
-                    const userId = resultLogin["data"]["user_id"]
+                    const userToken = resultLogin["data"]["details"]["token"];
+                    const userId = resultLogin["data"]["details"]["userId"]
                     console.log(userToken);
                     console.log(userId);
                     await AsyncStorage.setItem("userToken", userToken);

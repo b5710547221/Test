@@ -44,7 +44,14 @@ export default class SignUp extends Component {
                 firstname: 'D',
                 lastname: 'S',
                 gender: 'MALE',
-                phone: '0901234567'
+                phone: '0901234567',
+                imageUrl: null,
+                birthday: "1990-01-01",
+                address: "Ladprao",
+                city: "Bangkok",
+                zipCode: "10900",
+                country: "Thailand",
+                facebook: ""
              }
             // formRegister: {
             //     username: "",
@@ -82,7 +89,11 @@ export default class SignUp extends Component {
             gender,
             phone,
             securityCode,
-            confirmSecurityCode
+            confirmSecurityCode,
+            address,
+            zipCode,
+            city,
+            country
         } = this.state.formRegister;
 
         const EMAIL_REGEX = RegExp(
@@ -122,6 +133,17 @@ export default class SignUp extends Component {
             return Alert.alert("กรุณาใส่ PIN และ ยืนยัน PIN ให้เหมือนกัน");
         }
 
+        // // Validate Address
+        // if(address === "") {
+        //     return Alert.alert("กรุณาใส่ที่อยู่")
+        // } else if(zipCode === "") {
+        //     return Alert.alert("กรุณาใส่รหัสไปรษณีย์")
+        // } else if(city === "") {
+        //     return Alert.alert("กรุณาใส่เมือง")
+        // } else if(country === "") {
+        //     return Alert.alert("กรุณาใส่ประเทศ")
+        // }
+
         // Validation Firstname
         if (firstname === "") {
             return Alert.alert("กรุณาใส่ชื่อจริง");
@@ -151,15 +173,21 @@ export default class SignUp extends Component {
     submitForm = async data => {
         try {
             const body = {
-                    username: data["username"],
-                    password: data["password"],
-                    firstname: data["firstname"],
-                    lastname: data["lastname"],
-                    email: data["email"],
-                    confirmPassword: data["confirmpassword"],
-                    gender: data["gender"],
-                    phoneNumber: data["phone"],
-                    securityCode: data["securityCode"]
+                username: data["username"],
+                password: data["password"],
+                firstname: data["firstname"],
+                lastname: data["lastname"],
+                email: data["email"],
+                gender: data["gender"],
+                phoneNumber: data["phone"],
+                securityCode: data["securityCode"],
+                imageUrl: data["imageUrl"],
+                birthday: data["birthday"],
+                address: data["address"],
+                city: data["city"],
+                zipCode: data["zipCode"],
+                country: data["country"],
+                facebook: data["facebook"]
             };
             const resultRegister = await apiRequest("/registerNewAccount", "POST", body);
             console.log(resultRegister);
@@ -320,6 +348,92 @@ export default class SignUp extends Component {
                         </View>
 
                         <View style={styles["Card"]}>
+                            <Text style={styles["Card_Label"]}>
+                                Address
+                            </Text>
+                            <TextInput
+                                onChangeText={address =>
+                                    this.updateFormToState(
+                                        "address",
+                                        address
+                                    )
+                                }
+                                value={formRegister["address"]}
+                                style={styles["Card_Input"]}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles["Card_Label"]}>City</Text>
+                            <TextInput
+                                onChangeText={city =>
+                                    this.updateFormToState("city", city)
+                                }
+                                value={formRegister["city"]}
+                                style={styles["Card_Input"]}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles["Card_Label"]}>
+                                Zip code
+                            </Text>
+                            <TextInput
+                                onChangeText={zipCode =>
+                                    this.updateFormToState(
+                                        "zipCode",
+                                        zipCode
+                                    )
+                                }
+                                value={formRegister["zipCode"]}
+                                style={styles["Card_Input"]}
+                                underlineColorAndroid="transparent"
+                            />
+                            <Text style={styles["Card_Label"]}>
+                                Country
+                            </Text>
+                            <TextInput
+                                onChangeText={country =>
+                                    this.updateFormToState(
+                                        "country",
+                                        country
+                                    )
+                                }
+                                value={formRegister["country"]}
+                                style={styles["Card_Input_Last"]}
+                                underlineColorAndroid="transparent"
+                            />
+                        </View>
+
+                        <View style={styles["Card"]}>
+                            <Text style={styles["Card_Label"]}>
+                                Birthday
+                            </Text>
+                            <DatePicker
+                                style={styles["Card_DatePicker"]}
+                                date={formRegister["birthday"]}
+                                mode="date"
+                                // format="DD/MM/YYYY"
+                                format="YYYY-MM-DD"
+                                showIcon={false}
+                                confirmBtnText="Confirm"
+                                cancelBtnText="Cancel"
+                                customStyles={{
+                                    dateInput: {
+                                        alignItems: "flex-start",
+                                        borderWidth: 0
+                                    },
+                                    dateText: {
+                                        fontSize: 14.7,
+                                        color: "#838384"
+                                    },
+                                    disabled: {
+                                        backgroundColor: '#FDFDFD'
+                                    }
+                                }}
+                                onDateChange={birthday => {
+                                    this.updateFormToState(
+                                        "birthday",
+                                        birthday
+                                    );
+                                }}
+                            />
                             <Text style={styles["Card_Label"]}>Gender</Text>
                             <Dropdown
                                 style={styles["Card_Dropdown"]}

@@ -79,19 +79,8 @@ export default class EditProfile extends Component {
 
     getUserDetails = async () => {
         try {
-            const result = await axios.get(
-                API["base"] + "/getUserDetails/" + this.state.userId,
-                {
-                    headers: {
-                        "Client-Service": "MobileClient",
-                        "Auth-Key": "BarkodoAPIs",
-                        "Content-Type": "application/json",
-                        Authorization: this.state.userToken,
-                        "User-Id": this.state.userId
-                    },
-                    timeout: 10000
-                }
-            );
+            const result = await apiRequest("/getUserDetails", "GET", {}, "customer", this.state.userToken, 
+            this.state.userId);
             const userProfile = result["data"];
             console.log("User Profile", userProfile);
             await this.setState({
@@ -239,10 +228,10 @@ export default class EditProfile extends Component {
                     profile.PhoneNumber === null ? "" : profile.PhoneNumber,
                 gender: profile.Gender,
                 facebookId:
-                    profile.FacebookId === null ? "" : profile.FacebookId,
+                    profile.Facebook === null ? "" : profile.Facebook,
                 address: profile.Address === null ? "" : profile.Address,
                 city: profile.City === null ? "" : profile.City,
-                zipcode: profile.Zipcode === null ? "" : profile.Zipcode,
+                zipcode: profile.ZipCode === null ? "" : profile.ZipCode,
                 country: profile.Country === null ? "" : profile.Country,
                 birthday: profile.Birthday
             };
@@ -453,7 +442,7 @@ export default class EditProfile extends Component {
                                 </Text>
                                 <DatePicker
                                     style={styles["Card_DatePicker"]}
-                                    date={profile["BirthDay"]}
+                                    date={profile["Birthday"]}
                                     mode="date"
                                     disabled={!editable}
                                     // format="DD/MM/YYYY"
@@ -474,10 +463,10 @@ export default class EditProfile extends Component {
                                             backgroundColor: '#FDFDFD'
                                         }
                                     }}
-                                    onDateChange={BirthDay => {
+                                    onDateChange={Birthday => {
                                         this.updateFormToState(
-                                            "BirthDay",
-                                            BirthDay
+                                            "Birthday",
+                                            Birthday
                                         );
                                     }}
                                 />
@@ -537,13 +526,13 @@ export default class EditProfile extends Component {
                                     Zip code
                                 </Text>
                                 <TextInput
-                                    onChangeText={Zipcode =>
+                                    onChangeText={ZipCode =>
                                         this.updateFormToState(
-                                            "Zipcode",
-                                            Zipcode
+                                            "ZipCode",
+                                            ZipCode
                                         )
                                     }
-                                    value={profile["Zipcode"]}
+                                    value={profile["ZipCode"]}
                                     style={styles["Card_Input"]}
                                     underlineColorAndroid="transparent"
                                     editable={editable}
@@ -584,13 +573,13 @@ export default class EditProfile extends Component {
                                     Facebook ID
                                 </Text>
                                 <TextInput
-                                    onChangeText={FacebookId =>
+                                    onChangeText={Facebook =>
                                         this.updateFormToState(
-                                            "FacebookId",
-                                            FacebookId
+                                            "Facebook",
+                                            Facebook
                                         )
                                     }
-                                    value={profile["FacebookId"]}
+                                    value={profile["Facebook"]}
                                     style={styles["Card_Input_Last"]}
                                     underlineColorAndroid="transparent"
                                     editable={editable}
