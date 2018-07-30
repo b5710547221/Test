@@ -1,5 +1,7 @@
 Bug
 - login email doesnot exist return html
+- checkpromotion first time api
+- confirmqrcode does not change status api
 
 - react-native-maps android cannot be installed
 - cannot read filter of null

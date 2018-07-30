@@ -38,7 +38,7 @@ export default class Package extends Component {
         console.log('userId : ', userId)
         console.log('userToken : ', userToken);
 
-        return await apiRequest(`/getUserWalletByCamPaignTypeAndUserId/${camTypeId}/${userId}`,
+        return await apiRequest(`/getUserWalletByCamPaignTypeId/${camTypeId}`,
          'GET', {}, 'customer', userToken, userId);
 	}
 

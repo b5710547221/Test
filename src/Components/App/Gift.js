@@ -42,7 +42,7 @@ export default class Gift extends Component {
         console.log('userId : ', userId)
         console.log('userToken : ', userToken);
 
-        return await apiRequest(`/getUserWalletByCamPaignTypeAndUserId/${camTypeId}/${userId}`,
+        return await apiRequest(`/getUserWalletByCamPaignTypeId/${camTypeId}`,
          'GET', {}, 'customer', userToken, userId);
 	}
 	
@@ -61,7 +61,8 @@ export default class Gift extends Component {
 				Alert.alert(result["data"]["message"])
 			}
         } catch (err) {
-            console.log(err);
+			console.log(err);
+			console.log(err["response"])
             Alert.alert("Error loading Gifts");
 		}
 		await this.setState({

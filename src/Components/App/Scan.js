@@ -76,8 +76,9 @@ export default class Scan extends Component {
         await this.setState({
             isLoading: true
         })
+
         try {
-            const result = await apiRequest(`/qrCodeGetPromotionDetails/${qrCode}`, 'GET', {}, "customer", userToken, userId);
+            const result = await apiRequest(`/qrCodeGetPromotionDetails`, 'POST', { qrCode }, "customer", userToken, userId);
             console.log(result)
             if (result['status'] == 200 ) {
                 const promotion =  result["data"]                    

@@ -24,7 +24,7 @@ export default class Card extends PureComponent {
     render() {
         const { type, data, onClick } = this.props
         const { BranchId, PromotionId, ImageUrl, PromotionName, BranchName, Description, EndDate, BranchImage, Distance } = data
-        const { ExpiredDate, Timeslimit, Times } = data
+        const { ExpiredDate, MaxTimes, Times, PackageType } = data
         const { Points } = data
 
         console.log(type)
@@ -169,8 +169,8 @@ export default class Card extends PureComponent {
 
                                                 <Text style={[styles['Card_Content_Header'], { color: '#4D4D4D' }]}>{BranchName}</Text>
                                                 <Text style={styles['Card_Content_Special']}>
-                                                    {Timeslimit == '0' ? 'Unlimited' :
-                                                        Times + '/' + Timeslimit}
+                                                    {PackageType == '1' ? 'Unlimited' :
+                                                        Times + '/' + MaxTimes}
                                                 </Text>
                                                 <View style={styles['Card_Container_Icon']}>
                                                     <View style={styles['Card_Icon']}>
