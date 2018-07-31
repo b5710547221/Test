@@ -131,7 +131,7 @@ export default class Scan extends Component {
             "campaignTypeId": promotion["CampaignTypeId"],
             "promotionId": promotion["PromotionId"],
             "branchId": promotion["BranchId"],
-            "qrCode": code
+            "qrCode": promotion["Code"]
         };
         console.log('promotion ', promotion)
         let url;
