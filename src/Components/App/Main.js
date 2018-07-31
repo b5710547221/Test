@@ -111,11 +111,10 @@ export default class Main extends Component {
                 historyPage: historyPage,
                 searchText: "",
                 searchVisible: false,
-                markerPosition: null
+                markerPosition: null,
+                searchByMarker: false
             });
         }
-
-        // console.log(this.state.historyPage)
     };
 
     onChangeSearchText = value => {
@@ -195,11 +194,18 @@ export default class Main extends Component {
             markerPosition: this.state.markePosition
         });
     }
+
+    onClearMarker = () => {
+        this.setState({
+            markerPosition: null
+        })
+    }
+
     render() {
-        const { currentPage, searchVisible, searchText, filterVisible, markerPosition, onMarkerChange } = this.state;
+        const { currentPage, searchVisible, searchText, filterVisible, markerPosition, 
+            onMarkerChange, searchByMarker } = this.state;
         const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header;
-        console.log("Current Page", this.navigation.state);
-        console.log('Main Text : ', searchText)
+        console.log('SearchByMarker: ', searchByMarker)
 
         return (
             <Container>
@@ -215,6 +221,7 @@ export default class Main extends Component {
                     onToggle={this.onToggleSearchStatus}
                     onChangeSearchText={this.onChangeSearchText}
                     onMapPress={this.onMapPress}
+                    onClearMarker={this.onClearMarker}
                 />
                 {currentPage == "Shop List" || currentPage == "My Wallet" ? (
                     <Header
@@ -248,6 +255,7 @@ export default class Main extends Component {
                         navigation={this.navigation}
                         searchVisible={searchVisible}
                         searchText={searchText}
+                        markePosition={markerPosition}
                     />
                 ) : currentPage === "Scan" ? (
                     <CameraView

@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import {
     View,
     Text,
-    TouchableHighlight,
     TouchableWithoutFeedback,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    Alert
 } from "react-native";
 import Modal from "react-native-modal";
 import { Loading_Color, Bakodo_Color } from "../../Config";
@@ -41,6 +41,26 @@ export default class FilterModal extends Component {
         );
     }
 
+    componentDidUpdate = (prevProps) => {
+        if(this.props.markerPosition !== prevProps.markerPosition) {
+            this.setState({ isLoading : true});
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    console.log('success: ', position);
+                    this.setState({
+                        currentPosition: {
+                            latitude : position.coords.latitude,
+                            longitude: position.coords.longitude
+                        },
+                        isLoading: false
+                    })
+                },
+                (error) => console.log('error: ', error),
+                { enableHighAccuracy: true, timeout: 1000},
+            );
+        }
+    }
+
     onChangeSearchText = value => {
         this.setState({
             searchText: value
@@ -52,6 +72,7 @@ export default class FilterModal extends Component {
         this.props.onChangeSearchText(this.state.searchText);
         this.props.onToggle();
     }
+
 
     render = () => {
         const { markerPosition } = this.props
@@ -108,8 +129,8 @@ export default class FilterModal extends Component {
                                             style = {{ flex: 1}}
                                             provider = { PROVIDER_GOOGLE }
                                             initialRegion={{
-                                            latitude: currentPosition.latitude,
-                                            longitude: currentPosition.longitude,
+                                            latitude: markerPosition ? markerPosition.latitude : currentPosition.latitude,
+                                            longitude: markerPosition ? markerPosition.longitude : currentPosition.longitude,
                                             latitudeDelta: 0.0922,
                                             longitudeDelta: 0.0421,
                                             }}
@@ -131,10 +152,10 @@ export default class FilterModal extends Component {
                             <View style={styles["Card_Content_Search"]}>
                                 <TouchableOpacity
                                     style={styles["Card_Button_Small"]}
-                                    onPress={this.props.onToggle}
+                                    onPress={this.props.onClearMarker}
                                 >
                                     <Text style={styles["Card_Button_Text_Small"]}>
-                                        Search
+                                        Clear Marker
                                     </Text>
                                 </TouchableOpacity>
                             </View>

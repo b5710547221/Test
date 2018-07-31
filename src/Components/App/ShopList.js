@@ -58,16 +58,19 @@ export default class ShopList extends Component {
         // });
         const userId = await AsyncStorage.getItem("userId");
         const userToken = await AsyncStorage.getItem("userToken");
-        this.setState({ userId, userToken });
-        this.setCoords();
+        await this.setState({ userId, userToken });
+        await this.setCoords();
     };
 
-    getUserWallet = async(userId, userToken, camTypeId) => {
-        console.log('userId : ', userId)
-        console.log('userToken : ', userToken);
+    componentDidUpdate = (prevProps) => {
+        if (this.props.markePosition !== prevProps.markePosition) {
+            this.setCoords();
+        }
+      }
 
-        return await apiRequest(`/getUserWalletByCamPaignTypeId/${camTypeId}`,
-         'GET', {}, 'customer', userToken, userId);
+    getUserWallet = async(userId, userToken, camTypeId) => {
+        return await apiRequest(`/getUserWalletByCamPaignTypeId/${camTypeId}`,'GET', {}, 'customer', 
+        userToken, userId);
     }
 
     getWelcomePromotion = async(userId, userToken, latitude, longitude) => {
@@ -75,23 +78,29 @@ export default class ShopList extends Component {
     }
 
     setCoords = async() => {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                console.log('success: ', position);
-                this.setState({
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                }, this.setWelcomeList)
-            },
-            (error) => console.log('error: ', error),
-            { enableHighAccuracy: true, timeout: 1000},
-        );        
+        if(this.props.markePosition) {
+            this.setState({
+                latitude: this.props.markePosition.latitude,
+                longitude: this.props.markePosition.longitude
+            }, this.setWelcomeList)
+        } else {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    console.log('success: ', position);
+                    this.setState({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    }, this.setWelcomeList)
+                },
+                (error) => console.log('error: ', error),
+                { enableHighAccuracy: true, timeout: 1000},
+            );             
+        }
+       
     }
 
     setWelcomeList = async () => {
         try {
-            console.log('latitude : ', this.state.latitude)
-            console.log('longitude : ', this.state.longitude)
             result = await this.getWelcomePromotion(this.state.userId, this.state.userToken, this.state.latitude, this.state.longitude)
             console.log(result);
             if (result["status"] === 200) {
