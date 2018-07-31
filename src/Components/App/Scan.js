@@ -87,7 +87,7 @@ export default class Scan extends Component {
                     code: e.data
                 })
                 if(promotion['CampaignTypeId'] == 4) {
-                    const existResult = await apiRequest(`/checkCollectPromotionFirstTime/${promotion['CampaignTypeId']}
+                    const existResult = await apiRequest(`/checkCollectPromotionFirstTime/${promotion['BranchId']}/${promotion['CampaignTypeId']}
                     /${promotion['PromotionId']}`, 
                     'GET', {}, "customer", userToken, userId)
                     if (existResult['status'] == 200) {
@@ -103,7 +103,6 @@ export default class Scan extends Component {
                     } else {
                         await this.showSuccesModal(existResult['data']['message'])
                     }
-
                 } else {
                     const confirmText = `You will get ${promotion["PromotionName"]} from ${promotion["BranchName"]}`
                     const promptText = "Get the promotion now?"
