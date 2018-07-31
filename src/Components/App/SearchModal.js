@@ -155,7 +155,7 @@ export default class FilterModal extends Component {
                                     onPress={this.props.onClearMarker}
                                 >
                                     <Text style={styles["Card_Button_Text_Small"]}>
-                                        Clear Marker
+                                        Clear
                                     </Text>
                                 </TouchableOpacity>
                             </View>

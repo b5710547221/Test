@@ -1,4 +1,5 @@
-
+android
+- have not linked react-native-google-places
 
 Bug
 - login email doesnot exist return html

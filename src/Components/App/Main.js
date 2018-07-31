@@ -55,8 +55,6 @@ export default class Main extends Component {
         this.setState({
             userId, userToken
         })     
-        // this.navigation.navigate('MapView');
-
     };
 
     getUserWallet = async(userId, userToken, camTypeId) => {
@@ -177,7 +175,8 @@ export default class Main extends Component {
         this.navigation.navigate("MapView", {
             onToggle: this.onToggleSearchStatus,
             onMarkerChange: this.onMarkerChange,
-            markerPosition: this.state.markePosition
+            onClearMarker: this.onClearMarker,
+            markerPosition: this.state.markerPosition
         });
     }
 

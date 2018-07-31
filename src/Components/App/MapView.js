@@ -1,9 +1,12 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Alert, AsyncStorage, WebView } from 'react-native'
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Dimensions } from 'react-native'
 import { Container, Content, Button } from 'native-base'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import RNGooglePlaces from 'react-native-google-places';
 
-import { Bakodo_Color, Loading_Color, apiRequest } from '../../Config'
+
+
+import { Bakodo_Color, Loading_Color } from '../../Config'
 import Header from '../Common/Header'
 import Loading from '../Common/Loading'
 
@@ -18,6 +21,8 @@ const hiddenButton = (
         <Text></Text>
     </Button>
 )
+
+var width = Dimensions.get("window").width;
 
 export default class MapViewer extends Component {
 
@@ -34,11 +39,10 @@ export default class MapViewer extends Component {
                 currentPage: "Select Location",
                 rightMenu: null
             },
-            currentPosition: this.props.navigation.state.params.currentPosition,
-            markerPosition: null,
+            currentPosition: null,
+            markerPosition: this.props.navigation.state.params.markerPosition,
             isLoading: true
         }
-
         this.navigation = props.navigation
     }
 
@@ -60,6 +64,21 @@ export default class MapViewer extends Component {
         );
     }
 
+    openSearchModal = () => {
+        RNGooglePlaces.openAutocompleteModal()
+        .then((place) => {
+            console.log(place);
+            const newPosition = {
+                latitude: place.latitude,
+                longitude: place.longitude
+            }
+            this.setState({
+                markerPosition: newPosition
+            })
+        })
+        .catch(error => console.log(error.message));
+    }
+
     onFinish = () => {
         this.navigation.goBack();
     }
@@ -72,9 +91,13 @@ export default class MapViewer extends Component {
         this.navigation.state.params.onToggle();
     }
 
+    onClearMarker = () => {
+        this.setState({
+            markerPosition: null
+        })
+    }
 
     setHeader = async() => {
-        const { goBack } = this.navigation
         const backButton = (
             <Button
                 style={styles['Header_Icon']}
@@ -126,9 +149,7 @@ export default class MapViewer extends Component {
     render() {
         const { leftMenu, currentPage, rightMenu} = this.state.header
         const { currentPosition, isLoading, markerPosition } = this.state
-        console.log(markerPosition == null)
-        console.log('MapViewer!')
-        console.log(currentPage)
+        console.log(this.props.navigation.state.params.markerPosition)
         return (
             <Container style={styles['Container']}>
                 <Header
@@ -137,28 +158,49 @@ export default class MapViewer extends Component {
                     rightMenu={rightMenu}
                 />
                 { isLoading ? <Loading /> :
-                    <MapView
-                        style = {{ flex: 1}}
-                        provider = { PROVIDER_GOOGLE }
-                        initialRegion={{
-                        latitude: currentPosition.latitude,
-                        longitude: currentPosition.longitude,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                        }}
-                        onPress={(e) => this.onPress(e)}
-                        showsUserLocation
+                    <View style={{ flex: 1}}>
+                        <MapView
+                            style = {{ flex: 1}}
+                            provider = { PROVIDER_GOOGLE }
+                            region={{
+                                latitude: markerPosition ? markerPosition.latitude : currentPosition.latitude,
+                                longitude: markerPosition ? markerPosition.longitude : currentPosition.longitude,
+                                latitudeDelta: 0.0922,
+                                longitudeDelta: 0.0421,
+                            }}
+                            onPress={(e) => this.onPress(e)}
+                            showsUserLocation
 
-                    >
-                        { markerPosition == null ? <View></View> :   
-                            <Marker
-                                coordinate={markerPosition}
-                                title="title"
-                                description="description"
-                            />                
-                        }
+                        >
+                            { markerPosition == null ? <View></View> :   
+                                <Marker
+                                    coordinate={markerPosition}
+                                    title="title"
+                                    description="description"
+                                />                
+                            }
 
-                    </MapView>               
+                        </MapView>
+                        <View style={styles["More_Container"]}>
+                            <TouchableOpacity
+                                style={styles["Card_Button_Small"]}
+                                onPress={this.openSearchModal}
+                            >
+                                <Text style={styles["Card_Button_Text_Small"]}>
+                                    Find Places
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles["Card_Button_Small"]}
+                                onPress={this.onClearMarker}
+                            >
+                                <Text style={styles["Card_Button_Text_Small"]}>
+                                    Clear
+                                </Text>
+                            </TouchableOpacity>
+                        </View>                            
+                    </View>
+           
                 }
         
             </Container>
@@ -168,6 +210,31 @@ export default class MapViewer extends Component {
 }
 
 const styles = StyleSheet.create({
+    Card_Button_Small: {
+        borderWidth: 1,
+        borderColor: Loading_Color,
+        backgroundColor: Loading_Color,
+        borderRadius: 20,
+        width: 150,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        marginRight: 20,
+        alignSelf: "flex-end"
+    },
+    Card_Button_Text_Small: {
+        color: "#FDFDFD",
+        fontSize: 14
+    },
+    More_Container: {
+        bottom: 50,
+        position:"absolute",
+        height: 200,
+        width: width,
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
     Map: {
         position: 'absolute',
         top: 0,

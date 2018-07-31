@@ -11,11 +11,13 @@
 #import <React/RCTRootView.h>
 #import "SplashScreen.h"
 @import GoogleMaps;
+@import GooglePlaces;
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [GMSPlacesClient provideAPIKey:@"AIzaSyA3pL277rqQ4A4pSqMWn5vYbvW5BDn3Pq4"];
   [GMSServices provideAPIKey:@"AIzaSyA3pL277rqQ4A4pSqMWn5vYbvW5BDn3Pq4"];
   
   NSURL *jsCodeLocation;
