@@ -1,26 +1,16 @@
 import React, { Component } from "react";
-import {
-    View,
-    Text,
-    TouchableHighlight,
-    StyleSheet,
-    TouchableOpacity
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Modal from "react-native-modal";
 import { Loading_Color } from "../../Config";
 
-import RadioForm, {
-    RadioButton,
-    RadioButtonInput,
-    RadioButtonLabel
-} from "react-native-simple-radio-button";
+import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from "react-native-simple-radio-button";
 import CheckBox from "react-native-checkbox";
 
 export default class FilterModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            option: -1,
+            option: 0,
             checkList: {
                 restaurant: true,
                 drinkAndBev: true,
@@ -45,16 +35,11 @@ export default class FilterModal extends Component {
                 key={i + startIndex}
             >
                 <RadioButton labelHorizontal={true} key={i + startIndex}>
-                    {/*  You can set RadioButtonLabel before RadioButtonInput */}
                     <RadioButtonInput
                         obj={obj}
                         index={i + startIndex}
-                        isSelected={this.state.option === i + startIndex}
-                        onPress={value => {
-                            this.setState({
-                                option: value
-                            });
-                        }}
+                        isSelected={this.props.sortOption === i + startIndex}
+                        onPress={value => {this.props.onSortOptionChange(value)}}
                         buttonInnerColor={Loading_Color}
                         buttonOuterColor={Loading_Color}
                         buttonWrapStyle={{
@@ -128,44 +113,20 @@ export default class FilterModal extends Component {
                                             flexWrap: "wrap"
                                         }}
                                     >
-                                        <View
-                                            style={
-                                                styles["Card_Radio_Type_Text"]
-                                            }
-                                        >
-                                            <Text
-                                                style={
-                                                    styles["Card_Content_Type"]
-                                                }
-                                            >
+                                        <View style={styles["Card_Radio_Type_Text"]} >
+                                            <Text style={styles["Card_Content_Type"]}>
                                                 Location
                                             </Text>
                                         </View>
                                         {this.renderRadioRow(locationTypes, 1)}
-                                        <View
-                                            style={
-                                                styles["Card_Radio_Type_Text"]
-                                            }
-                                        >
-                                            <Text
-                                                style={
-                                                    styles["Card_Content_Type"]
-                                                }
-                                            >
+                                        <View style={styles["Card_Radio_Type_Text"]} >
+                                            <Text style={styles["Card_Content_Type"]}>
                                                 Rating
                                             </Text>
                                         </View>
                                         {this.renderRadioRow(ratingTypes, 3)}
-                                        <View
-                                            style={
-                                                styles["Card_Radio_Type_Text"]
-                                            }
-                                        >
-                                            <Text
-                                                style={
-                                                    styles["Card_Content_Type"]
-                                                }
-                                            >
+                                        <View style={styles["Card_Radio_Type_Text"]}>
+                                            <Text style={styles["Card_Content_Type"]}>                                            
                                                 Shop Name
                                             </Text>
                                         </View>

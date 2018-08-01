@@ -33,12 +33,13 @@ export default class Main extends Component {
             },
             currentPage: currentPage, 
             historyPage: [currentPage],
+            sortOption: 0,
             searchVisible: false,
             searchText: "",
             filterVisible: false,
             userId: null,
             userToken: null,
-            markerPosition: null
+            markerPosition: null,
         };
 
         this.navigation = props.navigation;
@@ -93,6 +94,7 @@ export default class Main extends Component {
                 header: header,
                 currentPage: goToPage,
                 historyPage: historyPage,
+                sortOption: 0,
                 searchText: "",
                 searchVisible: false,
                 markerPosition: null,
@@ -186,17 +188,26 @@ export default class Main extends Component {
         })
     }
 
+    onSortOptionChange = (value) => {
+        this.setState({
+            sortOption: value
+        })
+    }
+
     render() {
         const { currentPage, searchVisible, searchText, filterVisible, markerPosition, 
-            onMarkerChange, searchByMarker } = this.state;
+            onMarkerChange, searchByMarker, sortOption } = this.state;
         const { leftButton, rightButton, leftFunction, rightFunction } = this.state.header;
         console.log('SearchByMarker: ', searchByMarker)
+        console.log('Option: ', sortOption)
 
         return (
             <Container>
                 <FilterModal
                     filterVisible={filterVisible}
                     onPress={this.onToggleFilterStatus}
+                    sortOption={sortOption}
+                    onSortOptionChange={this.onSortOptionChange}
                 />
                 <SearchModal
                     isVisible={searchVisible}
@@ -238,9 +249,9 @@ export default class Main extends Component {
                 {currentPage === "Shop List" ? (
                     <ShopList
                         navigation={this.navigation}
-                        searchVisible={searchVisible}
                         searchText={searchText}
-                        markePosition={markerPosition}
+                        markerPosition={markerPosition}
+                        sortOption={sortOption}
                     />
                 ) : currentPage === "Scan" ? (
                     <CameraView
@@ -251,8 +262,9 @@ export default class Main extends Component {
                 ) : currentPage === "My Wallet" ? (
                     <Wallet
                         navigation={this.navigation}
-                        searchVisible={searchVisible}
                         searchText={searchText}
+                        markerPosition={markerPosition}
+                        sortOption={sortOption}
                         onChangePage={this.onChangePage}
                     />
                 ) : (

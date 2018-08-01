@@ -32,7 +32,7 @@ export default class Login extends Component {
             isLoading: false,
             isInternet: true,
             email: "new@gmail.com",
-            password: "12341234"
+            password: "1234"
         };
 
         this.navigation = props.navigation;

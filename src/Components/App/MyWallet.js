@@ -36,7 +36,7 @@ export default class MyWallet extends Component {
 	}
 
 	render() {
-		const { gifts, packages, collects, searchText, searchVisible } = this.props
+		const { searchText, sortOption, markerPosition } = this.props
 		const { showPage } = this.state
 		console.log(showPage)
 
@@ -79,13 +79,13 @@ export default class MyWallet extends Component {
 				{
 					showPage === 'Gifts' ?
 						(<GiftCard navigation={this.navigation} onChangePage={this.props.onChangePage}
-							searchText={searchText} searchVisible={searchVisible}/>)
+							searchText={searchText} sortOption={sortOption} markerPosition={markerPosition} />)
 						: showPage === 'Collects' ?
 							(<CollectCard navigation={this.navigation} onChangePage={this.props.onChangePage}
-								searchText={searchText} searchVisible={searchVisible}/>)
+								searchText={searchText} sortOption={sortOption} markerPosition={markerPosition}/>)
 							:
 							(<PackageCard navigation={this.navigation} onChangePage={this.props.onChangePage}
-								 searchText={searchText} searchVisible={searchVisible}/>)
+								 searchText={searchText} sortOption={sortOption} markerPosition={markerPosition}/>)
 				}
 			</View>
 		)

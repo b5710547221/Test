@@ -1,29 +1,14 @@
 import React, { Component } from "react";
-import {
-    ActivityIndicator,
-    Text,
-    Alert,
-    AsyncStorage,
-    FlatList,
-    Image,
-    StyleSheet,
-    ScrollView,
-    View,
-    RefreshControl
-} from "react-native";
+import { Text, Alert, AsyncStorage, FlatList, StyleSheet, ScrollView, View, RefreshControl } from "react-native";
 import { Container, Content, Button } from "native-base";
 // import GPSState from "react-native-gps-state";
-import axios from "axios";
 
 import { API, Loading_Color, apiRequest } from "../../Config";
 import { SearchIcon, HiddenIcon } from "../Common/Icon";
 
-import Header from "../Common/Header";
 import Loading from "../Common/Loading";
 import NoGPS from "../Common/NoGPS";
 import Card from "../Common/Card";
-
-import CommonCard from "../module/CommonCard";
 
 import mockUpData from "../module/mockup";
 
@@ -63,8 +48,11 @@ export default class ShopList extends Component {
     };
 
     componentDidUpdate = (prevProps) => {
-        if (this.props.markePosition !== prevProps.markePosition) {
+        if (this.props.markerPosition !== prevProps.markerPosition) {
             this.setCoords();
+        } else if((this.props.searchText !== prevProps.searchText)||(this.props.sortOption !== prevProps.sortOption)) {
+            this.filterList();
+            console.log('Update!!!')
         }
       }
 
@@ -78,10 +66,10 @@ export default class ShopList extends Component {
     }
 
     setCoords = async() => {
-        if(this.props.markePosition) {
+        if(this.props.markerPosition) {
             this.setState({
-                latitude: this.props.markePosition.latitude,
-                longitude: this.props.markePosition.longitude
+                latitude: this.props.markerPosition.latitude,
+                longitude: this.props.markerPosition.longitude
             }, this.setWelcomeList)
         } else {
             navigator.geolocation.getCurrentPosition(
@@ -124,10 +112,59 @@ export default class ShopList extends Component {
             console.log(err['response'])
             Alert.alert("Error loading Used Welcome Promotion!");
         }
-        await this.setState({
-            isLoading: false
-        });
+
+        this.filterList();
     };
+
+    filterList = () => {
+        const { welcomeProList, usedWelcome } = this.state;
+        const { searchText, sortOption } = this.props;
+        const filteredWelcome = welcomeProList && searchText.toLowerCase()
+            ? welcomeProList.filter(item => item.BranchName.toLowerCase().includes(
+                      searchText.toLowerCase()
+                  )
+              )
+            : [...welcomeProList];
+
+        const filteredUsedWelcome = usedWelcome && searchText.toLowerCase()
+            ? usedWelcome.filter(item =>
+                  item.BranchName.toLowerCase().includes(
+                      searchText.toLowerCase()
+                  )
+              )
+            : [...usedWelcome];
+
+        switch(sortOption) {
+            case 1:
+                filteredWelcome.sort((a, b) => a.Distance > b.Distance);
+                filteredUsedWelcome.sort((a, b) => a.Distance > b.Distance);
+                break;
+            case 2:
+                filteredWelcome.sort((a, b) => a.Distance < b.Distance);
+                filteredUsedWelcome.sort((a, b) => a.Distance < b.Distance);
+                break;       
+            case 3:
+                // TODO: : sort rating
+                break;
+            case 4:    
+                // TODO: : sort rating
+                break;
+            case 5:
+                filteredWelcome.sort((a, b) => a.BranchName.localeCompare(b.BranchName) >= 0);
+                filteredUsedWelcome.sort((a, b) => a.BranchName.localeCompare(b.BranchName) >= 0);     
+                break;
+            case 6:
+                filteredWelcome.sort((a, b) => a.BranchName.localeCompare(b.BranchName) < 0);
+                filteredUsedWelcome.sort((a, b) => a.BranchName.localeCompare(b.BranchName) < 0);   
+                break;
+        }
+
+        this.setState({
+            isLoading: false,
+            welcomeProList: filteredWelcome,
+            usedWelcome: filteredUsedWelcome
+        })
+    }
 
     checkStatusGPS = async status => {
         if (status === 3 || status === 4 || this.state.simulator) {
@@ -147,7 +184,6 @@ export default class ShopList extends Component {
     };
 
     onGetPromotion = async params => {
-        console.log("params", params);
         try {
             const result = await apiRequest("/confirmWelcomePromotionToWallet/2", "POST", params, "customer", this.state.userToken, this.state.userId);
             console.log(result)
@@ -195,32 +231,14 @@ export default class ShopList extends Component {
 	}
 
     render() {
-        const { isLoading, isNoGPS, welcomeProList, usedWelcome, refreshing } = this.state;
-        const { searchText, searchVisible } = this.props;
-        console.log('Shoplist searchTexg: ', searchText);
+        const { isLoading, isNoGPS, refreshing, welcomeProList, usedWelcome } = this.state;
 
-        const filteredWelcome = welcomeProList && searchText.toLowerCase()
-            ? welcomeProList.filter(item =>
-                  item.BranchName.toLowerCase().includes(
-                      searchText.toLowerCase()
-                  )
-              )
-            : welcomeProList;
-
-        const filteredUsedWelcome = usedWelcome && searchText.toLowerCase()
-            ? usedWelcome.filter(item =>
-                  item.BranchName.toLowerCase().includes(
-                      searchText.toLowerCase()
-                  )
-              )
-            : usedWelcome;
-        console.log("filteredWelcome : ", filteredWelcome);
-        console.log("isLoading: ", isLoading)
+        console.log('Welcome Prolist', welcomeProList);
 
         return (
             <ScrollView
                  refreshControl={
-                    <RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+                    <RefreshControl refreshing={refreshing} onRefresh={this.onRefresh} />
                 }
             >
                 { isLoading ? (
@@ -233,7 +251,7 @@ export default class ShopList extends Component {
                             <Text>Available Welcome Promotions</Text>
                         </View>
                         <FlatList
-                            data={filteredWelcome}
+                            data={welcomeProList}
                             renderItem={({ item, index }) => {
                                 return (
                                     <Card
@@ -249,16 +267,13 @@ export default class ShopList extends Component {
                             <Text>Used Welcome Promotions</Text>
                         </View>
                         <FlatList
-                            data={filteredUsedWelcome}
+                            data={usedWelcome}
                             renderItem={({ item, index }) => {
                                 return (
                                     <Card
                                         type="Used Shop List"
                                         data={item}
-                                        onClick={this.onUsedClick.bind(
-                                            this,
-                                            item
-                                        )}
+                                        onClick={this.onUsedClick.bind(this,item)}
                                         onGet={this.onGetPromotion}
                                     />
                                 );
