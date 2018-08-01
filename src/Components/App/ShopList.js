@@ -51,7 +51,7 @@ export default class ShopList extends Component {
             this.setCoords();
         } else if((this.props.searchText !== prevProps.searchText)||(this.props.sortOption !== prevProps.sortOption)) {
             this.setState({ isLoading: true})
-            this.filterList();
+            this.setCoords();
             console.log('Update!!!')
         }
       }

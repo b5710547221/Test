@@ -17,11 +17,19 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.8.0</string>
+	<string>0.8.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.8.0</string>
+	<string>0.8.2</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fb</string>
+		<string>fbapi</string>
+		<string>fb-messenger-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -37,14 +45,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>fb</string>
-		<string>fbapi</string>
-		<string>fb-messenger-api</string>
-		<string>fbauth2</string>
-		<string>fbshareextension</string>
-	</array>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Your message to user when the Apple Music is accessed for the first time</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
@@ -53,9 +53,9 @@
 	<string>Your message to user when the Calendar is accessed for the first time</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Your message to user when the camera is accessed for the first time</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Your message</string>
 	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Your message</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your message</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Your message to user when the Motion is accessed for the first time</string>

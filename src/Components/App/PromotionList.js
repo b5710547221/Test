@@ -34,8 +34,8 @@ export default class PromotionList extends Component {
             await this.setState({isLoading: true})
             await this.setCoords()
         } else if((this.props.searchText !== prevProps.searchText)||(this.props.sortOption !== prevProps.sortOption)) {
-            this.setState({ isLoading: true})
-            this.filterList();
+            await this.setState({ isLoading: true})
+            await this.setCoords();
         }
     }
 

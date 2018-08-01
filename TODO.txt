@@ -1,6 +1,3 @@
-android issue
-- have not linked react-native-google-places
-- react-native-maps android cannot be installed
 
 Bug
 - (API) login email does not exist return html
@@ -8,17 +5,8 @@ Bug
 confirm ASDFdfs add branchName
 
 refactor
-    - component should be in module
-    - seperate api function
-- qrcodegetpromotion return PromotionMamew
-- Used Promotion cannot get redeem code promotion
+- component should be in module
 
 - redeem code still work after 3 minutes
-
-- Log out sometimes network error
-- fix android react-native gps state
 - End Date to days left
-- shop list no gps does not display appropriate
-- clean up and organize navigation in AppNew.js
-- regular expression for signup form
-- Connect with facebook
+- Used Promotion cannot get redeem code promotion
