@@ -15,7 +15,9 @@ export default class PromotionList extends Component {
 			promotions: null,
 			userToken: null,
 			userId: null,
-			refreshing: false
+            refreshing: false,
+            latitude: null,
+            longitude: null
 		}
 		this.navigation = props.navigation
 	}
@@ -24,13 +26,16 @@ export default class PromotionList extends Component {
 		const userToken = await AsyncStorage.getItem('userToken')
 		const userId = await AsyncStorage.getItem('userId')
         await this.setState({ userId, userToken})
-		await this.setPromotions(this.props.camTypeId)
+		await this.setCoords();
     }
     
     componentDidUpdate = async(prevProps) => {
-        if(this.props.showPage !== prevProps.showPage) {
+        if((this.props.showPage !== prevProps.showPage)||(this.props.markerPosition !== prevProps.markerPosition)) {
             await this.setState({isLoading: true})
-            await this.setPromotions(this.props.camTypeId)
+            await this.setCoords()
+        } else if((this.props.searchText !== prevProps.searchText)||(this.props.sortOption !== prevProps.sortOption)) {
+            this.setState({ isLoading: true})
+            this.filterList();
         }
     }
 
@@ -44,7 +49,28 @@ export default class PromotionList extends Component {
 	getUserWallet = async(userId, userToken, camTypeId) => {
         return await apiRequest(`/getUserWalletByCamPaignTypeId/${camTypeId}`,
          'GET', {}, 'customer', userToken, userId);
-	}
+    }
+    
+    setCoords = async() => {
+        if(this.props.markerPosition) {
+            this.setState({
+                latitude: this.props.markerPosition.latitude,
+                longitude: this.props.markerPosition.longitude
+            }, this.setPromotions.bind(this, this.props.camTypeId))
+        } else {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    console.log('success: ', position);
+                    this.setState({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    }, this.setPromotions.bind(this, this.props.camTypeId))
+                },
+                (error) => console.log('error: ', error),
+                { enableHighAccuracy: true, timeout: 1000},
+            );             
+        }
+    }
 	
     setPromotions = async () => {
         try {
@@ -64,51 +90,77 @@ export default class PromotionList extends Component {
 			console.log(err["response"])
             Alert.alert("Error loading Gifts");
 		}
-		await this.setState({
-			isLoading: false
-		})
-	};
+        this.filterList();
+    };
+    
+    filterList = () => {
+        const { promotions } = this.state;
+        const { searchText, sortOption, camTypeId } = this.props;
+        if(camTypeId == 1) {
+            filteredPromotions = promotions && searchText.toLowerCase()
+                ? promotions.filter(item =>
+                    item.BranchName.toLowerCase().includes(
+                        searchText.toLowerCase() 
+                    ) && item.Used == "0"
+                )
+                : promotions.filter(item => item.Used == "0");	                
+        } else {
+            filteredPromotions = promotions && searchText.toLowerCase()
+                ? promotions.filter(item =>
+                    item.BranchName.toLowerCase().includes(
+                        searchText.toLowerCase() 
+                    )
+                )
+                : [...promotions]                 
+        }
+
+        switch(sortOption) {
+            case 1:
+                filteredPromotions.sort((a, b) => a.Distance > b.Distance);
+                break;
+            case 2:
+                filteredPromotions.sort((a, b) => a.Distance < b.Distance);
+                break;       
+            case 3:
+                // TODO: : sort rating
+                break;
+            case 4:    
+                // TODO: : sort rating
+                break;
+            case 5:
+                filteredPromotions.sort((a, b) => a.BranchName.localeCompare(b.BranchName) >= 0);   
+                break;
+            case 6:
+                filteredPromotions.sort((a, b) => a.BranchName.localeCompare(b.BranchName) < 0);
+                break;
+        }
+
+        this.setState({
+            isLoading: false,
+            promotions: filteredPromotions,
+            refreshing: false
+        })
+    }
 	
 
 	onRefresh = async() => {
-		console.log('refresh!')
-		await this.setState({ refreshing: true });      
-		await this.setPromotions(this.props.camTypeId);
-		await this.setState({ refreshing: false })
+		await this.setState({
+            refreshing: true,
+            isLoading: true
+		});      
+		await this.setCoords();
     }
+
 	render() {
 		const { isLoading, promotions, refreshing } = this.state
-		const { searchText, showPage, camTypeId  } = this.props
-		let filteredPromotions
-		if(!isLoading) {
-            if(camTypeId == 1) {
-                filteredPromotions = promotions && searchText.toLowerCase()
-                    ? promotions.filter(item =>
-                        item.BranchName.toLowerCase().includes(
-                            searchText.toLowerCase() 
-                        ) && item.Used == "0"
-                    )
-                    : promotions.filter(item => item.Used == "0");	                
-            } else {
-                filteredPromotions = promotions && searchText.toLowerCase()
-                    ? promotions.filter(item =>
-                        item.BranchName.toLowerCase().includes(
-                            searchText.toLowerCase() 
-                        )
-                    )
-                    : [...promotions]                 
-            }
-		}
+		const {  showPage  } = this.props
 
-        console.log(promotions)
-        console.log('CamType: ',  camTypeId)
-        console.log('ShowPage: ', showPage)
-        console.log(filteredPromotions)
+        console.log(this.state.latitude, ' ', this.state.longitude);
 		return (
 			<ScrollView style={styles['PromotionList']}
 				refreshControl={
 					<RefreshControl
-					    refreshing={this.state.refreshing}
+					    refreshing={refreshing}
 					    onRefresh={this.onRefresh}
 					/> 
 				}
@@ -117,7 +169,7 @@ export default class PromotionList extends Component {
 					isLoading ? <Loading />
 						:
 						<FlatList
-							data={filteredPromotions}
+							data={promotions}
 							renderItem={({ item, index }) => {
 								return <Card type={showPage} data={item} onClick={this.onClick.bind(this, item)}/>
 							}}

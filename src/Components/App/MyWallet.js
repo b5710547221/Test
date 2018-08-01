@@ -11,10 +11,6 @@ import unSelectGiftsImage from '../../images/gifticon.png'
 import unSelectCollectsImage from '../../images/collecticon.png'
 import unSelectPackageImage from '../../images/packageicon.png'
 
-
-
-
-
 export default class MyWallet extends Component {
 
 	static navigationOptions = {

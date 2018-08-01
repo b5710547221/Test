@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import { Text, Alert, AsyncStorage, FlatList, StyleSheet, ScrollView, View, RefreshControl } from "react-native";
-import { Container, Content, Button } from "native-base";
 // import GPSState from "react-native-gps-state";
 
-import { API, Loading_Color, apiRequest } from "../../Config";
-import { SearchIcon, HiddenIcon } from "../Common/Icon";
+import { apiRequest } from "../../Config";
 
 import Loading from "../Common/Loading";
 import NoGPS from "../Common/NoGPS";
@@ -49,8 +47,10 @@ export default class ShopList extends Component {
 
     componentDidUpdate = (prevProps) => {
         if (this.props.markerPosition !== prevProps.markerPosition) {
+            this.setState({ isLoading: true})
             this.setCoords();
         } else if((this.props.searchText !== prevProps.searchText)||(this.props.sortOption !== prevProps.sortOption)) {
+            this.setState({ isLoading: true})
             this.filterList();
             console.log('Update!!!')
         }
@@ -84,7 +84,6 @@ export default class ShopList extends Component {
                 { enableHighAccuracy: true, timeout: 1000},
             );             
         }
-       
     }
 
     setWelcomeList = async () => {
@@ -162,7 +161,8 @@ export default class ShopList extends Component {
         this.setState({
             isLoading: false,
             welcomeProList: filteredWelcome,
-            usedWelcome: filteredUsedWelcome
+            usedWelcome: filteredUsedWelcome,
+            refreshing: false
         })
     }
 
@@ -196,7 +196,10 @@ export default class ShopList extends Component {
             console.log(err);
             console.log(err["response"]);
         }
-        this.setCoords()
+        await this.setState({
+            isLoading: true
+        })
+        await this.setCoords()
     };
 
     componentWillUnmount() {
@@ -221,13 +224,10 @@ export default class ShopList extends Component {
     onRefresh = async() => {
 		console.log('refresh!')
 		await this.setState({
-			refreshing: true
+            refreshing: true,
+            isLoading: true
 		});      
 		await this.setCoords();
-		await this.setState({
-			refreshing: false
-		})
-
 	}
 
     render() {
