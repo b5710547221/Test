@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { ScrollView, FlatList, StyleSheet, Alert, AsyncStorage, RefreshControl } from 'react-native'
+import { ScrollView, FlatList, StyleSheet, Alert, AsyncStorage, RefreshControl, View } from 'react-native'
 
-import { apiRequest } from '../../Config'
+import { apiRequest, Loading_Color } from '../../Config'
 import Loading from '../Common/Loading'
 import Card from '../Common/Card'
 
@@ -145,8 +145,7 @@ export default class PromotionList extends Component {
 
 	onRefresh = async() => {
 		await this.setState({
-            refreshing: true,
-            isLoading: true
+            refreshing: true
 		});      
 		await this.setCoords();
     }
@@ -157,25 +156,29 @@ export default class PromotionList extends Component {
 
         console.log(this.state.latitude, ' ', this.state.longitude);
 		return (
-			<ScrollView style={styles['PromotionList']}
-				refreshControl={
-					<RefreshControl
-					    refreshing={refreshing}
-					    onRefresh={this.onRefresh}
-					/> 
-				}
-			>
-				{
-					isLoading ? <Loading />
-						:
-						<FlatList
-							data={promotions}
-							renderItem={({ item, index }) => {
-								return <Card type={showPage} data={item} onClick={this.onClick.bind(this, item)}/>
-							}}
-						/>
-				}
-			</ScrollView>
+            <View style={{flex: 1}}>
+                {
+                    isLoading ? <Loading /> :
+                    <ScrollView style={styles['PromotionList']}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={this.onRefresh}
+                                tintColor={Loading_Color}
+                            /> 
+                        }
+                    >
+                        <FlatList
+                            data={promotions}
+                            renderItem={({ item, index }) => {
+                                return <Card type={showPage} data={item} onClick={this.onClick.bind(this, item)}/>
+                            }}
+                        />
+                    </ScrollView>    
+                }
+        
+            </View>
+
 		)
 	}
 }

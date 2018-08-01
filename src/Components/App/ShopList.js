@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Text, Alert, AsyncStorage, FlatList, StyleSheet, ScrollView, View, RefreshControl } from "react-native";
 // import GPSState from "react-native-gps-state";
 
-import { apiRequest } from "../../Config";
+import { apiRequest, Bakodo_Color, Loading_Color } from "../../Config";
 
 import Loading from "../Common/Loading";
 import NoGPS from "../Common/NoGPS";
@@ -224,8 +224,7 @@ export default class ShopList extends Component {
     onRefresh = async() => {
 		console.log('refresh!')
 		await this.setState({
-            refreshing: true,
-            isLoading: true
+            refreshing: true
 		});      
 		await this.setCoords();
 	}
@@ -236,52 +235,60 @@ export default class ShopList extends Component {
         console.log('Welcome Prolist', welcomeProList);
 
         return (
-            <ScrollView
-                 refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={this.onRefresh} />
-                }
-            >
+            <View style={{flex: 1}}>
                 { isLoading ? (
                     <Loading />
                 ) : isNoGPS ? (
                     <NoGPS />
-                ) : (
-                    <View>
-                        <View style={styles["Promotion_Header"]}>
-                            <Text>Available Welcome Promotions</Text>
+                ) :                
+                    <ScrollView
+                        refreshControl={
+                            <RefreshControl 
+                                refreshing={refreshing} onRefresh={this.onRefresh} 
+                                tintColor={Loading_Color}
+                            />
+                        }
+                    >
+                        (<View>
+                            <View style={styles["Promotion_Header"]}>
+                                <Text>Available Welcome Promotions</Text>
+                            </View>
+                            <FlatList
+                                data={welcomeProList}
+                                renderItem={({ item, index }) => {
+                                    return (
+                                        <Card
+                                            type="Shop List"
+                                            data={item}
+                                            onClick={this.onClick.bind(this, item)}
+                                            onGet={this.onGetPromotion}
+                                        />
+                                    );
+                                }}
+                            />
+                            <View style={styles["Promotion_Header"]}>
+                                <Text>Used Welcome Promotions</Text>
+                            </View>
+                            <FlatList
+                                data={usedWelcome}
+                                renderItem={({ item, index }) => {
+                                    return (
+                                        <Card
+                                            type="Used Shop List"
+                                            data={item}
+                                            onClick={this.onUsedClick.bind(this,item)}
+                                            onGet={this.onGetPromotion}
+                                        />
+                                    );
+                                }}
+                            />
                         </View>
-                        <FlatList
-                            data={welcomeProList}
-                            renderItem={({ item, index }) => {
-                                return (
-                                    <Card
-                                        type="Shop List"
-                                        data={item}
-                                        onClick={this.onClick.bind(this, item)}
-                                        onGet={this.onGetPromotion}
-                                    />
-                                );
-                            }}
-                        />
-                        <View style={styles["Promotion_Header"]}>
-                            <Text>Used Welcome Promotions</Text>
-                        </View>
-                        <FlatList
-                            data={usedWelcome}
-                            renderItem={({ item, index }) => {
-                                return (
-                                    <Card
-                                        type="Used Shop List"
-                                        data={item}
-                                        onClick={this.onUsedClick.bind(this,item)}
-                                        onGet={this.onGetPromotion}
-                                    />
-                                );
-                            }}
-                        />
-                    </View>
-                )}
-            </ScrollView>
+                        )}
+                    </ScrollView>             
+                }
+               
+            </View>
+                
         );
     }
 }
