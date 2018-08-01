@@ -2,9 +2,7 @@
 import React, { Component } from 'react'
 import { View, Image, StyleSheet, TouchableOpacity, Text } from 'react-native'
 
-import GiftCard from './Gift'
-import CollectCard from './Collect'
-import PackageCard from './Package'
+import PromotionList from './PromotionList'
 
 import selectGiftsImage from '../../images/gifticond.png'
 import selectCollectsImage from '../../images/collecticond.png'
@@ -12,6 +10,10 @@ import selectPackageImage from '../../images/packageicond.png'
 import unSelectGiftsImage from '../../images/gifticon.png'
 import unSelectCollectsImage from '../../images/collecticon.png'
 import unSelectPackageImage from '../../images/packageicon.png'
+
+
+
+
 
 export default class MyWallet extends Component {
 
@@ -23,21 +25,23 @@ export default class MyWallet extends Component {
 		super(props)
 
 		this.state = {
-			showPage: 'Gifts'
+			showPage: 'Gift',
+			camTypeId: '1'
 		}
 
 		this.navigation = props.navigation
 	}
 
-	onChangePage = async (selectedPage) => {
+	onChangePage = async (selectedPage, selectedCamTypeId) => {
 		await this.setState({
-			showPage: selectedPage
+			showPage: selectedPage,
+			camTypeId: selectedCamTypeId
 		})
 	}
 
 	render() {
 		const { searchText, sortOption, markerPosition } = this.props
-		const { showPage } = this.state
+		const { showPage, camTypeId } = this.state
 		console.log(showPage)
 
 		return (
@@ -45,27 +49,27 @@ export default class MyWallet extends Component {
 				<View style={styles['Wallet_Tab_Container']}>
 					<View style={styles['Wallet_Tab']}>
 						<TouchableOpacity
-							onPress={() => { this.onChangePage('Gifts') }}
-							style={[styles['Wallet_Tab_Item'], { backgroundColor: showPage === 'Gifts' ? '#A38FE2' : '#FCFCFC' }]}
+							onPress={() => { this.onChangePage('Gift', 1) }}
+							style={[styles['Wallet_Tab_Item'], { backgroundColor: showPage === 'Gift' ? '#A38FE2' : '#FCFCFC' }]}
 						>
 							<Image
 								style={{ height: 17, width: 13.5 }}
-								source={showPage === 'Gifts' ? selectGiftsImage : unSelectGiftsImage}
+								source={showPage === 'Gift' ? selectGiftsImage : unSelectGiftsImage}
 							/>
-							<Text style={[styles['Wallet_Tab_Text'], { color: showPage === 'Gifts' ? '#FFFFFF' : '#A38FE2' }]}>Gifts</Text>
+							<Text style={[styles['Wallet_Tab_Text'], { color: showPage === 'Gift' ? '#FFFFFF' : '#A38FE2' }]}>Gifts</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
-							onPress={() => { this.onChangePage('Collects') }}
-							style={[styles['Wallet_Tab_Item'], { backgroundColor: showPage === 'Collects' ? '#A38FE2' : '#FCFCFC' }]}
+							onPress={() => { this.onChangePage('Collect', 4) }}
+							style={[styles['Wallet_Tab_Item'], { backgroundColor: showPage === 'Collect' ? '#A38FE2' : '#FCFCFC' }]}
 						>
 							<Image
 								style={{ height: 15, width: 18 }}
-								source={showPage === 'Collects' ? selectCollectsImage : unSelectCollectsImage}
+								source={showPage === 'Collect' ? selectCollectsImage : unSelectCollectsImage}
 							/>
-							<Text style={[styles['Wallet_Tab_Text'], { color: showPage === 'Collects' ? '#FFFFFF' : '#A38FE2' }]}>Collects</Text>
+							<Text style={[styles['Wallet_Tab_Text'], { color: showPage === 'Collect' ? '#FFFFFF' : '#A38FE2' }]}>Collects</Text>
 						</TouchableOpacity>
 						<TouchableOpacity
-							onPress={() => { this.onChangePage('Package') }}
+							onPress={() => { this.onChangePage('Package', 3) }}
 							style={[styles['Wallet_Tab_Item'], { backgroundColor: showPage === 'Package' ? '#A38FE2' : '#FCFCFC', borderRightWidth: 0 }]}
 						>
 							<Image
@@ -76,17 +80,21 @@ export default class MyWallet extends Component {
 						</TouchableOpacity>
 					</View>
 				</View>
-				{
-					showPage === 'Gifts' ?
+				{/* {
+					showPage === 'Gift' ?
 						(<GiftCard navigation={this.navigation} onChangePage={this.props.onChangePage}
 							searchText={searchText} sortOption={sortOption} markerPosition={markerPosition} />)
-						: showPage === 'Collects' ?
+						: showPage === 'Collect' ?
 							(<CollectCard navigation={this.navigation} onChangePage={this.props.onChangePage}
 								searchText={searchText} sortOption={sortOption} markerPosition={markerPosition}/>)
 							:
 							(<PackageCard navigation={this.navigation} onChangePage={this.props.onChangePage}
 								 searchText={searchText} sortOption={sortOption} markerPosition={markerPosition}/>)
-				}
+				} */}
+
+				<PromotionList showPage={showPage} camTypeId={camTypeId} navigation={this.navigation} 
+					onChangePage={this.props.onChangePage} searchText={searchText} 
+					sortOption={sortOption} markerPosition={markerPosition} />
 			</View>
 		)
 	}
