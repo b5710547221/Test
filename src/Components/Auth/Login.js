@@ -31,7 +31,7 @@ export default class Login extends Component {
         this.state = {
             isLoading: false,
             isInternet: true,
-            email: "new@gmail.com",
+            email: "customer@gmail.com",
             password: "1234"
         };
 

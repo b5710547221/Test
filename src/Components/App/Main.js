@@ -277,7 +277,7 @@ export default class Main extends Component {
                     />
                 ) : (
                     <View />
-                )}
+                )} 
             </Container>
         );
     }

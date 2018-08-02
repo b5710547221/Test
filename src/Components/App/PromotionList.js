@@ -3,6 +3,7 @@ import { ScrollView, FlatList, StyleSheet, Alert, AsyncStorage, RefreshControl, 
 
 import { apiRequest, Loading_Color } from '../../Config'
 import Loading from '../Common/Loading'
+import NoGPS from '../Common/NoGPS'
 import Card from '../Common/Card'
 
 export default class PromotionList extends Component {
