@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import {
-    Platform,
     StyleSheet,
     Alert,
     View,
     Text,
     Image,
     TouchableOpacity,
-    Linking
+    Linking, Platform, BackHandler 
 } from "react-native";
 import { Container, Content, Button } from "native-base";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -80,8 +79,21 @@ export default class ShowPromotion extends Component {
     };
 
     componentDidMount = async () => {
+        if (Platform.OS === "android") {
+            BackHandler.addEventListener("hardwareBackPress", this.onBackPage);
+        }
         await this.setHeader();
         await this.createCircles();
+    };
+
+    componentWillUnmount = () => {
+        if (Platform.OS === "android") {
+            BackHandler.removeEventListener("hardwareBackPress", this.onBackPage);
+        }
+    };
+
+    onBackPage = async () => {
+        this.navigation.goBack();
     };
 
     setHeader = () => {

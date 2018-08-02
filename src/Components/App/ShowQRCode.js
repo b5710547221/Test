@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, TextInput, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, Platform, BackHandler  } from 'react-native'
 import { Container, Content, Button } from 'native-base'
 import Svg, { Circle, Rect } from 'react-native-svg'
 import QRCode from 'react-native-qrcode-svg'
@@ -45,6 +45,9 @@ export default class AddCode extends Component {
     }
 
     componentDidMount = async () => {
+        if (Platform.OS === "android") {
+            BackHandler.addEventListener("hardwareBackPress", this.onBackPage);
+        }
         await this.setHeader()
         this.intervalId = setInterval(() => {
             this.setState((prevState) => {
@@ -64,9 +67,15 @@ export default class AddCode extends Component {
     }
 
     componentWillUnmount = () => {
+        if (Platform.OS === "android") {
+            BackHandler.removeEventListener("hardwareBackPress", this.onBackPage);
+        }
         clearInterval(this.intervalId)
-    }
+    };
 
+    onBackPage = async () => {
+        this.navigation.goBack();
+    };
 
     enterPassCode = async (text) => {
         if (text.length <= 6) {

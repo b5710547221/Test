@@ -2,9 +2,6 @@ import React, { Component } from "react";
 import { AsyncStorage, BackHandler, Platform, View } from "react-native";
 import { Container } from "native-base";
 
-
-
-
 import { apiRequest } from "../../Config";
 import { SearchIcon, BackIcon, HiddenIcon } from "../Common/Icon";
 import Header from "../Common/Header";
@@ -62,6 +59,17 @@ export default class Main extends Component {
         })     
     };
 
+    componentWillUnmount = () => {
+        console.log('unmount')
+        if (Platform.OS === "android") {
+            BackHandler.removeEventListener("hardwareBackPress", this.onBackPage);
+        }
+    };
+
+    onBackPage = async () => {
+        BackHandler.exitApp();
+    };
+
     getUserWallet = async(userId, userToken, camTypeId) => {
         console.log('userId : ', userId)
         console.log('userToken : ', userToken);
@@ -70,26 +78,7 @@ export default class Main extends Component {
          'GET', {}, 'customer', userToken, userId);
     }
 
-    componentWillUnmount = () => {
-        if (Platform.OS === "android") {
-            BackHandler.removeEventListener(
-                "hardwareBackPress",
-                this.onBackPage
-            );
-        }
-    };
-
     onChangePage = async goToPage => {
-        let { historyPage } = this.state;
-        // let filterHistory = true
-        // for (let index in historyPage) {
-        //     if (goToPage === historyPage[index]) {
-        //         filterHistory = false
-        //     }
-        // }
-        // if (filterHistory) {
-        historyPage.push(goToPage);
-        // }
         let header = this.setHeader(goToPage);
         if (goToPage == "Edit Profile") {
             this.navigation.navigate("EditProfile");
@@ -97,7 +86,6 @@ export default class Main extends Component {
             await this.setState({
                 header: header,
                 currentPage: goToPage,
-                historyPage: historyPage,
                 sortOption: 0,
                 searchText: "",
                 searchVisible: false,
@@ -134,28 +122,11 @@ export default class Main extends Component {
             header = {
                 leftButton: BackIcon,
                 rightButton: HiddenIcon,
-                leftFunction: this.onBackPage,
+                leftFunction: null,
                 rightFunction: null
             };
         }
         return header;
-    };
-
-    onBackPage = async () => {
-        let { historyPage } = this.state;
-        if (historyPage.length === 1) {
-            BackHandler.exitApp();
-        } else {
-            historyPage.pop();
-            let lenght = historyPage.length - 1;
-            let goToPage = historyPage[lenght];
-            let header = this.setHeader(goToPage);
-            await this.setState({
-                header: header,
-                currentPage: goToPage,
-                historyPage: historyPage
-            });
-        }
     };
 
     onToggleSearchStatus = () => {

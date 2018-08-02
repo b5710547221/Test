@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Dimensions } from 'react-native'
-import { Container, Content, Button } from 'native-base'
+import { StyleSheet, Text, TouchableOpacity, View, 
+Image, Dimensions, Platform, BackHandler } from 'react-native'
+import { Container, Button } from 'native-base'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import RNGooglePlaces from 'react-native-google-places';
 
@@ -47,6 +48,9 @@ export default class MapViewer extends Component {
     }
 
     componentDidMount = async () => {
+        if (Platform.OS === "android") {
+            BackHandler.addEventListener("hardwareBackPress", this.onBackPage);
+        }
         await this.setHeader()
         navigator.geolocation.getCurrentPosition(
             (position) => {
@@ -63,6 +67,21 @@ export default class MapViewer extends Component {
             { enableHighAccuracy: true, timeout: 1000},
         );
     }
+
+    componentWillMount = () => {
+        this.navigation.state.params.onToggle();
+    }
+
+    componentWillUnmount = () => {
+        if (Platform.OS === "android") {
+            BackHandler.removeEventListener("hardwareBackPress", this.onBackPage);
+        }
+        this.navigation.state.params.onToggle();
+    }
+
+    onBackPage = async () => {
+        this.navigation.goBack();
+    };
 
     openSearchModal = () => {
         RNGooglePlaces.openAutocompleteModal()
@@ -81,14 +100,6 @@ export default class MapViewer extends Component {
 
     onFinish = () => {
         this.navigation.goBack();
-    }
-
-    componentWillMount = () => {
-        this.navigation.state.params.onToggle();
-    }
-
-    componentWillUnmount = () => {
-        this.navigation.state.params.onToggle();
     }
 
     onClearMarker = () => {

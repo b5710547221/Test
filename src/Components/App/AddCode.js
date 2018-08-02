@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image, Alert, AsyncStorage } from 'react-native'
+import { StyleSheet, Text, TextInput, View, 
+Image, Alert, AsyncStorage, Platform, BackHandler  } from 'react-native'
 import { Container, Content, Button } from 'native-base'
 import Svg, { Circle }from 'react-native-svg';
 import { SafeAreaView } from 'react-navigation'
@@ -49,8 +50,21 @@ export default class AddCode extends Component {
     }
 
     componentDidMount = async () => {
+        if (Platform.OS === "android") {
+            BackHandler.addEventListener("hardwareBackPress", this.onBackPage);
+        }
         await this.setHeader()
     }
+
+    componentWillUnmount = () => {
+        if (Platform.OS === "android") {
+            BackHandler.removeEventListener("hardwareBackPress", this.onBackPage);
+        }
+    };
+
+    onBackPage = async () => {
+        this.navigation.goBack();
+    };
 
 
     enterPassCode = async (text) => {

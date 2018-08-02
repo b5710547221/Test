@@ -4,11 +4,10 @@ import {
     Text,
     TouchableWithoutFeedback,
     StyleSheet,
-    TouchableOpacity,
-    Alert
+    TouchableOpacity
 } from "react-native";
 import Modal from "react-native-modal";
-import { Loading_Color, Bakodo_Color } from "../../Config";
+import { Loading_Color } from "../../Config";
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Loading from "../Common/Loading"
 
@@ -77,7 +76,9 @@ export default class FilterModal extends Component {
     render = () => {
         const { markerPosition } = this.props
         const { isLoading, currentPosition, searchText } = this.state
+        
         console.log('Modal Marker : ', markerPosition)
+        console.log(isLoading);
         return (
             <Modal
                 // animationType="slide"

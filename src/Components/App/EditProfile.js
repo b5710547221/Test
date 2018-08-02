@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Alert, StyleSheet, View, Image, Text, TouchableOpacity, TextInput, AsyncStorage } from "react-native";
+import { Alert, StyleSheet, View, Image, Text, TouchableOpacity, 
+TextInput, AsyncStorage, Platform, BackHandler } from "react-native";
 import { Container, Content, Button, ActionSheet } from "native-base";
 import DatePicker from "react-native-datepicker";
 import { Dropdown } from "react-native-material-dropdown";
@@ -50,6 +51,9 @@ export default class EditProfile extends Component {
     }
 
     componentDidMount = async () => {
+        // if (Platform.OS === "android") {
+        //     BackHandler.addEventListener("hardwareBackPress", this.onBackPage);
+        // }
         const userToken = await AsyncStorage.getItem("userToken");
         const userId = await AsyncStorage.getItem("userId");
         await this.setState({ userToken, userId });
@@ -58,6 +62,16 @@ export default class EditProfile extends Component {
         await this.setState({
             isLoading: false
         });
+    };
+
+    componentWillUnmount = () => {
+        // if (Platform.OS === "android") {
+        //     BackHandler.removeEventListener("hardwareBackPress", this.onBackPage);
+        // }
+    };
+
+    onBackPage = async () => {
+        this.navigation.goBack();
     };
 
     getUserDetails = async () => {
