@@ -24,17 +24,17 @@ export const apiRequest = async (path, method = "GET", body = {}, serviceType = 
     switch (method) {
         case "GET":
             return await axios.get(API["base"] + path, {
-                    headers
+                    headers, timeout: 3000
                 }
             );
         case "POST":
             return await axios.post(API["base"] + path, body, {
-                    headers
+                    headers, timeout: 3000
                 }
             );
 		case "PUT":
 			return await axios.put(API["base"]+ path, body, {
-				headers
+				headers, timeout: 3000
 				}
 			);
     }
