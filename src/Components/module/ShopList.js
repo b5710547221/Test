@@ -116,7 +116,8 @@ export default class ShopList extends Component {
                     if(error.code == 1 || error.code == 2) {
                         this.setState({
                             isLoading: false,
-                            isNoGPS: true
+                            isNoGPS: true,
+                            refreshing: false
                         })
                     }
                 },
@@ -155,6 +156,7 @@ export default class ShopList extends Component {
     };
 
     filterList = () => {
+        console.log('filterList')
         const { welcomeProList, usedWelcome } = this.state;
         const { searchText, sortOption } = this.props;
         const filteredWelcome = welcomeProList && searchText.toLowerCase()
@@ -196,12 +198,13 @@ export default class ShopList extends Component {
                 filteredUsedWelcome.sort((a, b) => a.BranchName.localeCompare(b.BranchName) < 0);   
                 break;
         }
-
+        console.log('done')
         this.setState({
             isLoading: false,
             welcomeProList: filteredWelcome,
             usedWelcome: filteredUsedWelcome,
-            refreshing: false
+            refreshing: false,
+            isNoGPS: false
         })
     }
 
@@ -277,9 +280,7 @@ export default class ShopList extends Component {
             <View style={{flex: 1}}>
                 { isLoading ? (
                     <Loading />
-                ) : isNoGPS ? (
-                    <NoGPS />
-                ) :                
+                ) :              
                     <ScrollView
                         refreshControl={
                             <RefreshControl 
@@ -288,7 +289,8 @@ export default class ShopList extends Component {
                             />
                         }
                     >
-                        (<View>
+                    { isNoGPS ? <NoGPS /> :
+                        <View>
                             <View style={styles["Promotion_Header"]}>
                                 <Text>Available Welcome Promotions</Text>
                             </View>
@@ -322,7 +324,7 @@ export default class ShopList extends Component {
                                 }}
                             />
                         </View>
-                        )}
+                    }
                     </ScrollView>             
                 }
                

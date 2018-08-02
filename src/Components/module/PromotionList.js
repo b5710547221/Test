@@ -73,7 +73,8 @@ export default class PromotionList extends Component {
                     if(error.code == 1 || error.code == 2) {
                         this.setState({
                             isLoading: false,
-                            isNoGPS: true
+                            isNoGPS: true,
+                            refreshing: false
                         })
                     }
                 },
@@ -148,7 +149,8 @@ export default class PromotionList extends Component {
         this.setState({
             isLoading: false,
             promotions: filteredPromotions,
-            refreshing: false
+            refreshing: false,
+            isNoGPS: false
         })
     }
 	
@@ -169,7 +171,6 @@ export default class PromotionList extends Component {
             <View style={{flex: 1}}>
                 {
                     isLoading ? <Loading /> : 
-                    isNoGPS ? <NoGPS /> :
                     <ScrollView style={styles['PromotionList']}
                         refreshControl={
                             <RefreshControl
@@ -179,12 +180,16 @@ export default class PromotionList extends Component {
                             /> 
                         }
                     >
-                        <FlatList
-                            data={promotions}
-                            renderItem={({ item, index }) => {
-                                return <Card type={showPage} data={item} onClick={this.onClick.bind(this, item)}/>
-                            }}
-                        />
+                        {
+                            isNoGPS ? <NoGPS /> :
+                            <FlatList
+                                data={promotions}
+                                renderItem={({ item, index }) => {
+                                    return <Card type={showPage} data={item} onClick={this.onClick.bind(this, item)}/>
+                                }}
+                            />
+                        }
+
                     </ScrollView>    
                 }
         
