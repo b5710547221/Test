@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
-import { View, Image, Linking, StyleSheet, Text, TouchableOpacity, AsyncStorage, Alert } from 'react-native'
+import { View, StyleSheet, AsyncStorage, Alert } from 'react-native'
 
 import QRCodeScanner from 'react-native-qrcode-scanner'
-import axios from 'axios'
 
-import { API, apiRequest } from '../../Config'
+import { apiRequest } from '../../Config'
 import ModalSuccess from './ScanSuccess'
 import ModalConfirm from './ScanConfirm'
 import Loading from '../Common/Loading'

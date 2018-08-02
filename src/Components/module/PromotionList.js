@@ -12,7 +12,8 @@ export default class PromotionList extends Component {
 		super(props)
 
 		this.state = {
-			isLoading: true,
+            isLoading: true,
+            isNoGPS: false,
 			promotions: null,
 			userToken: null,
 			userId: null,
@@ -67,7 +68,15 @@ export default class PromotionList extends Component {
                         longitude: position.coords.longitude
                     }, this.setPromotions.bind(this, this.props.camTypeId))
                 },
-                (error) => console.log('error: ', error),
+                (error) => {
+                    console.log('error: ', error)    
+                    if(error.code == 1 || error.code == 2) {
+                        this.setState({
+                            isLoading: false,
+                            isNoGPS: true
+                        })
+                    }
+                },
                 { enableHighAccuracy: true, timeout: 1000},
             );             
         }
@@ -152,14 +161,15 @@ export default class PromotionList extends Component {
     }
 
 	render() {
-		const { isLoading, promotions, refreshing } = this.state
+		const { isLoading, isNoGPS, promotions, refreshing } = this.state
 		const {  showPage  } = this.props
 
         console.log(this.state.latitude, ' ', this.state.longitude);
 		return (
             <View style={{flex: 1}}>
                 {
-                    isLoading ? <Loading /> :
+                    isLoading ? <Loading /> : 
+                    isNoGPS ? <NoGPS /> :
                     <ScrollView style={styles['PromotionList']}
                         refreshControl={
                             <RefreshControl

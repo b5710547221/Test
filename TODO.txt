@@ -4,9 +4,6 @@ Bug
 
 confirm ASDFdfs add branchName
 
-refactor
-- component should be in module
-
 - redeem code still work after 3 minutes
 - End Date to days left
 - Used Promotion cannot get redeem code promotion

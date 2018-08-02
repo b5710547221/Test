@@ -3,7 +3,7 @@ import { StyleSheet, SafeAreaView } from 'react-native'
 import SplashScreen from 'react-native-splash-screen'
 
 import { Bakodo_Color } from './Config'
- import App from './AppNew'
+ import App from './App'
 
 import StatusBar from './Components/Common/StatusBar'
 

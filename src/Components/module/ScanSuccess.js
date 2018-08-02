@@ -2,13 +2,10 @@ import React, { Component } from "react";
 import {
     View,
     Text,
-    TouchableHighlight,
-    StyleSheet,
-    TouchableOpacity
+    StyleSheet
 } from "react-native";
 import { Button } from "native-base"
 import Modal from "react-native-modal";
-import { StackActions, NavigationActions } from "react-navigation"
 import { Loading_Color, Bakodo_Color } from "../../Config";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 

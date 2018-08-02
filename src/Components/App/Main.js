@@ -2,17 +2,21 @@ import React, { Component } from "react";
 import { AsyncStorage, BackHandler, Platform, View } from "react-native";
 import { Container } from "native-base";
 
-import CameraView from "./Scan";
-import Wallet from "./MyWallet";
-import ShopList from "./ShopList";
+
+
+
 import { apiRequest } from "../../Config";
 import { SearchIcon, BackIcon, HiddenIcon } from "../Common/Icon";
 import Header from "../Common/Header";
 import Footer from "../Common/Footer";
-import Search from "./Search";
-import Filter from "./Filter";
-import FilterModal from "./FilterModal";
-import SearchModal from "./SearchModal";
+
+import ShopList from "../module/ShopList";
+import CameraView from "../module/Scan";
+import Wallet from "../module/MyWallet";
+import Filter from "../module/Filter";
+import FilterModal from "../module/FilterModal";
+import Search from "../module/Search";
+import SearchModal from "../module/SearchModal";
 
 export default class Main extends Component {
     static navigationOptions = {
