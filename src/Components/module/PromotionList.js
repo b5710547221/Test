@@ -70,13 +70,11 @@ export default class PromotionList extends Component {
                 },
                 (error) => {
                     console.log('error: ', error)    
-                    if(error.code == 1 || error.code == 2) {
                         this.setState({
                             isLoading: false,
                             isNoGPS: true,
                             refreshing: false
                         })
-                    }
                 },
                 { enableHighAccuracy: true, timeout: 1000},
             );             
@@ -87,7 +85,6 @@ export default class PromotionList extends Component {
         try {
             result = await this.getUserWallet(this.state.userId, this.state.userToken, this.props.camTypeId)
             const promotions = result["data"];
-            console.log('promotions: ', promotions);
             if (result["status"] === 200) {
                 await this.setState({
                     promotions: result["data"]
@@ -165,8 +162,6 @@ export default class PromotionList extends Component {
 	render() {
 		const { isLoading, isNoGPS, promotions, refreshing } = this.state
 		const {  showPage  } = this.props
-
-        console.log(this.state.latitude, ' ', this.state.longitude);
 		return (
             <View style={{flex: 1}}>
                 {

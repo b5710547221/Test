@@ -6,8 +6,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import StatusBar from '../Common/StatusBar'
 import Header from '../Common/Header'
 import Carousel from '../Common/Carousel'
+import Loading from '../Common/Loading'
 
-import { Bakodo_Color, Loading_Color } from '../../Config'
+import { Bakodo_Color, Loading_Color, apiRequest } from '../../Config'
 
 import ImageBackIcon from '../../images/left.png'
 import ImageClockIcon from '../../images/pointicon.png'
@@ -36,11 +37,14 @@ export default class ShowPromotion extends Component {
                 leftMenu: null,
                 currentPage: null,
                 rightMenu: null
-            }
+            },
+            isLoading: true,
+            Details: {},
+            ShopImages: {},
+            PromotionImages: {}
         }
 
         this.navigation = props.navigation
-        console.log(Bakodo_Color)
     }
 
     componentDidMount = async () => {
@@ -48,6 +52,7 @@ export default class ShowPromotion extends Component {
             BackHandler.addEventListener("hardwareBackPress", this.onBackPage);
         }
         await this.setHeader()
+        await this.setPromotionData()
     }
 
     componentWillUnmount = () => {
@@ -55,6 +60,31 @@ export default class ShowPromotion extends Component {
             BackHandler.removeEventListener("hardwareBackPress", this.onBackPage);
         }
     };
+
+    setPromotionData = async() => {
+        const { used } = this.navigation.state.params
+        const { WalletId, BranchId, CampaignTypeId, PromotionId } = this.navigation.state.params.data
+        const userToken = await AsyncStorage.getItem('userToken');
+        const userId = await AsyncStorage.getItem('userId');
+        try {
+            const url = used ? 
+            `/getWalletPromotionDetails` + `/${WalletId}/${BranchId}/${CampaignTypeId}/${PromotionId}` :
+            `/getWelcomePromotionAllDetails` + `/${BranchId}/${CampaignTypeId}/${PromotionId}`
+            const result = await apiRequest(url, "GET", {}, "customer", userToken, userId);
+            
+            if(result['status'] === 200) {
+                await this.setState({
+                    Details: result['data']['Details'],
+                    PromotionImages: result['data']['PromotionImages'],
+                    ShopImages: result['data']['ShopImages'],
+                    isLoading: false
+                })
+            }
+        } catch(error) {
+            console.log(error["response"])
+            Alert.alert("Error getting Promotion detail!")
+        }
+    }
 
     onBackPage = async () => {
         this.navigation.goBack();
@@ -101,12 +131,20 @@ export default class ShowPromotion extends Component {
         })
     }
 
+    mapShopImages = () => {
+        const { ShopImages } = this.state
+        console.log('state : ', this.state)
+        return ShopImages.map(((img) => {
+            return `http://worldenergystation.com/barkodo/assets/img/shop/${img['ImageUrl']}`
+        }))
+    }
 
     render() {
 
         const { leftMenu, currentPage, rightMenu } = this.state.header
-        const { PromotionName, BranchName, BranchImage, Description, ExpiredDate } = this.navigation.state.params.data
+        const { PromotionName, BranchName, BranchDescription, ExpiredDate, EndDate, OpenTime } = this.state.Details
         const { used } = this.navigation.state.params
+        const { isLoading } = this.state
         console.log(leftMenu)
         console.log(BranchName)
         return (
@@ -117,69 +155,73 @@ export default class ShowPromotion extends Component {
                     titlePage={currentPage}
                     rightMenu={rightMenu}
                 />
+                { isLoading ? <Loading /> : 
                 <Content>
-                    <View style={styles['Content']}>
-                        <Text style={styles['Header']}>{BranchName}</Text>
-                        <Text style={styles['SubHeader']}>{PromotionName}</Text>
+                        <View style={styles['Content']}>
+                            <Text style={styles['Header']}>{BranchName}</Text>
+                            <Text style={styles['SubHeader']}>{PromotionName}</Text>
 
-                        <View style={styles['Carousel']}>
-                            <Carousel images={[`http://worldenergystation.com/barkodo/assets/img/shop/${BranchImage}`]} />
-                        </View>
-
-                        <View style={styles['FlexDirection_Row_Last']}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Image
-                                    style={{ height: 15, width: 15, marginRight: 10}}
-                                    source={ImageClockIcon}
-                                />
-                                <Text style={{color: Loading_Color, fontSize: 12}}>{ExpiredDate}</Text>
+                            <View style={styles['Carousel']}>
+                                <Carousel images={this.mapShopImages()} />
                             </View>
-                            <Text style={{ flex: 1, textAlign: 'right', color: '#737373', fontSize: 12 }}>Mon - Sun 11:00 - 21:00</Text>
-                        </View>
 
-                        <View style={[styles['FlexDirection_Row'], { maxHeight: 120, paddingHorizontal: 20 }]}>
-                            <Text style={styles['Normal_Text']}>{Description}</Text>
-                        </View>
+                            <View style={styles['FlexDirection_Row_Last']}>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Image
+                                        style={{ height: 15, width: 15, marginRight: 10}}
+                                        source={ImageClockIcon}
+                                    />
+                                    <Text style={{color: Loading_Color, fontSize: 12}}>{used ? ExpiredDate: EndDate}</Text>
+                                </View>
+                                <Text style={{ flex: 1, textAlign: 'right', color: '#737373', fontSize: 12 }}>{OpenTime}</Text>
+                            </View>
 
-                        <View style={styles['FlexDirection_Row']}>
-                            <Image
-                                style={{ height: 15, width: 12, marginRight: 10 }}
-                                source={ImagePinIcon}
-                            />
-                            <Text style={[styles['Normal_Text'], {flex: 1}]}>qq dessert of Taiwan, Chatuchak, Bangkok 10900</Text>
-                        </View>
+                            <View style={[styles['FlexDirection_Row'], { maxHeight: 120, paddingHorizontal: 20 }]}>
+                                <Text style={styles['Normal_Text']}>{BranchDescription}</Text>
+                            </View>
 
-                        <View style={styles['FlexDirection_Row']}>
-                            <TouchableOpacity
-                                onPress={() => { Alert.alert('Instagram') }}
-                                style={styles['Contract_Container']}>
-                                <View style={styles['Contract']}>
-                                    <Icon style={styles['Contract_Icon']} name='logo-instagram' size={30} color='#FFFFFF' />
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => { Alert.alert('Phone') }}
-                                style={styles['Contract_Container']}>
-                                <View style={styles['Contract']}>
-                                    <Icon style={styles['Contract_Icon']} name='ios-call' size={30} color='#FFFFFF' />
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => { Alert.alert('Facebook') }}
-                                style={styles['Contract_Container']}>
-                                <View style={styles['Contract']}>
-                                    <Icon style={styles['Contract_Icon']} name='logo-facebook' size={30} color='#FFFFFF' />
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                        { used ? 
-                            <View></View> : 
-                            <Button style={styles['Button']} onPress={this.onGetPress.bind(this)}>
-                                <Text style={styles['Button_Text']}>Get</Text>
-                            </Button>
-                        }
-                    </View>
+                            <View style={styles['FlexDirection_Row']}>
+                                <Image
+                                    style={{ height: 15, width: 12, marginRight: 10 }}
+                                    source={ImagePinIcon}
+                                />
+                                <Text style={[styles['Normal_Text'], {flex: 1}]}>qq dessert of Taiwan, Chatuchak, Bangkok 10900</Text>
+                            </View>
+
+                            <View style={styles['FlexDirection_Row']}>
+                                <TouchableOpacity
+                                    onPress={() => { Alert.alert('Instagram') }}
+                                    style={styles['Contract_Container']}>
+                                    <View style={styles['Contract']}>
+                                        <Icon style={styles['Contract_Icon']} name='logo-instagram' size={30} color='#FFFFFF' />
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => { Alert.alert('Phone') }}
+                                    style={styles['Contract_Container']}>
+                                    <View style={styles['Contract']}>
+                                        <Icon style={styles['Contract_Icon']} name='ios-call' size={30} color='#FFFFFF' />
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => { Alert.alert('Facebook') }}
+                                    style={styles['Contract_Container']}>
+                                    <View style={styles['Contract']}>
+                                        <Icon style={styles['Contract_Icon']} name='logo-facebook' size={30} color='#FFFFFF' />
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                            { used ? 
+                                <View></View> : 
+                                <Button style={styles['Button']} onPress={this.onGetPress.bind(this)}>
+                                    <Text style={styles['Button_Text']}>Get</Text>
+                                </Button>
+                            }
+                        </View>                        
+                    
+
                 </Content>
+                }
             </Container>
         )
     }

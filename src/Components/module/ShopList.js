@@ -44,37 +44,37 @@ export default class ShopList extends Component {
         await this.setCoords();
     };
 
-	onGPSChange = (status) => {
-		switch (status) {
-			case GPSState.NOT_DETERMINED:
-				Alert.alert('NOT_DETERMINED')
-				break
+	// onGPSChange = (status) => {
+	// 	switch (status) {
+	// 		case GPSState.NOT_DETERMINED:
+	// 			Alert.alert('NOT_DETERMINED')
+	// 			break
 
-			case GPSState.RESTRICTED:
-				Alert.alert(
-					'GPS ไม่ได้เปิดการใช้งาน',
-					'คุณต้องการไปเปิด GPS ใช่มั้ย',
-					[
-						{ text: 'ไปที่ตั้งค่า', onPress: () => { GPSState.openSettings() } },
-						{ text: 'ยกเลิก' },
-					],
-					{ cancelable: false }
-				)
-				break
+	// 		case GPSState.RESTRICTED:
+	// 			Alert.alert(
+	// 				'GPS ไม่ได้เปิดการใช้งาน',
+	// 				'คุณต้องการไปเปิด GPS ใช่มั้ย',
+	// 				[
+	// 					{ text: 'ไปที่ตั้งค่า', onPress: () => { GPSState.openSettings() } },
+	// 					{ text: 'ยกเลิก' },
+	// 				],
+	// 				{ cancelable: false }
+	// 			)
+	// 			break
 
-			case GPSState.DENIED:
-				Alert.alert('DENIED')
-				break
+	// 		case GPSState.DENIED:
+	// 			Alert.alert('DENIED')
+	// 			break
 
-			case GPSState.AUTHORIZED_ALWAYS:
-				Alert.alert('AUTHORIZED_ALWAYS')
-				break
+	// 		case GPSState.AUTHORIZED_ALWAYS:
+	// 			Alert.alert('AUTHORIZED_ALWAYS')
+	// 			break
 
-			case GPSState.AUTHORIZED_WHENINUSE:
-				Alert.alert('AUTHORIZED_WHENINUSE')
-				break
-		}
-	}
+	// 		case GPSState.AUTHORIZED_WHENINUSE:
+	// 			Alert.alert('AUTHORIZED_WHENINUSE')
+	// 			break
+	// 	}
+	// }
 
     componentDidUpdate = (prevProps) => {
         if (this.props.markerPosition !== prevProps.markerPosition) {
@@ -113,13 +113,12 @@ export default class ShopList extends Component {
                 },
                 (error) => {
                     console.log('error: ', error)    
-                    if(error.code == 1 || error.code == 2) {
                         this.setState({
                             isLoading: false,
                             isNoGPS: true,
                             refreshing: false
                         })
-                    }
+
                 },
                 { enableHighAccuracy: true, timeout: 1000},
             );             
@@ -208,22 +207,22 @@ export default class ShopList extends Component {
         })
     }
 
-    checkStatusGPS = async status => {
-        if (status === 3 || status === 4 || this.state.simulator) {
-            setTimeout(async () => {
-                await this.setState({
-                    data: mockUpData,
-                    isLoading: false,
-                    isNoGPS: false
-                });
-            }, 0);
-        } else {
-            await this.setState({
-                isLoading: false,
-                isNoGPS: true
-            });
-        }
-    };
+    // checkStatusGPS = async status => {
+    //     if (status === 3 || status === 4 || this.state.simulator) {
+    //         setTimeout(async () => {
+    //             await this.setState({
+    //                 data: mockUpData,
+    //                 isLoading: false,
+    //                 isNoGPS: false
+    //             });
+    //         }, 0);
+    //     } else {
+    //         await this.setState({
+    //             isLoading: false,
+    //             isNoGPS: true
+    //         });
+    //     }
+    // };
 
     onGetPromotion = async params => {
         try {

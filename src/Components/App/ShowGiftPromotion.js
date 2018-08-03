@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, Alert, View, Text, Image, TouchableOpacity, Linking, Platform, BackHandler  } from 'react-native'
+import { StyleSheet, Alert, View, Text, Image, TouchableOpacity, Linking, Platform, BackHandler, AsyncStorage  } from 'react-native'
 import { Container, Content, Button } from 'native-base'
 import Icon from 'react-native-vector-icons/Ionicons';
 import call from 'react-native-phone-call'
@@ -8,8 +8,9 @@ import call from 'react-native-phone-call'
 import StatusBar from '../Common/StatusBar'
 import Header from '../Common/Header'
 import Carousel from '../Common/Carousel'
+import Loading from '../Common/Loading'
 
-import { Bakodo_Color, Loading_Color } from '../../Config'
+import { Bakodo_Color, Loading_Color, apiRequest } from '../../Config'
 
 import ImageBackIcon from '../../images/left.png'
 import ImageClockIcon from '../../images/pointicon.png'
@@ -38,8 +39,13 @@ export default class ShowPromotion extends Component {
                 leftMenu: null,
                 currentPage: null,
                 rightMenu: null
-            }
+            },
+            isLoading: true,
+            Details: {},
+            ShopImages: {},
+            PromotionImages: {}
         }
+    
 
         this.navigation = props.navigation
         console.log(Bakodo_Color)
@@ -50,6 +56,7 @@ export default class ShowPromotion extends Component {
             BackHandler.addEventListener("hardwareBackPress", this.onBackPage);
         }
         await this.setHeader()
+        await this.setPromotionData()
     }
 
     componentWillUnmount = () => {
@@ -57,6 +64,28 @@ export default class ShowPromotion extends Component {
             BackHandler.removeEventListener("hardwareBackPress", this.onBackPage);
         }
     };
+
+    setPromotionData = async() => {
+        const { WalletId, BranchId, CampaignTypeId, PromotionId } = this.navigation.state.params.data
+        const userToken = await AsyncStorage.getItem('userToken');
+        const userId = await AsyncStorage.getItem('userId');
+        try {
+            const result = await apiRequest(`/getWalletPromotionDetails` + 
+            `/${WalletId}/${BranchId}/${CampaignTypeId}/${PromotionId}`, "GET", {}, "customer", userToken, userId);
+            if(result['status'] === 200) {
+                console.log('heyyyyyy')
+                await this.setState({
+                    Details: result['data']['Details'],
+                    PromotionImages: result['data']['PromotionImages'],
+                    ShopImages: result['data']['ShopImages'],
+                    isLoading: false
+                })
+            }
+        } catch(error) {
+            console.log(error)
+            Alert.alert("Error getting Promotion detail!")
+        }
+    }
 
     onBackPage = async () => {
         this.navigation.goBack();
@@ -92,7 +121,12 @@ export default class ShowPromotion extends Component {
 
     onClaim = () => {
         console.log('Claim Now')
-        this.navigation.navigate('AddCode', { data : this.props.navigation.state.params.data})
+        this.navigation.navigate('AddCode', { 
+            data : this.props.navigation.state.params.data,
+            Details: this.state.Details,
+            PromotionImages: this.state.PromotionImages,
+            ShopImages: this.state.ShopImages
+        })
     }
 
     onCallNum = (number) =>  {
@@ -149,10 +183,19 @@ export default class ShowPromotion extends Component {
           .catch(err => console.error("An error occurred", err));        
     }
 
+    mapShopImages = () => {
+        const { ShopImages } = this.state
+        console.log('state : ', this.state)
+        return ShopImages.map(((img) => {
+            return `http://worldenergystation.com/barkodo/assets/img/shop/${img['ImageUrl']}`
+        }))
+    }
+
     render() {
 
         const { leftMenu, currentPage, rightMenu } = this.state.header
-        const { PromotionName, BranchName, BranchImage, Description, ExpiredDate } = this.props.navigation.state.params.data
+        const { PromotionName, BranchName, BranchDescription, ExpiredDate, OpenTime } = this.state.Details
+        const { isLoading } = this.state
         console.log(leftMenu)
         console.log(BranchName)
         return (
@@ -162,7 +205,8 @@ export default class ShowPromotion extends Component {
                     leftMenu={leftMenu}
                     titlePage={currentPage}
                     rightMenu={rightMenu}
-                />          
+                />
+                { isLoading ? <Loading /> :           
                 <Content>
 
                    <View style={styles['Content']}>
@@ -170,7 +214,7 @@ export default class ShowPromotion extends Component {
                         <Text style={styles['SubHeader']}>{PromotionName}</Text>
 
                         <View style={styles['Carousel']}>
-                            <Carousel images={[`http://worldenergystation.com/barkodo/assets/img/shop/${BranchImage}`]} />
+                            <Carousel images={this.mapShopImages()} />
                         </View>
 
                         <View style={styles['FlexDirection_Row_Last']}>
@@ -181,11 +225,11 @@ export default class ShowPromotion extends Component {
                                 />
                                 <Text style={{color: Loading_Color, fontSize: 12}}>{ExpiredDate}</Text>
                             </View>
-                            <Text style={{ flex: 1, textAlign: 'right', color: '#737373', fontSize: 12 }}>Mon - Sun 11:00 - 21:00</Text>
+                            <Text style={{ flex: 1, textAlign: 'right', color: '#737373', fontSize: 12 }}>{OpenTime}</Text>
                         </View>
 
                         <View style={[styles['FlexDirection_Row'], { maxHeight: 120, paddingHorizontal: 20 }]}>
-                            <Text style={styles['Normal_Text']}>{Description}</Text>
+                            <Text style={styles['Normal_Text']}>{BranchDescription}</Text>
                         </View>
 
                         <View style={styles['FlexDirection_Row']}>
@@ -225,6 +269,7 @@ export default class ShowPromotion extends Component {
                         </Button>
                     </View> 
                 </Content>
+                }
             </Container>
         )
     }

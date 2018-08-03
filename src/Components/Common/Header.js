@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     Left: {
-        paddingLeft: 5
+        paddingLeft: 10
     },
     Center: {
         flex: 1,

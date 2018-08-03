@@ -124,8 +124,8 @@ export default class AddCode extends Component {
 
     render() {
         const { leftMenu, currentPage, rightMenu } = this.state.header
-        const { PromotionName, BranchName, Description, ExpiredDate } = this.props.navigation.state.params.data
-        const code = this.props.navigation.state.params.code
+        const { Details, code } = this.navigation.state.params;
+        const { PromotionName, BranchName} = Details
         const { remainingSeconds } = this.state
         console.log(code)
         return (

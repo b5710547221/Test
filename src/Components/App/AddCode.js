@@ -3,11 +3,9 @@ import { StyleSheet, Text, TextInput, View,
 Image, Alert, AsyncStorage, Platform, BackHandler  } from 'react-native'
 import { Container, Content, Button } from 'native-base'
 import Svg, { Circle }from 'react-native-svg';
-import { SafeAreaView } from 'react-navigation'
 
 import { Bakodo_Color, Loading_Color, apiRequest } from '../../Config'
 import Header from '../Common/Header'
-import Footer from '../Common/Footer'
 import StatusBar from '../Common/StatusBar'
 import Carousel from '../Common/Carousel'
 
@@ -104,19 +102,20 @@ export default class AddCode extends Component {
     }
 
     onRedeem = async() => {
-        const { CampaignTypeId, PromotionId } = this.navigation.state.params.data;
+        const { Details, PromotionImages} = this.navigation.state.params;
+        const { CampaignTypeId, PromotionId } = Details
         const userToken = await AsyncStorage.getItem('userToken');
         const userId = await AsyncStorage.getItem('userId');
         if(this.state.isPassCode === '1234') {
-
             try {
                 const resultGetCode = await apiRequest(`/getRedeemQRCodePromotions/${CampaignTypeId}/${PromotionId}`, 'GET', {}, 
                  "customer", userToken, userId);                
                 if(resultGetCode['status'] === 201) {
                     console.log(resultGetCode)
                     this.navigation.navigate('ShowQRCode', {
-                        data : this.navigation.state.params.data,
-                        code : resultGetCode['data']['redeemCode']
+                        code : resultGetCode['data']['redeemCode'],
+                        Details: Details,
+                        PromotionImage: PromotionImages,
                     })  
                 } else {
                     console.log(resultGetCode);
@@ -129,28 +128,33 @@ export default class AddCode extends Component {
         } else {
             Alert.alert('Wrong Pin!')
         }
+    }
 
+    mapPromotionImages = () => {
+        const { Details, PromotionImages} = this.navigation.state.params;
+        const { CampaignTypeId } = Details
+        let imgUrl = "http://worldenergystation.com/barkodo/assets/img"
+        switch(CampaignTypeId) {
+            case '1': imgUrl += "/gift_promotion/"
+                break
+            case '2': imgUrl += "/welcome_promotion/"
+                break
+            case '3': imgUrl += "/package_promotion/"
+                break
+            case '4': imgUrl += "/collect_promotion/"
+        }  
+        return PromotionImages.map(((img) => {
+            return imgUrl + img['ImageUrl'];
+        }))
     }
 
     render() {
         const { leftMenu, currentPage, rightMenu } = this.state.header
-        const { PromotionName, BranchName, Description, ExpiredDate, PromotionImage, CampaignTypeId } = this.navigation.state.params.data
+        const { Details } = this.navigation.state.params;
+        const { PromotionName, BranchName } = Details
         const reward = this.navigation.state.params.reward
-        let imgUrl = "http://worldenergystation.com/barkodo/assets/img"
-        if(PromotionImage) {
-            switch(CampaignTypeId) {
-                case '1': imgUrl += "/gift_promotion/" + PromotionImage
-                    break
-                case '2': imgUrl += "/welcome_promotion/" + PromotionImage
-                    break
-                case '3': imgUrl += "/package_promotion/" + PromotionImage
-                    break
-                case '4': imgUrl += "/collect_promotion/" + PromotionImage
-                    break
-            }
-        }
+
         const { isPassCode } = this.state
-        console.log('Add Code', this.navigation.state.params.data)
         return (
             <Container style={styles['Container']}>
                 <StatusBar />
@@ -164,7 +168,7 @@ export default class AddCode extends Component {
                         <Text style={styles['Header']}>{BranchName}</Text>
                         <Text style={styles['SubHeader']}>{reward ? reward.desc : PromotionName}</Text>
                         <View style={styles['Carousel']}>
-                            <Carousel images={[imgUrl]}/>
+                            <Carousel images={this.mapPromotionImages()}/>
                         </View>
                         <View style={styles['AddCode_Container']}>
                             <Text style={styles['AddCode_Text']}>Add your code for redeem</Text>
