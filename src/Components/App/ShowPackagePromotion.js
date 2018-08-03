@@ -119,7 +119,12 @@ export default class ShowPromotion extends Component {
 
     onClaim = () => {
         console.log('Claim Now')
-        this.navigation.navigate('AddCode', { data : this.props.navigation.state.params.data})
+        this.navigation.navigate('AddCode', { 
+            data : this.props.navigation.state.params.data,
+            Details: this.state.Details,
+            PromotionImages: this.state.PromotionImages,
+            ShopImages: this.state.ShopImages
+        })
     }
 
     onGotoWeb = (url) => {
@@ -195,7 +200,7 @@ export default class ShowPromotion extends Component {
         const { leftMenu, currentPage, rightMenu } = this.state.header
         const { PromotionName, BranchName, BranchDescription, ExpiredDate, OpenTime, MaxTimes, Times } = this.state.Details
         const { isLoading } = this.state
-        const isLimited = Timeslimit != '0'
+        const isLimited = MaxTimes != '0'
         console.log(leftMenu)
         console.log(BranchName)
         return (

@@ -144,13 +144,6 @@ export default class ShowPromotion extends Component {
         });
     };
 
-    onClaim = () => {
-        console.log("Claim Now");
-        this.navigation.navigate("AddCode", {
-            data: this.props.navigation.state.params.data
-        });
-    };
-
     renderCircles = () => {
         console.log("circles : ", this.state.circles);
         const circleElements = this.state.circles.length > 0 ? this.state.circles.map((item, index) => {
@@ -222,6 +215,9 @@ export default class ShowPromotion extends Component {
         console.log("Claim Now");
         this.navigation.navigate("AddCode", {
             data: this.props.navigation.state.params.data,
+            Details: this.state.Details,
+            PromotionImages: this.state.PromotionImages,
+            ShopImages: this.state.ShopImages,
             reward: reward
         });
     };
