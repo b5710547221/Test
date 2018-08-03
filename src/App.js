@@ -10,10 +10,8 @@ import SignUp from './Components/Auth/SignUp'
 //App
 import Main from './Components/App/Main'
 import EditProfile from './Components/App/EditProfile' 
-import ShowGiftPromotion from './Components/App/ShowGiftPromotion'
-import ShowPackagePromotion from './Components/App/ShowPackagePromotion'
+import ShowPromotion from './Components/App/ShowPromotion'
 import ShowWelcomePromotion from './Components/App/ShowWelcomePromotion'
-import ShowCollectPromotion from './Components/App/ShowCollectPromotion'
 import AddCode from './Components/App/AddCode'
 import ShowQRCode from './Components/App/ShowQRCode'
 
@@ -26,10 +24,8 @@ const AuthStack = createStackNavigator({
     Login, SignUp
 })
 const AppStack = createStackNavigator({
-    Main, EditProfile, ShowWelcomePromotion, ShowWelcomePromotion,
-    ShowGiftPromotion, ShowGiftPromotion, ShowPackagePromotion, ShowPackagePromotion,
-    ShowCollectPromotion, ShowCollectPromotion, AddCode, ShowQRCode, ShowQRCode, 
-    ResetPassword, ResetSecurityCode, MapView
+    Main, EditProfile, ShowPromotion,ShowWelcomePromotion, AddCode, 
+    ShowQRCode, ShowQRCode, ResetPassword, ResetSecurityCode, MapView
 })
 
 const App = createSwitchNavigator(

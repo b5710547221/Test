@@ -42,11 +42,11 @@ export default class PromotionList extends Component {
     }
 
 	onClick = (item) => {
-		console.log('On Click in Gift')
-		this.navigation.navigate(`Show${this.props.showPage}Promotion`, {
-			data: item 
-		})
-	}
+
+        this.navigation.navigate(`ShowPromotion`, {
+            data: item 
+        })
+    }
 
 	getUserWallet = async(userId, userToken, camTypeId) => {
         return await apiRequest(`/getUserWalletByCamPaignTypeId/${camTypeId}`,

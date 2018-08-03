@@ -4,6 +4,9 @@ import { Container, Content, Button } from 'native-base'
 import Icon from 'react-native-vector-icons/Ionicons';
 import call from 'react-native-phone-call'
 
+import GiftContent from '../module/GiftContent'
+import CollectContent from '../module/CollectContent'
+import PackageContent from '../module/PackageContent'
 
 import StatusBar from '../Common/StatusBar'
 import Header from '../Common/Header'
@@ -45,10 +48,8 @@ export default class ShowPromotion extends Component {
             ShopImages: {},
             PromotionImages: {}
         }
-    
 
         this.navigation = props.navigation
-        console.log(Bakodo_Color)
     }
 
     componentDidMount = async () => {
@@ -73,7 +74,6 @@ export default class ShowPromotion extends Component {
             const result = await apiRequest(`/getWalletPromotionDetails` + 
             `/${WalletId}/${BranchId}/${CampaignTypeId}/${PromotionId}`, "GET", {}, "customer", userToken, userId);
             if(result['status'] === 200) {
-                console.log('heyyyyyy')
                 await this.setState({
                     Details: result['data']['Details'],
                     PromotionImages: result['data']['PromotionImages'],
@@ -90,7 +90,6 @@ export default class ShowPromotion extends Component {
     onBackPage = async () => {
         this.navigation.goBack();
     };
-
 
     setHeader = () => {
         const { goBack } = this.navigation
@@ -122,10 +121,8 @@ export default class ShowPromotion extends Component {
     onClaim = () => {
         console.log('Claim Now')
         this.navigation.navigate('AddCode', { 
-            data : this.props.navigation.state.params.data,
             Details: this.state.Details,
-            PromotionImages: this.state.PromotionImages,
-            ShopImages: this.state.ShopImages
+            PromotionImages: this.state.PromotionImages
         })
     }
 
@@ -194,10 +191,9 @@ export default class ShowPromotion extends Component {
     render() {
 
         const { leftMenu, currentPage, rightMenu } = this.state.header
-        const { PromotionName, BranchName, BranchDescription, ExpiredDate, OpenTime } = this.state.Details
+        const { Details, PromotionImages } = this.state
+        const { PromotionName, BranchName, ExpiredDate, OpenTime, CampaignTypeId } = Details
         const { isLoading } = this.state
-        console.log(leftMenu)
-        console.log(BranchName)
         return (
             <Container style={styles['Container']}>
                 <StatusBar />
@@ -208,11 +204,9 @@ export default class ShowPromotion extends Component {
                 />
                 { isLoading ? <Loading /> :           
                 <Content>
-
                    <View style={styles['Content']}>
                         <Text style={styles['Header']}>{BranchName}</Text>
                         <Text style={styles['SubHeader']}>{PromotionName}</Text>
-
                         <View style={styles['Carousel']}>
                             <Carousel images={this.mapShopImages()} />
                         </View>
@@ -227,10 +221,14 @@ export default class ShowPromotion extends Component {
                             </View>
                             <Text style={{ flex: 1, textAlign: 'right', color: '#737373', fontSize: 12 }}>{OpenTime}</Text>
                         </View>
-
-                        <View style={[styles['FlexDirection_Row'], { maxHeight: 120, paddingHorizontal: 20 }]}>
-                            <Text style={styles['Normal_Text']}>{BranchDescription}</Text>
-                        </View>
+                        {
+                            CampaignTypeId == "1" || CampaignTypeId == "2" ? <GiftContent Details={Details}/> :
+                            CampaignTypeId == "3" ? <PackageContent Details={Details} onClaim={this.onClaim}/> :
+                            CampaignTypeId == "4" ? <CollectContent navigation={this.navigation} Details={Details} 
+                                PromotionImages={PromotionImages}
+                            /> : 
+                            <View></View>
+                        }
 
                         <View style={styles['FlexDirection_Row']}>
                             <Image
@@ -263,10 +261,12 @@ export default class ShowPromotion extends Component {
                                 </View>
                             </TouchableOpacity>
                         </View>
-
-                        <Button style={styles['Button']} onPress={this.onClaim}>
-                            <Text style={styles['Button_Text']}>Claim now</Text>
-                        </Button>
+                        {
+                            CampaignTypeId == "1" || CampaignTypeId == "2" ? 
+                            <Button style={styles['Button']} onPress={this.onClaim}>
+                                <Text style={styles['Button_Text']}>Claim now</Text>
+                            </Button> : <View></View>                       
+                        }
                     </View> 
                 </Content>
                 }
@@ -356,6 +356,18 @@ const styles = StyleSheet.create({
     },
     Normal_Text: {
         color: '#737373'
+    },
+    Banner: {
+        backgroundColor: Bakodo_Color,
+        marginRight: 5,
+        marginLeft: 5,
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "space-around"
+    },
+    Banner_Text: {
+        color: "#FDFDFD",
+        fontWeight: "bold",
+        marginTop: 5
     }
-
 })
