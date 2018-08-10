@@ -2,7 +2,7 @@ import axios from "axios";
 
 // SET API Server
 export const API = {
-    base: "http://worldenergystation.com/barkodo/index.php/barkodo_api/api"
+    base: "https://barkodo-api.pieros.site/barkodo_api/api"
 };
 
 // SET Theme Color Applicationƒ
