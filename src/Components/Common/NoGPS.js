@@ -19,10 +19,8 @@ export default class NoGPS extends Component {
     
    
             onOpenSetting = () => {
-                
-                
-         
-            }
+            
+            
             componentDidMount = () => {
                 Permissions.check('location', { type: 'always' }).then(response => {
                     this.setState({ locationPermission: response })
@@ -52,6 +50,7 @@ export default class NoGPS extends Component {
                   ],
                 )
               }
+            }
          
     render() {
         return (
