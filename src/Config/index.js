@@ -8,6 +8,7 @@ export const API = {
 // SET Theme Color Applicationƒ
 export const Bakodo_Color = "#B7A5EF";
 export const Loading_Color = "#6E69CC";
+export const  status_color = "#FFFFFF";
 
 export const apiRequest = async (path, method = "GET", body = {}, serviceType = "customer", userToken = null, userId = null) => {
     headers = {

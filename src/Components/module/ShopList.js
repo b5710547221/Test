@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Text, Alert, AsyncStorage, FlatList, StyleSheet, ScrollView, View, RefreshControl } from "react-native";
-// import GPSState from "react-native-gps-state";
+import GPSState from "react-native-gps-state";
 
 import { apiRequest, Bakodo_Color, Loading_Color } from "../../Config";
 
@@ -268,7 +268,8 @@ export default class ShopList extends Component {
             refreshing: true
 		});      
 		await this.setCoords();
-	}
+    }
+    
 
     render() {
         const { isLoading, isNoGPS, refreshing, welcomeProList, usedWelcome } = this.state;
